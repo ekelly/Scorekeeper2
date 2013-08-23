@@ -66,4 +66,9 @@ public class Player {
 	public int getId() {
 		return this.id;
 	}
+	
+	@Override
+	public String toString() {
+		return "Player " + this.id + ": " + this.name + ", " + this.score;
+	}
 }

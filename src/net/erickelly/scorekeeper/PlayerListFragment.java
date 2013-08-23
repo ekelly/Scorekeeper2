@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import net.erickelly.scorekeeper.data.PlayerManager;
 import net.erickelly.scorekeeper.data.Players;
 import net.erickelly.scorekeeper.dummy.DummyContent;
 
@@ -120,12 +121,19 @@ public class PlayerListFragment extends ListFragment implements LoaderManager.Lo
         ListView listView = getListView();
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+        	private Long mSelectedId;
 
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position,
                                                   long id, boolean checked) {
+            	Log.d(TAG, "onItemCheckedStateChanged: " + id + ", " + checked);
                 // Here you can do something when items are selected/de-selected,
                 // such as update the title in the CAB
+            	if (checked) {
+            		mSelectedId = id;
+            	} else {
+            		mSelectedId = null;
+            	}
             }
 
             @Override
@@ -133,7 +141,7 @@ public class PlayerListFragment extends ListFragment implements LoaderManager.Lo
                 // Respond to clicks on the actions in the CAB
                 switch (item.getItemId()) {
                     case R.id.menu_delete_player:
-                        // deleteSelectedItems();
+                    	deletePlayer(mSelectedId);
                         mode.finish(); // Action picked, so close the CAB
                         return true;
                     default:
@@ -249,5 +257,15 @@ public class PlayerListFragment extends ListFragment implements LoaderManager.Lo
         mAdapter.swapCursor(null);
 	}
 	
+	/**
+	 * Delete the player identified by the player id
+	 * @param playerId
+	 */
+	void deletePlayer(long playerId) {
+		PlayerManager.getInstance()
+			.deletePlayer(getActivity(), playerId);
+		getLoaderManager().getLoader(0).forceLoad();
+	}
+
 	private static String TAG = "PlayerListFragment";
 }

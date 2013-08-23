@@ -114,7 +114,7 @@ public class PlayerDetailActivity extends FragmentActivity implements NumpadList
 	     @Override
 	     public Fragment getItem(int position) {
 	    	 Log.d(TAG, "getItem: " + position);
-	    	 Player p = PlayerManager.getInstance(PlayerDetailActivity.this)
+	    	 Player p = PlayerManager.getInstance()
 	    			 .getPlayerByIndex(PlayerDetailActivity.this, position);
 	         Fragment fragment = new PlayerDetailFragment();
 	         Bundle args = new Bundle();
@@ -126,14 +126,14 @@ public class PlayerDetailActivity extends FragmentActivity implements NumpadList
 	     @Override
 	     public int getCount() {
 	    	 Log.d(TAG, "getCount");
-	         return PlayerManager.getInstance(PlayerDetailActivity.this)
+	         return PlayerManager.getInstance()
 	        		 .getPlayerCount(PlayerDetailActivity.this);
 	     }
 	
 	     @Override
 	     public CharSequence getPageTitle(int position) {
 	    	 Log.d(TAG, "getPageTitle: " + position);
-	    	 Player p = PlayerManager.getInstance(PlayerDetailActivity.this)
+	    	 Player p = PlayerManager.getInstance()
 	    			 .getPlayerByIndex(PlayerDetailActivity.this, position);
 	         return p.getName();
 	     }

@@ -1,5 +1,6 @@
 package net.erickelly.scorekeeper;
 
+import net.erickelly.scorekeeper.data.PlayerManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -128,6 +129,10 @@ public class PlayerListActivity extends FragmentActivity
      * Add a player to the list
      */
     public void addPlayer() {
-    	// TODO: method stub
+    	PlayerManager.getInstance().addPlayer(this, "Player");
+    	// TODO: Why do I have to force it to load?
+    	((PlayerListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.player_list))
+                .getLoaderManager().getLoader(0).forceLoad();
     }
 }

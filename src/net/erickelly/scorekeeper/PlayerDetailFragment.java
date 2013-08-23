@@ -8,7 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import net.erickelly.scorekeeper.dummy.DummyContent;
+import net.erickelly.scorekeeper.data.Player;
+import net.erickelly.scorekeeper.data.PlayerManager;
 
 /**
  * A fragment representing a single Player detail screen.
@@ -22,11 +23,11 @@ public class PlayerDetailFragment extends Fragment {
      * represents.
      */
     public static final String ARG_PLAYER_ID = "player_id";
-
+    
     /**
-     * The dummy content this fragment is presenting.
+     * The Player which is being shown
      */
-    private DummyContent.DummyItem mItem;
+    private Player mPlayer;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -40,11 +41,8 @@ public class PlayerDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_PLAYER_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
         	int id = getArguments().getInt(ARG_PLAYER_ID);
-        	mItem = new DummyContent.DummyItem(id, "Item #: " + id);
+        	mPlayer = PlayerManager.getInstance().getPlayer(getActivity(), id);
         }
     }
 
@@ -54,17 +52,13 @@ public class PlayerDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_player_detail, container, false);
 
         // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.player_detail)).setText(mItem.content);
+        if (mPlayer != null) {
+            ((TextView) rootView.findViewById(R.id.player_detail))
+            	.setText(String.valueOf(mPlayer.getScore()));
+            rootView.setTag(mPlayer.getId());
         }
-        
-        rootView.setTag(mItem.id);
 
         return rootView;
-    }
-    
-    public DummyContent.DummyItem getItem() {
-    	return mItem;
     }
     
     @Override
