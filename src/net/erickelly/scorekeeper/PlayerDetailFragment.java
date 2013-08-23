@@ -18,10 +18,10 @@ import net.erickelly.scorekeeper.dummy.DummyContent;
  */
 public class PlayerDetailFragment extends Fragment {
     /**
-     * The fragment argument representing the item ID that this fragment
+     * The fragment argument representing the player ID that this fragment
      * represents.
      */
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_PLAYER_ID = "player_id";
 
     /**
      * The dummy content this fragment is presenting.
@@ -39,11 +39,11 @@ public class PlayerDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
+        if (getArguments().containsKey(ARG_PLAYER_ID)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-        	String id = getArguments().getString(ARG_ITEM_ID);
+        	int id = getArguments().getInt(ARG_PLAYER_ID);
         	mItem = new DummyContent.DummyItem(id, "Item #: " + id);
         }
     }

@@ -87,13 +87,13 @@ public class PlayerListActivity extends FragmentActivity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(Integer id) {
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(PlayerDetailFragment.ARG_ITEM_ID, id);
+            arguments.putInt(PlayerDetailFragment.ARG_PLAYER_ID, id);
             PlayerDetailFragment fragment = new PlayerDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -104,7 +104,7 @@ public class PlayerListActivity extends FragmentActivity
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, PlayerDetailActivity.class);
-            detailIntent.putExtra(PlayerDetailFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, id);
             startActivity(detailIntent);
         }
     }
@@ -119,7 +119,7 @@ public class PlayerListActivity extends FragmentActivity
     	    isPositive = false;
     	}
     	Intent i = new Intent(this, PlayerDetailActivity.class);
-    	i.putExtra(PlayerDetailFragment.ARG_ITEM_ID, "0");
+    	i.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, "0");
     	i.putExtra(NumpadFragment.ARG_POS_NEG, isPositive);
     	startActivity(i);
     }

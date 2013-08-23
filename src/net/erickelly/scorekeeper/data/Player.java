@@ -1,13 +1,30 @@
-package net.erickelly.scorekeeper;
+package net.erickelly.scorekeeper.data;
 
 public class Player {
 	private String name;
+	private int score;
 	private String extra;
 	private int id;
 	
-	Player(int id, String name) {
+	public Player(int id, String name, int score) {
 		this.id = id;
 		this.name = name;
+		this.score = score;
+	}
+	
+	/**
+	 * Adjust the score by the given amount
+	 * @param adjustAmt
+	 */
+	public void adjustScore(int adjustAmt) {
+		this.score = this.score + adjustAmt;
+	}
+	
+	/**
+	 * Getter for score
+	 */
+	public int getScore() {
+		return this.score;
 	}
 	
 	/**

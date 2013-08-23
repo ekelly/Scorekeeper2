@@ -1,8 +1,14 @@
 package net.erickelly.scorekeeper;
 
+import static net.erickelly.scorekeeper.data.Players.*;
 import android.app.Activity;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.app.LoaderManager;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -10,8 +16,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView.MultiChoiceModeListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import net.erickelly.scorekeeper.data.Players;
 import net.erickelly.scorekeeper.dummy.DummyContent;
 
 /**
@@ -23,13 +30,18 @@ import net.erickelly.scorekeeper.dummy.DummyContent;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class PlayerListFragment extends ListFragment {
+public class PlayerListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * The serialization (saved instance state) Bundle key representing the
      * activated item position. Only used on tablets.
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    
+    /**
+     *  This is the Adapter being used to display the list's data.
+     */
+    SimpleCursorAdapter mAdapter;
 
     /**
      * The fragment's current callback object, which is notified of list item
@@ -51,7 +63,7 @@ public class PlayerListFragment extends ListFragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        public void onItemSelected(Integer id);
         /**
          * Callback for when a player's score is being adjusted
          */
@@ -64,7 +76,7 @@ public class PlayerListFragment extends ListFragment {
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(Integer id) {
         }
 		@Override
 		public void onAdjustScore(View v) {
@@ -82,12 +94,17 @@ public class PlayerListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-                getActivity(),
-                R.layout.player_list_item,
-                R.id.player_name,
-                DummyContent.ITEMS));
+        mAdapter = new SimpleCursorAdapter(
+        		getActivity(), 
+        		R.layout.player_list_item, 
+        		null, 
+        		new String[] { NAME, SCORE }, 
+        		new int[] { R.id.player_name, R.id.score }, 0);
+        setListAdapter(mAdapter);
+        
+        // Prepare the loader.  Either re-connect with an existing one,
+        // or start a new one.
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -207,5 +224,30 @@ public class PlayerListFragment extends ListFragment {
         mActivatedPosition = position;
     }
     
-    private static String TAG = "PlayerListFragment";
+    @Override
+	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		Uri baseUri = Players.CONTENT_URI;
+		
+		// Now create and return a CursorLoader that will take care of
+        // creating a Cursor for the data being displayed.
+        return new CursorLoader(getActivity(), baseUri,
+                new String[] { _ID, NAME, SCORE }, null, null, null);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		// Swap the new cursor in.  (The framework will take care of closing the
+        // old cursor once we return.)
+        mAdapter.swapCursor(data);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		// This is called when the last Cursor provided to onLoadFinished()
+        // above is about to be closed.  We need to make sure we are no
+        // longer using it.
+        mAdapter.swapCursor(null);
+	}
+	
+	private static String TAG = "PlayerListFragment";
 }

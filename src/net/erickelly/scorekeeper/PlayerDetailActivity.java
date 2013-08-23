@@ -1,6 +1,8 @@
 package net.erickelly.scorekeeper;
 
 import net.erickelly.scorekeeper.NumpadFragment.NumpadListener;
+import net.erickelly.scorekeeper.data.Player;
+import net.erickelly.scorekeeper.data.PlayerManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,12 +10,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
@@ -32,9 +32,9 @@ public class PlayerDetailActivity extends FragmentActivity implements NumpadList
      */
     public static final String ARG_POS_NEG = "pos_neg";
 	
-	// When requested, this adapter returns a DemoObjectFragment,
+	// When requested, this adapter returns a PageDetailFragment,
     // representing an object in the collection.
-    PlayersCollectionPagerAdapter mPlayersCollectionPagerAdapter;
+    PlayersPagerAdapter mPlayersCollectionPagerAdapter;
     ViewPager mViewPager;
     
     int currentPage;
@@ -60,8 +60,8 @@ public class PlayerDetailActivity extends FragmentActivity implements NumpadList
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(PlayerDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(PlayerDetailFragment.ARG_ITEM_ID));
+            arguments.putInt(PlayerDetailFragment.ARG_PLAYER_ID,
+                    getIntent().getIntExtra(PlayerDetailFragment.ARG_PLAYER_ID, 0));
             PlayerDetailFragment fragment = new PlayerDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -72,12 +72,12 @@ public class PlayerDetailActivity extends FragmentActivity implements NumpadList
         // ViewPager and its adapters use support library
         // fragments, so use getSupportFragmentManager.
         mPlayersCollectionPagerAdapter =
-                new PlayersCollectionPagerAdapter(
+                new PlayersPagerAdapter(
                         getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.player_detail_container);
         mViewPager.setAdapter(mPlayersCollectionPagerAdapter);
-        mViewPager.setCurrentItem(Integer.parseInt(getIntent()
-                .getStringExtra(PlayerDetailFragment.ARG_ITEM_ID)));
+        mViewPager.setCurrentItem(getIntent()
+        		.getIntExtra(PlayerDetailFragment.ARG_PLAYER_ID, 0));
         
         boolean positive = getIntent().getExtras()
                 .getBoolean(NumpadFragment.ARG_POS_NEG, true);
@@ -106,29 +106,44 @@ public class PlayerDetailActivity extends FragmentActivity implements NumpadList
     
 	 // Since this is an object collection, use a FragmentStatePagerAdapter,
 	 // and NOT a FragmentPagerAdapter.
-	 public class PlayersCollectionPagerAdapter extends FragmentStatePagerAdapter {
-	     public PlayersCollectionPagerAdapter(FragmentManager fm) {
+	 public class PlayersPagerAdapter extends FragmentStatePagerAdapter {
+	     public PlayersPagerAdapter(FragmentManager fm) {
 	         super(fm);
 	     }
 	
 	     @Override
-	     public Fragment getItem(int i) {
+	     public Fragment getItem(int position) {
+	    	 Log.d(TAG, "getItem: " + position);
+	    	 Player p = PlayerManager.getInstance(PlayerDetailActivity.this)
+	    			 .getPlayerByIndex(PlayerDetailActivity.this, position);
 	         Fragment fragment = new PlayerDetailFragment();
 	         Bundle args = new Bundle();
-	         args.putString(PlayerDetailFragment.ARG_ITEM_ID, Integer.valueOf(i).toString());
+	         args.putInt(PlayerDetailFragment.ARG_PLAYER_ID, p.getId());
 	         fragment.setArguments(args);
 	         return fragment;
 	     }
 	
 	     @Override
 	     public int getCount() {
-	         return 5;
+	    	 Log.d(TAG, "getCount");
+	         return PlayerManager.getInstance(PlayerDetailActivity.this)
+	        		 .getPlayerCount(PlayerDetailActivity.this);
 	     }
 	
 	     @Override
 	     public CharSequence getPageTitle(int position) {
-	         return "Player " + (position + 1);
+	    	 Log.d(TAG, "getPageTitle: " + position);
+	    	 Player p = PlayerManager.getInstance(PlayerDetailActivity.this)
+	    			 .getPlayerByIndex(PlayerDetailActivity.this, position);
+	         return p.getName();
 	     }
+	     
+	     @Override
+	     public int getItemPosition(Object object){
+	         return PagerAdapter.POSITION_NONE;
+	     }
+	     
+	     private static final String TAG = "PlayerDetailActivity.PlayersPagerAdapter";
 	 }
 
 	@Override

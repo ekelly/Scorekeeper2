@@ -32,6 +32,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".PlayerListActivity" />
         </activity>
+        
+        <provider
+		       android:authorities="net.erickelly.scorekeeper.provider"
+		       android:name=".data.Players" >
+		</provider> 
     </application>
 
 </manifest>
