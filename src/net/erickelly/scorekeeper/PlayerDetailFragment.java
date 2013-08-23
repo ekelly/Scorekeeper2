@@ -1,6 +1,5 @@
 package net.erickelly.scorekeeper;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -28,6 +27,11 @@ public class PlayerDetailFragment extends Fragment {
      * The Player which is being shown
      */
     private Player mPlayer;
+    
+    /**
+     * The TextView containing the score
+     */
+    private TextView scoreView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -39,6 +43,7 @@ public class PlayerDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
 
         if (getArguments().containsKey(ARG_PLAYER_ID)) {
         	int id = getArguments().getInt(ARG_PLAYER_ID);
@@ -49,22 +54,19 @@ public class PlayerDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_player_detail, container, false);
-
-        // Show the dummy content as text in a TextView.
+    	Log.d(TAG, "onCreateView");
+        scoreView = (TextView) inflater.inflate(R.layout.fragment_player_detail, container, false);
+        
         if (mPlayer != null) {
-            ((TextView) rootView.findViewById(R.id.player_detail))
-            	.setText(String.valueOf(mPlayer.getScore()));
-            rootView.setTag(mPlayer.getId());
+            scoreView.setText(String.valueOf(mPlayer.getScore()));
+            scoreView.setTag(mPlayer.getId());
         }
 
-        return rootView;
+        return scoreView;
     }
     
-    @Override
-    public void onAttach(Activity activity) {
-    	super.onAttach(activity);
-    	Log.d(TAG, "onAttach");
+    public void adjustScore(int amt) {
+    	
     }
     
     private static final String TAG = "PlayerDetailFragment";

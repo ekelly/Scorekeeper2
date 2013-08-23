@@ -3,7 +3,6 @@ package net.erickelly.scorekeeper;
 import static net.erickelly.scorekeeper.data.Players.*;
 import android.app.Activity;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.content.CursorLoader;
@@ -19,8 +18,6 @@ import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import net.erickelly.scorekeeper.data.PlayerManager;
-import net.erickelly.scorekeeper.data.Players;
-import net.erickelly.scorekeeper.dummy.DummyContent;
 
 /**
  * A list fragment representing a list of Players. This fragment
@@ -152,9 +149,9 @@ public class PlayerListFragment extends ListFragment implements LoaderManager.Lo
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 // Inflate the menu for the CAB
+            	Log.d(TAG, "onCreateActionMode");
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.menu_context, menu);
-                Log.d(TAG, "onCreateActionMode");
                 return true;
             }
 
@@ -198,7 +195,7 @@ public class PlayerListFragment extends ListFragment implements LoaderManager.Lo
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+        mCallbacks.onItemSelected(position);
     }
 
     @Override
@@ -234,11 +231,9 @@ public class PlayerListFragment extends ListFragment implements LoaderManager.Lo
     
     @Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		Uri baseUri = Players.CONTENT_URI;
-		
 		// Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
-        return new CursorLoader(getActivity(), baseUri,
+        return new CursorLoader(getActivity(), CONTENT_URI,
                 new String[] { _ID, NAME, SCORE }, null, null, null);
 	}
 

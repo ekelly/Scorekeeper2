@@ -126,6 +126,7 @@ public class PlayerDetailActivity extends FragmentActivity implements NumpadList
 	     @Override
 	     public int getCount() {
 	    	 Log.d(TAG, "getCount");
+	    	 // TODO: Why is getCount() called so many times?
 	         return PlayerManager.getInstance()
 	        		 .getPlayerCount(PlayerDetailActivity.this);
 	     }

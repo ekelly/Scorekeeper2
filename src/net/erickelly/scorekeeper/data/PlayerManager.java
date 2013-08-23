@@ -3,7 +3,6 @@ package net.erickelly.scorekeeper.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 import static net.erickelly.scorekeeper.data.Players.*;
@@ -24,6 +23,11 @@ public class PlayerManager {
 		values.put(NAME, name);
 		values.put(SCORE, 0);
 		Uri uri = c.getContentResolver().insert(CONTENT_URI, values);
+		if (mPlayerCount == null) {
+			mPlayerCount = getPlayerCount(c);
+		} else {
+			mPlayerCount++;
+		}
 		return Long.parseLong(uri.getLastPathSegment());
 	}
 
@@ -36,6 +40,11 @@ public class PlayerManager {
 		Log.d(TAG, "deletePlayer: " + id);
 		c.getContentResolver().delete(Uri
 				.withAppendedPath(CONTENT_URI, "/" + id), null, null);
+		if (mPlayerCount == null) {
+			mPlayerCount = getPlayerCount(c);
+		} else {
+			mPlayerCount--;
+		}
 	}
 
 	/**
@@ -112,19 +121,18 @@ public class PlayerManager {
 	 */
 	public int getPlayerCount(Context c) {
 		Log.d(TAG, "getPlayerCount");
-		Cursor cursor = c.getContentResolver().query(CONTENT_URI,
-				new String[] { _ID, NAME, SCORE, NOTES }, null, null, null);
-		int size = cursor.getCount();
-		cursor.close();
-		return size;
+		if (mPlayerCount == null) {
+			Cursor cursor = c.getContentResolver().query(CONTENT_URI,
+					new String[] { _ID, NAME, SCORE, NOTES }, null, null, null);
+			mPlayerCount = cursor.getCount();
+			cursor.close();
+		}
+		return mPlayerCount;
 	}
 
 	public static PlayerManager getInstance() {
 		if (mInstance == null) {
 			mInstance = new PlayerManager();
-		}
-		if (db != null) {
-			db.close();
 		}
 		return mInstance;
 	}
@@ -132,8 +140,8 @@ public class PlayerManager {
 	private PlayerManager() {
 	}
 
+	private Integer mPlayerCount;
 	private static PlayerManager mInstance;
-	private static SQLiteDatabase db;
 
 	private static final String TAG = "PlayerManager";
 }
