@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?android:attr/buttonBarStyle"
+    android:descendantFocusability="blocksDescendants"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/player_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:text="@string/player" />
+
+    <Button
+        android:id="@+id/plus"
+        android:padding="0dp"
+        android:textSize="24sp"
+        android:onClick="onAdjustScore"
+        android:textColor="@color/green"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:text="@string/plus" />
+
+    <TextView
+        android:id="@+id/score"
+        android:textSize="24sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/plus"
+        android:layout_alignBottom="@+id/plus"
+        android:layout_toLeftOf="@+id/plus"
+        android:text="@string/zero" />
+
+    <Button
+        android:id="@+id/minus"
+        style="?android:attr/buttonBarButtonStyle"
+        android:padding="0dp"
+        android:onClick="onAdjustScore"
+        android:textSize="24sp"
+        android:textColor="@color/red"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/plus"
+        android:layout_alignBaseline="@+id/plus"
+        android:layout_toLeftOf="@+id/score"
+        android:text="@string/minus" />
+
+</RelativeLayout>

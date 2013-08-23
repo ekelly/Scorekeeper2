@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Scorekeeper</string>
+    <string name="title_player_detail">Player Detail</string>
+    
+    <!-- Menus -->
+    <string name="add_player">Add Player</string>
+    <string name="remove_player">Delete Player</string>
+    <string name="edit_player">Edit Player</string>
+
+    <!-- NumpadFragment -->
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
+    <string name="seven">7</string>
+    <string name="eight">8</string>
+    <string name="nine">9</string>
+    <string name="zero">0</string>
+    <string name="delete">delete</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+    <string name="posneg">+/-</string>
+    <string name="enter">Enter</string>
+    
+    <!-- Other -->
+    <string name="player">Player</string>
+</resources>

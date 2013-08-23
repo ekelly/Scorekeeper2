@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:title="@string/remove_player" 
+        android:icon="@drawable/ic_action_delete"
+        android:id="@+id/menu_delete_player"></item>
+	<item
+        android:title="@string/edit_player" 
+        android:icon="@drawable/ic_action_edit"
+        android:id="@+id/menu_edit_player"></item>
+</menu>

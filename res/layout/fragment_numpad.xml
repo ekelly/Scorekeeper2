@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right" >
+
+        <ImageButton
+            style="?android:attr/buttonBarButtonStyle"
+            android:contentDescription="@string/delete"
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_input_delete" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+        
+        <LinearLayout
+            style="?android:attr/buttonBarStyle"
+	        android:orientation="horizontal"
+	        android:layout_weight="1"
+	        android:layout_width="match_parent"
+	        android:layout_height="fill_parent" >
+	        
+	        <Button
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:id="@+id/one"
+	            android:layout_weight="1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:text="@string/one" />
+	        
+	        <Button
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:id="@+id/two"
+	            android:layout_weight="1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:text="@string/two" />
+	        
+	        <Button
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:id="@+id/three"
+	            android:layout_weight="1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:text="@string/three" />
+	        
+	    </LinearLayout>
+	
+	    <LinearLayout
+	        style="?android:attr/buttonBarStyle"
+	        android:orientation="horizontal"
+	        android:layout_weight="1"
+	        android:layout_width="match_parent"
+	        android:layout_height="fill_parent" >
+	        
+	        <Button
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:id="@+id/four"
+	            android:layout_weight="1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:text="@string/four" />
+	        
+	        <Button
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:id="@+id/five"
+	            android:layout_weight="1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:text="@string/five" />
+	        
+	        <Button
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:id="@+id/six"
+	            android:layout_weight="1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:text="@string/six" />
+	        
+	    </LinearLayout>
+	    
+	    <LinearLayout
+	        style="?android:attr/buttonBarStyle"
+	        android:orientation="horizontal"
+	        android:layout_weight="1"
+	        android:layout_width="match_parent"
+	        android:layout_height="fill_parent" >
+	        
+	        <Button
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:id="@+id/seven"
+	            android:layout_weight="1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:text="@string/seven" />
+	        
+	        <Button
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:id="@+id/eight"
+	            android:layout_weight="1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:text="@string/eight" />
+	        
+	        <Button
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:id="@+id/nine"
+	            android:layout_weight="1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:text="@string/nine" />
+	        
+	    </LinearLayout>
+	    
+	    <LinearLayout
+	        style="?android:attr/buttonBarStyle"
+	        android:orientation="horizontal"
+	        android:layout_weight="1"
+	        android:layout_width="match_parent"
+	        android:layout_height="fill_parent" >
+	        
+	        <Button
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:id="@+id/plus_minus"
+	            android:layout_weight="1"
+	            android:textSize="48sp"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:text="@string/posneg" />
+	        
+	        <Button
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:id="@+id/zero"
+	            android:layout_weight="1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:text="@string/zero" />
+	        
+	        <Button
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:id="@+id/enter"
+	            android:layout_weight="1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:text="@string/enter" />
+	        
+	    </LinearLayout>
+        
+    </LinearLayout>
+    
+</LinearLayout>
