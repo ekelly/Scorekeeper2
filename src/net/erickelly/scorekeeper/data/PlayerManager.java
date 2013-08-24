@@ -12,7 +12,8 @@ public class PlayerManager {
 	/**
 	 * Add a player
 	 * 
-	 * @param c Context
+	 * @param c
+	 *            Context
 	 * @param name
 	 *            Name of the new player
 	 * @return Id of the newly created player
@@ -38,8 +39,8 @@ public class PlayerManager {
 	 */
 	public void deletePlayer(Context c, long id) {
 		Log.d(TAG, "deletePlayer: " + id);
-		c.getContentResolver().delete(Uri
-				.withAppendedPath(CONTENT_URI, "/" + id), null, null);
+		c.getContentResolver().delete(
+				Uri.withAppendedPath(CONTENT_URI, "/" + id), null, null);
 		if (mPlayerCount == null) {
 			mPlayerCount = getPlayerCount(c);
 		} else {
@@ -60,8 +61,26 @@ public class PlayerManager {
 		Player p = getPlayer(c, playerId);
 		ContentValues values = new ContentValues();
 		values.put(SCORE, p.getScore() + adjustAmt);
-		c.getContentResolver().update(CONTENT_URI, values, "? = ?",
-				new String[] { _ID, String.valueOf(playerId) });
+		c.getContentResolver().update(
+				Uri.withAppendedPath(CONTENT_URI,
+						"/" + String.valueOf(playerId)), values, null, null);
+	}
+
+	/**
+	 * Edit the player's name
+	 * 
+	 * @param playerId
+	 *            The id of the player to update the name
+	 * @param playerName
+	 *            The new name of the player
+	 */
+	public void editPlayerName(Context c, long playerId, String playerName) {
+		Log.d(TAG, "editPlayerName: " + playerId + ", " + playerName);
+		ContentValues values = new ContentValues();
+		values.put(NAME, playerName);
+		c.getContentResolver().update(
+				Uri.withAppendedPath(CONTENT_URI,
+						"/" + String.valueOf(playerId)), values, null, null);
 	}
 
 	/**
@@ -70,9 +89,10 @@ public class PlayerManager {
 	 * @param playerId
 	 * @return
 	 */
-	public Player getPlayer(Context c, int playerId) {
+	public Player getPlayer(Context c, long playerId) {
 		Log.d(TAG, "getPlayer: " + playerId);
-		Cursor cursor = c.getContentResolver().query(CONTENT_URI,
+		Cursor cursor = c.getContentResolver().query(
+				Uri.withAppendedPath(CONTENT_URI, "/" + playerId),
 				new String[] { _ID, NAME, SCORE, NOTES }, null, null, null);
 		cursor.moveToFirst();
 		String name = cursor.getString(cursor.getColumnIndex(NAME));

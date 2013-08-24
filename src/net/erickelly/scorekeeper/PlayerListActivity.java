@@ -1,5 +1,6 @@
 package net.erickelly.scorekeeper;
 
+import net.erickelly.scorekeeper.PlayerNameDialogFragment.PlayerNamePromptListener;
 import net.erickelly.scorekeeper.data.PlayerManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -76,25 +77,39 @@ public class PlayerListActivity extends FragmentActivity
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.menu_add_player:
-            	addPlayer();
+            	showNewPlayerDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    /**
+    private void showNewPlayerDialog() {
+    	PlayerNameDialogFragment.newInstance(new PlayerNamePromptListener() {
+			/**
+			 * When the new player's name is entered, this method is called. Use
+			 * this to actually set the new player name
+			 */
+			@Override
+			public void onPlayerNameEntry(String name) {
+				addPlayer(name);
+			}
+		}).show(getSupportFragmentManager(), "NewPlayerDialog");
+	}
+
+	/**
      * Callback method from {@link PlayerListFragment.Callbacks}
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(Integer id) {
+    public void onItemSelected(long id, int position) {
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putInt(PlayerDetailFragment.ARG_PLAYER_ID, id);
+            arguments.putLong(PlayerDetailFragment.ARG_PLAYER_ID, id);
+            arguments.putInt(PlayerDetailActivity.ARG_PLAYER_INDEX, position);
             PlayerDetailFragment fragment = new PlayerDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -106,6 +121,7 @@ public class PlayerListActivity extends FragmentActivity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, PlayerDetailActivity.class);
             detailIntent.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, id);
+            detailIntent.putExtra(PlayerDetailActivity.ARG_PLAYER_INDEX, position);
             startActivity(detailIntent);
         }
     }
@@ -128,8 +144,19 @@ public class PlayerListActivity extends FragmentActivity
     /**
      * Add a player to the list
      */
-    public void addPlayer() {
-    	PlayerManager.getInstance().addPlayer(this, "Player");
+    public void addPlayer(String playerName) {
+    	PlayerManager.getInstance().addPlayer(this, playerName);
+    	// TODO: Why do I have to force it to load?
+    	((PlayerListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.player_list))
+                .getLoaderManager().getLoader(0).forceLoad();
+    }
+    
+    /**
+     * Edit the player name given an id and a new name
+     */
+    public void editPlayer(int playerId, String playerName) {
+    	PlayerManager.getInstance().editPlayerName(this, playerId, playerName);
     	// TODO: Why do I have to force it to load?
     	((PlayerListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.player_list))

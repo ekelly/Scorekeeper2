@@ -28,4 +28,9 @@
     
     <!-- Other -->
     <string name="player">Player</string>
+    
+    <!-- Dialog -->
+    <string name="player_name">Player Name</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
 </resources>

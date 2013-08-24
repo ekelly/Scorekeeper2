@@ -31,6 +31,11 @@ public class PlayerDetailActivity extends FragmentActivity implements NumpadList
      * The fragment argument representing the state of the +/- button
      */
     public static final String ARG_POS_NEG = "pos_neg";
+    
+    /**
+     * The fragment argument representing the index in the viewpager
+     */
+    public static final String ARG_PLAYER_INDEX = "player_index";
 	
 	// When requested, this adapter returns a PageDetailFragment,
     // representing an object in the collection.
@@ -60,8 +65,8 @@ public class PlayerDetailActivity extends FragmentActivity implements NumpadList
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putInt(PlayerDetailFragment.ARG_PLAYER_ID,
-                    getIntent().getIntExtra(PlayerDetailFragment.ARG_PLAYER_ID, 0));
+            arguments.putLong(PlayerDetailFragment.ARG_PLAYER_ID,
+                    getIntent().getLongExtra(PlayerDetailFragment.ARG_PLAYER_ID, 0));
             PlayerDetailFragment fragment = new PlayerDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -77,7 +82,7 @@ public class PlayerDetailActivity extends FragmentActivity implements NumpadList
         mViewPager = (ViewPager) findViewById(R.id.player_detail_container);
         mViewPager.setAdapter(mPlayersCollectionPagerAdapter);
         mViewPager.setCurrentItem(getIntent()
-        		.getIntExtra(PlayerDetailFragment.ARG_PLAYER_ID, 0));
+        		.getIntExtra(ARG_PLAYER_INDEX, 0));
         
         boolean positive = getIntent().getExtras()
                 .getBoolean(NumpadFragment.ARG_POS_NEG, true);
@@ -118,7 +123,7 @@ public class PlayerDetailActivity extends FragmentActivity implements NumpadList
 	    			 .getPlayerByIndex(PlayerDetailActivity.this, position);
 	         Fragment fragment = new PlayerDetailFragment();
 	         Bundle args = new Bundle();
-	         args.putInt(PlayerDetailFragment.ARG_PLAYER_ID, p.getId());
+	         args.putLong(PlayerDetailFragment.ARG_PLAYER_ID, p.getId());
 	         fragment.setArguments(args);
 	         return fragment;
 	     }

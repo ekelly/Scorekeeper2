@@ -46,7 +46,8 @@ public class PlayerDetailFragment extends Fragment {
         Log.d(TAG, "onCreate");
 
         if (getArguments().containsKey(ARG_PLAYER_ID)) {
-        	int id = getArguments().getInt(ARG_PLAYER_ID);
+        	long id = getArguments().getLong(ARG_PLAYER_ID);
+        	Log.d(TAG, "Creating fragment for Player@" + id);
         	mPlayer = PlayerManager.getInstance().getPlayer(getActivity(), id);
         }
     }
@@ -65,8 +66,19 @@ public class PlayerDetailFragment extends Fragment {
         return scoreView;
     }
     
+    /**
+     * Display the score adjust amount
+     * @param amt
+     */
     public void adjustScore(int amt) {
-    	
+    	String content = "" + mPlayer.getScore();
+    	if (amt != 0) {
+    		content += amt < 0 ? " - " : " + ";
+    		content += amt;
+    		content += " = ";
+    		content += (mPlayer.getScore() + amt);
+    	}
+    	scoreView.setText(content);
     }
     
     private static final String TAG = "PlayerDetailFragment";

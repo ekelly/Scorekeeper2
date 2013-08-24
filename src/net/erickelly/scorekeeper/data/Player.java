@@ -4,9 +4,9 @@ public class Player {
 	private String name;
 	private int score;
 	private String extra;
-	private int id;
+	private long id;
 	
-	public Player(int id, String name, int score) {
+	public Player(long id, String name, int score) {
 		this.id = id;
 		this.name = name;
 		this.score = score;
@@ -63,7 +63,7 @@ public class Player {
 	 * Getter for id
 	 * @return
 	 */
-	public int getId() {
+	public long getId() {
 		return this.id;
 	}
 	
