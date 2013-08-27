@@ -56,7 +56,7 @@ public class PlayerManager {
 	 * @param adjustAmt
 	 *            The amount with which to update the score
 	 */
-	public void adjustScore(Context c, int playerId, int adjustAmt) {
+	public void adjustScore(Context c, long playerId, int adjustAmt) {
 		Log.d(TAG, "adjustScore: " + playerId + ", " + adjustAmt);
 		Player p = getPlayer(c, playerId);
 		ContentValues values = new ContentValues();

@@ -4,7 +4,6 @@ import static net.erickelly.scorekeeper.data.Players.*;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -293,12 +292,6 @@ public class PlayerListFragment extends ListFragment implements
 				mAdapter.notifyDataSetChanged();
 			}
 		}, p.getName()).show(getFragmentManager(), "EditPlayerName");
-	}
-	
-	public void showDialog(PlayerNameDialogFragment.PlayerNamePromptListener listener) {
-		// Create an instance of the dialog fragment and show it
-        DialogFragment dialog = new PlayerNameDialogFragment();
-        dialog.show(getFragmentManager(), "PlayerNameDialogFragment");
 	}
 
 	private static String TAG = "PlayerListFragment";

@@ -11,75 +11,91 @@ import net.erickelly.scorekeeper.data.Player;
 import net.erickelly.scorekeeper.data.PlayerManager;
 
 /**
- * A fragment representing a single Player detail screen.
- * This fragment is either contained in a {@link PlayerListActivity}
- * in two-pane mode (on tablets) or a {@link PlayerDetailActivity}
- * on handsets.
+ * A fragment representing a single Player detail screen. This fragment is
+ * either contained in a {@link PlayerListActivity} in two-pane mode (on
+ * tablets) or a {@link PlayerDetailActivity} on handsets.
  */
 public class PlayerDetailFragment extends Fragment {
-    /**
-     * The fragment argument representing the player ID that this fragment
-     * represents.
-     */
-    public static final String ARG_PLAYER_ID = "player_id";
-    
-    /**
-     * The Player which is being shown
-     */
-    private Player mPlayer;
-    
-    /**
-     * The TextView containing the score
-     */
-    private TextView scoreView;
+	/**
+	 * The fragment argument representing the player ID that this fragment
+	 * represents.
+	 */
+	public static final String ARG_PLAYER_ID = "player_id";
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public PlayerDetailFragment() {
-    }
+	/**
+	 * The Player which is being shown
+	 */
+	private Player mPlayer;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
+	/**
+	 * The TextView containing the score
+	 */
+	private TextView scoreView;
 
-        if (getArguments().containsKey(ARG_PLAYER_ID)) {
-        	long id = getArguments().getLong(ARG_PLAYER_ID);
-        	Log.d(TAG, "Creating fragment for Player@" + id);
-        	mPlayer = PlayerManager.getInstance().getPlayer(getActivity(), id);
-        }
-    }
+	/**
+	 * Mandatory empty constructor for the fragment manager to instantiate the
+	 * fragment (e.g. upon screen orientation changes).
+	 */
+	public PlayerDetailFragment() {
+	}
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-    	Log.d(TAG, "onCreateView");
-        scoreView = (TextView) inflater.inflate(R.layout.fragment_player_detail, container, false);
-        
-        if (mPlayer != null) {
-            scoreView.setText(String.valueOf(mPlayer.getScore()));
-            scoreView.setTag(mPlayer.getId());
-        }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Log.d(TAG, "onCreate");
 
-        return scoreView;
-    }
-    
-    /**
-     * Display the score adjust amount
-     * @param amt
-     */
-    public void adjustScore(int amt) {
-    	String content = "" + mPlayer.getScore();
-    	if (amt != 0) {
-    		content += amt < 0 ? " - " : " + ";
-    		content += amt;
-    		content += " = ";
-    		content += (mPlayer.getScore() + amt);
-    	}
-    	scoreView.setText(content);
-    }
-    
-    private static final String TAG = "PlayerDetailFragment";
+		if (getArguments().containsKey(ARG_PLAYER_ID)) {
+			long id = getArguments().getLong(ARG_PLAYER_ID);
+			Log.d(TAG, "Creating fragment for Player@" + id);
+			mPlayer = PlayerManager.getInstance().getPlayer(getActivity(), id);
+		}
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		Log.d(TAG, "onCreateView");
+		scoreView = (TextView) inflater.inflate(
+				R.layout.fragment_player_detail, container, false);
+
+		if (mPlayer != null) {
+			scoreView.setText(String.valueOf(mPlayer.getScore()));
+			scoreView.setTag(mPlayer.getId());
+		}
+
+		return scoreView;
+	}
+
+	public void clear() {
+		mPlayer = PlayerManager.getInstance().getPlayer(getActivity(),
+				mPlayer.getId());
+		setText(String.valueOf(mPlayer.getScore()));
+	}
+
+	public void setText(String text) {
+		Log.d(TAG, "setText");
+		Log.d(TAG, getView().toString());
+		Log.d(TAG, scoreView.toString());
+		if (scoreView != null) {
+			scoreView.setText(text);
+		}
+	}
+
+	/**
+	 * Display the score adjust amount
+	 * 
+	 * @param amt
+	 */
+	public void adjustScore(int amt) {
+		String content = "" + mPlayer.getScore();
+		if (amt != 0) {
+			content += amt < 0 ? " - " : " + ";
+			content += Math.abs(amt);
+			content += " = ";
+			content += (mPlayer.getScore() + amt);
+		}
+		scoreView.setText(content);
+	}
+
+	private static final String TAG = "PlayerDetailFragment";
 }
