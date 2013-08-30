@@ -19,16 +19,26 @@ public class Players extends ContentProvider {
 	private DatabaseHelper mDatabase;
 
 	public static final String AUTHORITY = "net.erickelly.scorekeeper.provider";
-	public static final String TABLE_NAME = "players";
+	public static final String PLAYERS_TABLE_NAME = "players";
+	public static final String SCORES_TABLE_NAME = "scores";
+	public static final String SUMMARY = "summary";
 
 	// Columns in the Events database
 	public static final String _ID = BaseColumns._ID;
+	public static final String PLAYER_ID = "player_id";
 	public static final String NAME = "name";
 	public static final String SCORE = "score";
+	public static final String ADJUST_AMT = "adjust_amt";
 	public static final String NOTES = "notes";
 
-	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-			+ "/" + TABLE_NAME);
+	public static final Uri BASE_URI = Uri
+			.parse("content://" + AUTHORITY + "/");
+	public static final Uri PLAYERS_URI = Uri.withAppendedPath(BASE_URI,
+			PLAYERS_TABLE_NAME);
+	public static final Uri SCORES_URI = Uri.withAppendedPath(BASE_URI,
+			SCORES_TABLE_NAME);
+	public static final Uri PLAYERS_WITH_SCORE_URI = Uri.withAppendedPath(
+			BASE_URI, SUMMARY);
 
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
 			+ "/players";
@@ -40,35 +50,53 @@ public class Players extends ContentProvider {
 			UriMatcher.NO_MATCH);
 
 	private static final int PLAYERS = 1;
-	private static final int PLAYER_ID = 2;
+	private static final int PLAYER_BY_ID = 2;
+	private static final int SCORES_BY_ID = 3;
+	private static final int PLAYERS_WITH_SCORE = 4;
 
 	// The various patters that the UriMatcher should match
 	static {
-		sUriMatcher.addURI(AUTHORITY, TABLE_NAME, PLAYERS);
-		sUriMatcher.addURI(AUTHORITY, TABLE_NAME + "/#", PLAYER_ID);
+		sUriMatcher.addURI(AUTHORITY, PLAYERS_TABLE_NAME, PLAYERS);
+		sUriMatcher.addURI(AUTHORITY, PLAYERS_TABLE_NAME + "/#", PLAYER_BY_ID);
+		sUriMatcher.addURI(AUTHORITY, SCORES_TABLE_NAME + "/#", SCORES_BY_ID);
+		sUriMatcher.addURI(AUTHORITY, SUMMARY, PLAYERS_WITH_SCORE);
 	}
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
+		String id;
 		SQLiteDatabase db = mDatabase.getWritableDatabase();
 		int rowsDeleted = 0;
 		switch (sUriMatcher.match(uri)) {
 		case PLAYERS:
-			rowsDeleted = db.delete(TABLE_NAME, selection, selectionArgs);
+			rowsDeleted = db.delete(PLAYERS_TABLE_NAME, selection,
+					selectionArgs);
 			break;
-		case PLAYER_ID:
-			String id = uri.getLastPathSegment();
+		case PLAYER_BY_ID:
+			id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsDeleted = db.delete(TABLE_NAME, _ID + "=" + id, null);
+				rowsDeleted = db.delete(PLAYERS_TABLE_NAME, _ID + "=" + id,
+						null);
 			} else {
-				rowsDeleted = db.delete(TABLE_NAME, _ID + "=" + id + " and "
-						+ selection, selectionArgs);
+				rowsDeleted = db.delete(PLAYERS_TABLE_NAME, _ID + "=" + id
+						+ " and " + selection, selectionArgs);
+			}
+			break;
+		case SCORES_BY_ID:
+			id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsDeleted = db.delete(SCORES_TABLE_NAME,
+						PLAYER_ID + "=" + id, null);
+			} else {
+				rowsDeleted = db.delete(SCORES_TABLE_NAME, PLAYER_ID + "=" + id
+						+ " and " + selection, selectionArgs);
 			}
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
+		getContext().getContentResolver().notifyChange(PLAYERS_WITH_SCORE_URI,
+				null);
 		return rowsDeleted;
 	}
 
@@ -81,15 +109,22 @@ public class Players extends ContentProvider {
 	public Uri insert(Uri uri, ContentValues values) {
 		SQLiteDatabase db = mDatabase.getWritableDatabase();
 		long id = 0;
+		String table;
 		switch (sUriMatcher.match(uri)) {
 		case PLAYERS:
-			id = db.insert(TABLE_NAME, null, values);
+			id = db.insert(PLAYERS_TABLE_NAME, null, values);
+			table = PLAYERS_TABLE_NAME;
+			break;
+		case SCORES_BY_ID:
+			id = db.insert(SCORES_TABLE_NAME, null, values);
+			table = SCORES_TABLE_NAME;
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
-		return Uri.parse(TABLE_NAME + "/" + id);
+		getContext().getContentResolver().notifyChange(PLAYERS_WITH_SCORE_URI,
+				null);
+		return Uri.withAppendedPath(BASE_URI, table + "/" + id);
 	}
 
 	@Override
@@ -101,6 +136,7 @@ public class Players extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
+		String groupBy = null;
 
 		// Using SQLiteQueryBuilder instead of query() method
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
@@ -108,15 +144,30 @@ public class Players extends ContentProvider {
 		// Check if the caller has requested a column which does not exists
 		checkColumns(projection);
 
-		// Set the table
-		queryBuilder.setTables(TABLE_NAME);
-
 		switch (sUriMatcher.match(uri)) {
-		case 1:
+		case PLAYERS:
+			// Set the table
+			queryBuilder.setTables(PLAYERS_TABLE_NAME);
 			break;
-		case 2:
+		case PLAYER_BY_ID:
+			// Set the table
+			queryBuilder.setTables(PLAYERS_TABLE_NAME);
 			// Adding the ID to the original query
 			queryBuilder.appendWhere(_ID + "=" + uri.getLastPathSegment());
+			break;
+		case SCORES_BY_ID:
+			// Set the table
+			queryBuilder.setTables(SCORES_TABLE_NAME);
+			// Adding the ID to the original query
+			queryBuilder
+					.appendWhere(PLAYER_ID + "=" + uri.getLastPathSegment());
+			break;
+		case PLAYERS_WITH_SCORE:
+			// Set the table
+			queryBuilder.setTables(PLAYERS_TABLE_NAME + " LEFT OUTER JOIN "
+					+ SCORES_TABLE_NAME + " ON (" + PLAYERS_TABLE_NAME + "."
+					+ _ID + "=" + SCORES_TABLE_NAME + "." + PLAYER_ID + ")");
+			groupBy = PLAYERS_TABLE_NAME + "." + _ID;
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -124,7 +175,7 @@ public class Players extends ContentProvider {
 
 		SQLiteDatabase db = mDatabase.getWritableDatabase();
 		Cursor cursor = queryBuilder.query(db, projection, selection,
-				selectionArgs, null, null, sortOrder);
+				selectionArgs, groupBy, null, sortOrder);
 		// Make sure that potential listeners are getting notified
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
@@ -134,21 +185,32 @@ public class Players extends ContentProvider {
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
+		String id;
 		SQLiteDatabase db = mDatabase.getWritableDatabase();
 		int rowsUpdated = 0;
 		switch (sUriMatcher.match(uri)) {
 		case PLAYERS:
-			rowsUpdated = db.update(TABLE_NAME, values, selection,
+			rowsUpdated = db.update(PLAYERS_TABLE_NAME, values, selection,
 					selectionArgs);
 			break;
-		case PLAYER_ID:
-			String id = uri.getLastPathSegment();
+		case PLAYER_BY_ID:
+			id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsUpdated = db.update(TABLE_NAME, values, _ID + "=" + id,
-						null);
+				rowsUpdated = db.update(PLAYERS_TABLE_NAME, values, _ID + "="
+						+ id, null);
 			} else {
-				rowsUpdated = db.update(TABLE_NAME, values, _ID + "=" + id
-						+ " and " + selection, selectionArgs);
+				rowsUpdated = db.update(PLAYERS_TABLE_NAME, values, _ID + "="
+						+ id + " and " + selection, selectionArgs);
+			}
+			break;
+		case SCORES_BY_ID:
+			id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsUpdated = db.update(SCORES_TABLE_NAME, values, PLAYER_ID
+						+ "=" + id, null);
+			} else {
+				rowsUpdated = db.update(SCORES_TABLE_NAME, values, PLAYER_ID
+						+ "=" + id + " and " + selection, selectionArgs);
 			}
 			break;
 		default:
@@ -159,7 +221,10 @@ public class Players extends ContentProvider {
 	}
 
 	private void checkColumns(String[] projection) {
-		String[] available = { _ID, NAME, SCORE, NOTES };
+		String[] available = { _ID, PLAYERS_TABLE_NAME + "." + _ID,
+				SCORES_TABLE_NAME + "." + _ID, NAME,
+				"SUM(" + ADJUST_AMT + ") AS " + SCORE, PLAYER_ID, ADJUST_AMT,
+				NOTES };
 		if (projection != null) {
 			HashSet<String> requestedColumns = new HashSet<String>(
 					Arrays.asList(projection));

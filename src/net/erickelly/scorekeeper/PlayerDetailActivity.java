@@ -193,7 +193,7 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		Player p = PlayerManager.getInstance().getPlayerByIndex(this,
 				mViewPager.getCurrentItem());
 		PlayerManager.getInstance().adjustScore(this, p.getId(),
-				getCurrentAdjustAmount());
+				getCurrentAdjustAmount(), null);
 		clearState(mViewPager.getCurrentItem());
 	}
 

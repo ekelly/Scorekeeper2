@@ -245,8 +245,10 @@ public class PlayerListFragment extends ListFragment implements
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		// Now create and return a CursorLoader that will take care of
 		// creating a Cursor for the data being displayed.
-		return new CursorLoader(getActivity(), CONTENT_URI, new String[] { _ID,
-				NAME, SCORE }, null, null, null);
+		return new CursorLoader(getActivity(), PLAYERS_WITH_SCORE_URI, new String[] {
+				PLAYERS_TABLE_NAME + "." + _ID, NAME,
+				"SUM(" + ADJUST_AMT + ") AS " + SCORE, ADJUST_AMT }, null,
+				null, PLAYERS_TABLE_NAME + "." + _ID);
 	}
 
 	@Override
@@ -273,22 +275,25 @@ public class PlayerListFragment extends ListFragment implements
 		PlayerManager.getInstance().deletePlayer(getActivity(), playerId);
 		getLoaderManager().getLoader(0).forceLoad();
 	}
-	
+
 	/**
 	 * Edit the player name associated with the given player id
+	 * 
 	 * @param playerId
 	 */
 	void editPlayerName(final long playerId) {
 		Log.d(TAG, "editPlayerName: " + playerId);
-		Player p = PlayerManager.getInstance().getPlayer(getActivity(), playerId);
-		PlayerNameDialogFragment.newInstance(new PlayerNamePromptListener () {
+		Player p = PlayerManager.getInstance().getPlayer(getActivity(),
+				playerId);
+		PlayerNameDialogFragment.newInstance(new PlayerNamePromptListener() {
 			/**
-			 * When the new player's name is entered, this method is called.
-			 * Use this to actually set the new player name
+			 * When the new player's name is entered, this method is called. Use
+			 * this to actually set the new player name
 			 */
 			@Override
 			public void onPlayerNameEntry(String name) {
-				PlayerManager.getInstance().editPlayerName(getActivity(), playerId, name);
+				PlayerManager.getInstance().editPlayerName(getActivity(),
+						playerId, name);
 				mAdapter.notifyDataSetChanged();
 			}
 		}, p.getName()).show(getFragmentManager(), "EditPlayerName");

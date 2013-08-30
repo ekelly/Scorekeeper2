@@ -1,10 +1,14 @@
 package net.erickelly.scorekeeper.data;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import android.util.Pair;
 import static net.erickelly.scorekeeper.data.Players.*;
 
 public class PlayerManager {
@@ -22,8 +26,7 @@ public class PlayerManager {
 		Log.d(TAG, "addPlayer: " + name);
 		ContentValues values = new ContentValues();
 		values.put(NAME, name);
-		values.put(SCORE, 0);
-		Uri uri = c.getContentResolver().insert(CONTENT_URI, values);
+		Uri uri = c.getContentResolver().insert(PLAYERS_URI, values);
 		if (mPlayerCount == null) {
 			mPlayerCount = getPlayerCount(c);
 		} else {
@@ -40,7 +43,9 @@ public class PlayerManager {
 	public void deletePlayer(Context c, long id) {
 		Log.d(TAG, "deletePlayer: " + id);
 		c.getContentResolver().delete(
-				Uri.withAppendedPath(CONTENT_URI, "/" + id), null, null);
+				Uri.withAppendedPath(PLAYERS_URI, "/" + id), null, null);
+		c.getContentResolver().delete(
+				Uri.withAppendedPath(SCORES_URI, "/" + id), null, null);
 		if (mPlayerCount == null) {
 			mPlayerCount = getPlayerCount(c);
 		} else {
@@ -55,15 +60,21 @@ public class PlayerManager {
 	 *            The id of the player to update the score
 	 * @param adjustAmt
 	 *            The amount with which to update the score
+	 * @param extra
+	 *            Extra information associated with this round
 	 */
-	public void adjustScore(Context c, long playerId, int adjustAmt) {
-		Log.d(TAG, "adjustScore: " + playerId + ", " + adjustAmt);
-		Player p = getPlayer(c, playerId);
+	public void adjustScore(Context c, long playerId, int adjustAmt,
+			String extra) {
+		Log.d(TAG, "adjustScore: " + playerId + ", " + adjustAmt + ", " + extra);
 		ContentValues values = new ContentValues();
-		values.put(SCORE, p.getScore() + adjustAmt);
-		c.getContentResolver().update(
-				Uri.withAppendedPath(CONTENT_URI,
-						"/" + String.valueOf(playerId)), values, null, null);
+		values.put(PLAYER_ID, playerId);
+		values.put(ADJUST_AMT, adjustAmt);
+		if (extra != null) {
+			values.put(NOTES, extra);
+		}
+		c.getContentResolver()
+				.insert(Uri.withAppendedPath(SCORES_URI,
+						"/" + String.valueOf(playerId)), values);
 	}
 
 	/**
@@ -79,7 +90,7 @@ public class PlayerManager {
 		ContentValues values = new ContentValues();
 		values.put(NAME, playerName);
 		c.getContentResolver().update(
-				Uri.withAppendedPath(CONTENT_URI,
+				Uri.withAppendedPath(PLAYERS_URI,
 						"/" + String.valueOf(playerId)), values, null, null);
 	}
 
@@ -92,13 +103,33 @@ public class PlayerManager {
 	public Player getPlayer(Context c, long playerId) {
 		Log.d(TAG, "getPlayer: " + playerId);
 		Cursor cursor = c.getContentResolver().query(
-				Uri.withAppendedPath(CONTENT_URI, "/" + playerId),
-				new String[] { _ID, NAME, SCORE, NOTES }, null, null, null);
+				Uri.withAppendedPath(PLAYERS_URI, "/" + playerId),
+				new String[] { _ID, NAME }, null, null, null);
 		cursor.moveToFirst();
 		String name = cursor.getString(cursor.getColumnIndex(NAME));
-		int score = cursor.getInt(cursor.getColumnIndex(SCORE));
 		cursor.close();
-		return new Player(playerId, name, score);
+		List<Pair<Integer, String>> history = getPlayerHistory(c, playerId);
+		return new Player(playerId, name, history);
+	}
+	
+	/**
+	 * Return the score history for the given player
+	 * @param c
+	 * @param id ID of the player to query
+	 * @return
+	 */
+	private List<Pair<Integer, String>> getPlayerHistory(Context c, long id) {
+		Cursor cursor = c.getContentResolver().query(
+				Uri.withAppendedPath(SCORES_URI, "/" + id),
+				new String[] { _ID, ADJUST_AMT, NOTES }, null, null, null);
+		List<Pair<Integer, String>> history = new LinkedList<Pair<Integer, String>>();
+		while (cursor.moveToNext()) {
+			history.add(Pair.create(
+					cursor.getInt(cursor.getColumnIndex(ADJUST_AMT)),
+					cursor.getString(cursor.getColumnIndex(NOTES))));
+		}
+		cursor.close();
+		return history;
 	}
 
 	/**
@@ -109,14 +140,15 @@ public class PlayerManager {
 	 */
 	public Player getPlayerByIndex(Context c, int idx) {
 		Log.d(TAG, "getPlayerByIndex: " + idx);
-		Cursor cursor = c.getContentResolver().query(CONTENT_URI,
-				new String[] { _ID, NAME, SCORE, NOTES }, null, null, null);
+		Cursor cursor = c.getContentResolver().query(PLAYERS_URI,
+				new String[] { _ID, NAME }, null, null, null);
 		Player p = null;
 		cursor.moveToFirst();
 		if (cursor.move(idx)) {
-			p = new Player(cursor.getInt(cursor.getColumnIndex(_ID)),
-					cursor.getString(cursor.getColumnIndex(NAME)),
-					cursor.getInt(cursor.getColumnIndex(SCORE)));
+			long id = cursor.getInt(cursor.getColumnIndex(_ID));
+			String name = cursor.getString(cursor.getColumnIndex(NAME));
+			List<Pair<Integer, String>> history = getPlayerHistory(c, id);
+			p = new Player(id, name, history);
 		}
 		cursor.close();
 		return p;
@@ -130,8 +162,8 @@ public class PlayerManager {
 	 */
 	public Cursor getAllPlayers(Context c) {
 		Log.d(TAG, "getAllPlayers");
-		return c.getContentResolver().query(CONTENT_URI,
-				new String[] { _ID, NAME, SCORE, NOTES }, null, null, null);
+		return c.getContentResolver().query(PLAYERS_URI,
+				new String[] { _ID, NAME }, null, null, null);
 	}
 
 	/**
@@ -142,8 +174,8 @@ public class PlayerManager {
 	public int getPlayerCount(Context c) {
 		Log.d(TAG, "getPlayerCount");
 		if (mPlayerCount == null) {
-			Cursor cursor = c.getContentResolver().query(CONTENT_URI,
-					new String[] { _ID, NAME, SCORE, NOTES }, null, null, null);
+			Cursor cursor = c.getContentResolver().query(PLAYERS_URI,
+					new String[] { _ID, NAME }, null, null, null);
 			mPlayerCount = cursor.getCount();
 			cursor.close();
 		}

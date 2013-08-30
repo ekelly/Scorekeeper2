@@ -1,15 +1,27 @@
 package net.erickelly.scorekeeper.data;
 
+import java.util.List;
+
+import android.util.Pair;
+
 public class Player {
 	private String name;
 	private int score;
 	private String extra;
 	private long id;
+	private List<Pair<Integer, String>> history;
 	
 	public Player(long id, String name, int score) {
 		this.id = id;
 		this.name = name;
 		this.score = score;
+	}
+	
+	public Player(long id, String name, List<Pair<Integer, String>> history) {
+		this.id = id;
+		this.name = name;
+		this.history = history;
+		this.score = calculateScore(history);
 	}
 	
 	/**
@@ -25,6 +37,13 @@ public class Player {
 	 */
 	public int getScore() {
 		return this.score;
+	}
+	
+	/**
+	 * Getter for score history
+	 */
+	public List<Pair<Integer, String>> getHistory() {
+		return this.history;
 	}
 	
 	/**
@@ -65,6 +84,14 @@ public class Player {
 	 */
 	public long getId() {
 		return this.id;
+	}
+	
+	private int calculateScore(List<Pair<Integer, String>> scores) {
+		int score = 0;
+		for (Pair<Integer, String> p : scores) {
+			score += p.first;
+		}
+		return score;
 	}
 	
 	@Override
