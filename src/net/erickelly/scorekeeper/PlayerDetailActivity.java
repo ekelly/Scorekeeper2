@@ -27,23 +27,6 @@ import android.view.MenuItem;
 public class PlayerDetailActivity extends FragmentActivity implements
 		NumpadListener {
 
-	/**
-	 * The fragment argument representing the state of the +/- button
-	 */
-	public static final String ARG_POS_NEG = "pos_neg";
-
-	/**
-	 * The fragment argument representing the index in the viewpager
-	 */
-	public static final String ARG_PLAYER_INDEX = "player_index";
-
-	// When requested, this adapter returns a PageDetailFragment,
-	// representing an object in the collection.
-	PlayersPagerAdapter mPlayersCollectionPagerAdapter;
-	ViewPager mViewPager;
-
-	Long currentId;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -204,6 +187,14 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		getCurrentPlayerFragment().adjustScore(getCurrentAdjustAmount());
 	}
 
+	/**
+	 * Resets the state of the given fragment position. When switching between
+	 * players using the view flipper, the player you are exiting must have its
+	 * unsaved state cleared. This resets the view, temporary adjust amount, and
+	 * default operation sign.
+	 * 
+	 * @param previousPagePosition
+	 */
 	public void clearState(int previousPagePosition) {
 		Log.d(TAG, "clearState");
 		((PlayerDetailFragment) mViewPager.getAdapter().instantiateItem(
@@ -213,6 +204,11 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		setOperationSign(adjustOperationIsPositive);
 	}
 
+	/**
+	 * Returns the current temporary adjust amount as an integer.
+	 * 
+	 * @return The adjust amount as an integer (could be + or -)
+	 */
 	private int getCurrentAdjustAmount() {
 		if (!adjustAmount.isEmpty()) {
 			return Integer.parseInt((adjustOperationIsPositive ? "" : "-")
@@ -222,15 +218,43 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		}
 	}
 
+	/**
+	 * Set the sign of the numpad to the given boolean value (true for +, false
+	 * for -)
+	 * 
+	 * @param sign
+	 */
 	private void setOperationSign(boolean sign) {
 		((NumpadFragment) getSupportFragmentManager().findFragmentById(
 				R.id.numpad)).setOperationSign(sign);
 	}
 
+	/**
+	 * Return the PlayerFragment representing the current player that is being
+	 * viewed.
+	 * 
+	 * @return
+	 */
 	private PlayerDetailFragment getCurrentPlayerFragment() {
 		return (PlayerDetailFragment) mViewPager.getAdapter().instantiateItem(
 				mViewPager, mViewPager.getCurrentItem());
 	}
+
+	/**
+	 * The fragment argument representing the state of the +/- button
+	 */
+	public static final String ARG_POS_NEG = "pos_neg";
+
+	/**
+	 * The fragment argument representing the index in the viewpager
+	 */
+	public static final String ARG_PLAYER_INDEX = "player_index";
+
+	// When requested, this adapter returns a PageDetailFragment,
+	// representing an object in the collection.
+	PlayersPagerAdapter mPlayersCollectionPagerAdapter;
+
+	ViewPager mViewPager;
 
 	private String adjustAmount = "";
 	private boolean adjustOperationIsPositive = true;

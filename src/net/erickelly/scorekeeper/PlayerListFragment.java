@@ -34,59 +34,6 @@ public class PlayerListFragment extends ListFragment implements
 		LoaderManager.LoaderCallbacks<Cursor> {
 
 	/**
-	 * The serialization (saved instance state) Bundle key representing the
-	 * activated item position. Only used on tablets.
-	 */
-	private static final String STATE_ACTIVATED_POSITION = "activated_position";
-
-	/**
-	 * This is the Adapter being used to display the list's data.
-	 */
-	SimpleCursorAdapter mAdapter;
-
-	/**
-	 * The fragment's current callback object, which is notified of list item
-	 * clicks.
-	 */
-	private Callbacks mCallbacks = sDummyCallbacks;
-
-	/**
-	 * The current activated item position. Only used on tablets.
-	 */
-	private int mActivatedPosition = ListView.INVALID_POSITION;
-
-	/**
-	 * A callback interface that all activities containing this fragment must
-	 * implement. This mechanism allows activities to be notified of item
-	 * selections.
-	 */
-	public interface Callbacks {
-		/**
-		 * Callback for when an item has been selected.
-		 */
-		public void onItemSelected(long id, int position);
-
-		/**
-		 * Callback for when a player's score is being adjusted
-		 */
-		public void onAdjustScore(View v);
-	}
-
-	/**
-	 * A dummy implementation of the {@link Callbacks} interface that does
-	 * nothing. Used only when this fragment is not attached to an activity.
-	 */
-	private static Callbacks sDummyCallbacks = new Callbacks() {
-		@Override
-		public void onItemSelected(long id, int position) {
-		}
-
-		@Override
-		public void onAdjustScore(View v) {
-		}
-	};
-
-	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
@@ -241,6 +188,39 @@ public class PlayerListFragment extends ListFragment implements
 		mActivatedPosition = position;
 	}
 
+	/**
+	 * Delete the player identified by the player id
+	 * 
+	 * @param playerId
+	 */
+	private void deletePlayer(long playerId) {
+		PlayerManager.getInstance().deletePlayer(getActivity(), playerId);
+		getLoaderManager().getLoader(0).forceLoad();
+	}
+
+	/**
+	 * Edit the player name associated with the given player id
+	 * 
+	 * @param playerId
+	 */
+	private void editPlayerName(final long playerId) {
+		Log.d(TAG, "editPlayerName: " + playerId);
+		Player p = PlayerManager.getInstance().getPlayer(getActivity(),
+				playerId);
+		PlayerNameDialogFragment.newInstance(new PlayerNamePromptListener() {
+			/**
+			 * When the new player's name is entered, this method is called. Use
+			 * this to actually set the new player name
+			 */
+			@Override
+			public void onPlayerNameEntry(String name) {
+				PlayerManager.getInstance().editPlayerName(getActivity(),
+						playerId, name);
+				mAdapter.notifyDataSetChanged();
+			}
+		}, p.getName()).show(getFragmentManager(), "EditPlayerName");
+	}
+
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		// Now create and return a CursorLoader that will take care of
@@ -267,37 +247,57 @@ public class PlayerListFragment extends ListFragment implements
 	}
 
 	/**
-	 * Delete the player identified by the player id
-	 * 
-	 * @param playerId
+	 * The serialization (saved instance state) Bundle key representing the
+	 * activated item position. Only used on tablets.
 	 */
-	void deletePlayer(long playerId) {
-		PlayerManager.getInstance().deletePlayer(getActivity(), playerId);
-		getLoaderManager().getLoader(0).forceLoad();
+	private static final String STATE_ACTIVATED_POSITION = "activated_position";
+
+	/**
+	 * This is the Adapter being used to display the list's data.
+	 */
+	SimpleCursorAdapter mAdapter;
+
+	/**
+	 * The fragment's current callback object, which is notified of list item
+	 * clicks.
+	 */
+	private Callbacks mCallbacks = sDummyCallbacks;
+
+	/**
+	 * The current activated item position. Only used on tablets.
+	 */
+	private int mActivatedPosition = ListView.INVALID_POSITION;
+
+	/**
+	 * A callback interface that all activities containing this fragment must
+	 * implement. This mechanism allows activities to be notified of item
+	 * selections.
+	 */
+	public interface Callbacks {
+		/**
+		 * Callback for when an item has been selected.
+		 */
+		public void onItemSelected(long id, int position);
+	
+		/**
+		 * Callback for when a player's score is being adjusted
+		 */
+		public void onAdjustScore(View v);
 	}
 
 	/**
-	 * Edit the player name associated with the given player id
-	 * 
-	 * @param playerId
+	 * A dummy implementation of the {@link Callbacks} interface that does
+	 * nothing. Used only when this fragment is not attached to an activity.
 	 */
-	void editPlayerName(final long playerId) {
-		Log.d(TAG, "editPlayerName: " + playerId);
-		Player p = PlayerManager.getInstance().getPlayer(getActivity(),
-				playerId);
-		PlayerNameDialogFragment.newInstance(new PlayerNamePromptListener() {
-			/**
-			 * When the new player's name is entered, this method is called. Use
-			 * this to actually set the new player name
-			 */
-			@Override
-			public void onPlayerNameEntry(String name) {
-				PlayerManager.getInstance().editPlayerName(getActivity(),
-						playerId, name);
-				mAdapter.notifyDataSetChanged();
-			}
-		}, p.getName()).show(getFragmentManager(), "EditPlayerName");
-	}
+	private static Callbacks sDummyCallbacks = new Callbacks() {
+		@Override
+		public void onItemSelected(long id, int position) {
+		}
+	
+		@Override
+		public void onAdjustScore(View v) {
+		}
+	};
 
 	private static String TAG = "PlayerListFragment";
 }

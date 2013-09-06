@@ -17,22 +17,6 @@ import net.erickelly.scorekeeper.data.PlayerManager;
  */
 public class PlayerDetailFragment extends Fragment {
 	/**
-	 * The fragment argument representing the player ID that this fragment
-	 * represents.
-	 */
-	public static final String ARG_PLAYER_ID = "player_id";
-
-	/**
-	 * The Player which is being shown
-	 */
-	private Player mPlayer;
-
-	/**
-	 * The TextView containing the score
-	 */
-	private TextView scoreView;
-
-	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
@@ -55,7 +39,7 @@ public class PlayerDetailFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		Log.d(TAG, "onCreateView");
-		scoreView = (TextView) inflater.inflate(
+		TextView scoreView = (TextView) inflater.inflate(
 				R.layout.fragment_player_detail, container, false);
 
 		if (mPlayer != null) {
@@ -66,18 +50,23 @@ public class PlayerDetailFragment extends Fragment {
 		return scoreView;
 	}
 
+	/**
+	 * Reset the displayed score to the player's actual current score
+	 */
 	public void clear() {
 		mPlayer = PlayerManager.getInstance().getPlayer(getActivity(),
 				mPlayer.getId());
 		setText(String.valueOf(mPlayer.getScore()));
 	}
 
-	public void setText(String text) {
+	/**
+	 * Set the textview to display the given text
+	 * @param text
+	 */
+	private void setText(String text) {
 		Log.d(TAG, "setText");
-		Log.d(TAG, getView().toString());
-		Log.d(TAG, scoreView.toString());
-		if (scoreView != null) {
-			scoreView.setText(text);
+		if (getView() != null) {
+			((TextView) getView()).setText(text);
 		}
 	}
 
@@ -94,8 +83,19 @@ public class PlayerDetailFragment extends Fragment {
 			content += " = ";
 			content += (mPlayer.getScore() + amt);
 		}
-		scoreView.setText(content);
+		setText(content);
 	}
+
+	/**
+	 * The fragment argument representing the player ID that this fragment
+	 * represents.
+	 */
+	public static final String ARG_PLAYER_ID = "player_id";
+
+	/**
+	 * The Player which is being shown
+	 */
+	private Player mPlayer;
 
 	private static final String TAG = "PlayerDetailFragment";
 }

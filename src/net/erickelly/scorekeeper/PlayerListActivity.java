@@ -83,19 +83,6 @@ public class PlayerListActivity extends FragmentActivity implements
 		}
 	}
 
-	private void showNewPlayerDialog() {
-		PlayerNameDialogFragment.newInstance(new PlayerNamePromptListener() {
-			/**
-			 * When the new player's name is entered, this method is called. Use
-			 * this to actually set the new player name
-			 */
-			@Override
-			public void onPlayerNameEntry(String name) {
-				addPlayer(name);
-			}
-		}).show(getSupportFragmentManager(), "NewPlayerDialog");
-	}
-
 	/**
 	 * Callback method from {@link PlayerListFragment.Callbacks} indicating that
 	 * the item with the given ID was selected.
@@ -180,6 +167,22 @@ public class PlayerListActivity extends FragmentActivity implements
 		// TODO: Why do I have to force it to load?
 		((PlayerListFragment) getSupportFragmentManager().findFragmentById(
 				R.id.player_list)).getLoaderManager().getLoader(0).forceLoad();
+	}
+
+	/**
+	 * Open a diolog prompting input for a new player's name
+	 */
+	private void showNewPlayerDialog() {
+		PlayerNameDialogFragment.newInstance(new PlayerNamePromptListener() {
+			/**
+			 * When the new player's name is entered, this method is called. Use
+			 * this to actually set the new player name
+			 */
+			@Override
+			public void onPlayerNameEntry(String name) {
+				addPlayer(name);
+			}
+		}).show(getSupportFragmentManager(), "NewPlayerDialog");
 	}
 
 	private static final String TAG = "PlayerListActivity";

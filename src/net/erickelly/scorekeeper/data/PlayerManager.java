@@ -11,6 +11,11 @@ import android.util.Log;
 import android.util.Pair;
 import static net.erickelly.scorekeeper.data.Players.*;
 
+/**
+ * This class encapsulates all player management
+ * @author eric
+ *
+ */
 public class PlayerManager {
 
 	/**
@@ -75,6 +80,25 @@ public class PlayerManager {
 		c.getContentResolver()
 				.insert(Uri.withAppendedPath(SCORES_URI,
 						"/" + String.valueOf(playerId)), values);
+	}
+	
+	/**
+	 * Adjust the player's score
+	 * 
+	 * @param playerId
+	 *            The id of the player to update the score
+	 */
+	public int getPlayerScore(Context c, long playerId) {
+		Log.d(TAG, "getPlayerScore: " + playerId);
+		Cursor cursor = c.getContentResolver().query(
+				Uri.withAppendedPath(SCORES_URI, "/" + playerId),
+				new String[] { PLAYER_ID, ADJUST_AMT }, null, null, null);
+		int score = 0;
+		int adjustAmtColumn = cursor.getColumnIndex(ADJUST_AMT);
+		while (cursor.moveToNext()) {
+			score += cursor.getInt(adjustAmtColumn);
+		}
+		return score;
 	}
 
 	/**
@@ -182,6 +206,10 @@ public class PlayerManager {
 		return mPlayerCount;
 	}
 
+	/**
+	 * Retrieve a PlayerManager instance
+	 * @return
+	 */
 	public static PlayerManager getInstance() {
 		if (mInstance == null) {
 			mInstance = new PlayerManager();

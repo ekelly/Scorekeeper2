@@ -12,30 +12,27 @@ import android.view.View;
 import android.widget.EditText;
 
 public class PlayerNameDialogFragment extends DialogFragment {
-	
+
 	/**
-	 * Interface for the PlayerNameDialogFragment to communicate
-	 * back with its host activity
+	 * Create a new dialog prompting for a player name
+	 * 
+	 * @param listener
+	 * @return
 	 */
-	public interface PlayerNamePromptListener {
-		public void onPlayerNameEntry(String name);
-	}
-	
-	private static PlayerNamePromptListener mDummyListener = new PlayerNamePromptListener() {
-		@Override
-		public void onPlayerNameEntry(String name) {
-		}
-	};
-	
-	private static String prefill = "";
-	
-	private PlayerNamePromptListener mListener;
-	
-	static PlayerNameDialogFragment newInstance(PlayerNamePromptListener listener) {
+	public static PlayerNameDialogFragment newInstance(
+			PlayerNamePromptListener listener) {
 		return newInstance(listener, null);
 	}
-	
-	static PlayerNameDialogFragment newInstance(PlayerNamePromptListener listener, String text) {
+
+	/**
+	 * Create a new dialog prompting for a player name
+	 * 
+	 * @param listener
+	 * @param text
+	 * @return
+	 */
+	public static PlayerNameDialogFragment newInstance(
+			PlayerNamePromptListener listener, String text) {
 		if (listener == null) {
 			listener = mDummyListener;
 		}
@@ -46,41 +43,70 @@ public class PlayerNameDialogFragment extends DialogFragment {
 		d.setListener(listener);
 		return d;
 	}
-	
+
+	/**
+	 * Set this fragment's listener to the given listener
+	 * 
+	 * @param listener
+	 */
 	private void setListener(PlayerNamePromptListener listener) {
 		mListener = listener;
 	}
-	
+
 	@Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Build the dialog and set up the button click handlers
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        final View v = inflater.inflate(R.layout.dialog_fragment_new_player, null);
-        EditText nameInput = (EditText) v.findViewById(R.id.dialog_player_name);
-        if (!prefill.isEmpty()) {
-        	Log.d(TAG, "using prefill: " + prefill);
-        	nameInput.setText(prefill);
-        } else {
-	        int numPlayers = PlayerManager.getInstance().getPlayerCount(getActivity());
-	        nameInput.setText("Player " + (numPlayers + 1));
-	        Log.d(TAG, "using new name: Player" + (numPlayers + 1));
-        }
-        builder.setTitle(getResources().getString(R.string.player_name))
-               .setView(v)
-               .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int id) {
-                	   EditText nameInput = (EditText) v.findViewById(R.id.dialog_player_name);
-                       mListener.onPlayerNameEntry(nameInput.getText().toString());
-                   }
-               })
-               .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int id) {
-                       dialog.dismiss();
-                   }
-               });
-        return builder.create();
-    }
-	
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		// Build the dialog and set up the button click handlers
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		LayoutInflater inflater = getActivity().getLayoutInflater();
+		final View v = inflater.inflate(R.layout.dialog_fragment_new_player,
+				null);
+		EditText nameInput = (EditText) v.findViewById(R.id.dialog_player_name);
+		if (!prefill.isEmpty()) {
+			Log.d(TAG, "using prefill: " + prefill);
+			nameInput.setText(prefill);
+		} else {
+			int numPlayers = PlayerManager.getInstance().getPlayerCount(
+					getActivity());
+			nameInput.setText("Player " + (numPlayers + 1));
+			Log.d(TAG, "using new name: Player" + (numPlayers + 1));
+		}
+		builder.setTitle(getResources().getString(R.string.player_name))
+				.setView(v)
+				.setPositiveButton(R.string.ok,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								EditText nameInput = (EditText) v
+										.findViewById(R.id.dialog_player_name);
+								mListener.onPlayerNameEntry(nameInput.getText()
+										.toString());
+							}
+						})
+				.setNegativeButton(R.string.cancel,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.dismiss();
+							}
+						});
+		return builder.create();
+	}
+
+	/**
+	 * Interface for the PlayerNameDialogFragment to communicate back with its
+	 * host activity
+	 */
+	public interface PlayerNamePromptListener {
+		public void onPlayerNameEntry(String name);
+	}
+
+	private static PlayerNamePromptListener mDummyListener = new PlayerNamePromptListener() {
+		@Override
+		public void onPlayerNameEntry(String name) {
+		}
+	};
+
+	private static String prefill = "";
+
+	private PlayerNamePromptListener mListener;
+
 	private static final String TAG = "PlayerNameDialogFragment";
 }
