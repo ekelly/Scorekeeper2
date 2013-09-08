@@ -104,11 +104,7 @@ public class PlayerListActivity extends FragmentActivity implements
 		} else {
 			// In single-pane mode, simply start the detail activity
 			// for the selected item ID.
-			Intent detailIntent = new Intent(this, PlayerDetailActivity.class);
-			detailIntent.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, id);
-			detailIntent.putExtra(PlayerDetailActivity.ARG_PLAYER_INDEX,
-					position);
-			startActivity(detailIntent);
+			gotoPlayerDetail(position, id, true, false);
 		}
 	}
 
@@ -127,7 +123,7 @@ public class PlayerListActivity extends FragmentActivity implements
 				.findFragmentById(R.id.player_list));
 		int index = listFragment.getListView().getPositionForView(row);
 		Long id = listFragment.getListAdapter().getItemId(index);
-		gotoPlayerDetail(index, id, isPositive);
+		gotoPlayerDetail(index, id, isPositive, true);
 	}
 
 	/**
@@ -139,13 +135,16 @@ public class PlayerListActivity extends FragmentActivity implements
 	 *            ID of the player
 	 * @param isPositive
 	 *            Should the numpad be positive?
+	 * @param returnToList
+	 * 	          Should hitting enter cause the screen to return to this list
 	 */
-	private void gotoPlayerDetail(int index, long id, boolean isPositive) {
+	private void gotoPlayerDetail(int index, long id, boolean isPositive, boolean returnToList) {
 		Log.d(TAG, "gotoPlayerDetail: " + index + ", " + id + ", " + isPositive);
 		Intent i = new Intent(this, PlayerDetailActivity.class);
 		i.putExtra(PlayerDetailActivity.ARG_PLAYER_INDEX, index);
 		i.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, id);
 		i.putExtra(NumpadFragment.ARG_POS_NEG, isPositive);
+		i.putExtra(PlayerDetailActivity.ARG_RETURN_TO_LIST, returnToList);
 		startActivity(i);
 	}
 

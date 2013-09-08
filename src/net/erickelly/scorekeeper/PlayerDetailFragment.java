@@ -39,7 +39,7 @@ public class PlayerDetailFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		Log.d(TAG, "onCreateView");
-		TextView scoreView = (TextView) inflater.inflate(
+		scoreView = (TextView) inflater.inflate(
 				R.layout.fragment_player_detail, container, false);
 
 		if (mPlayer != null) {
@@ -65,8 +65,8 @@ public class PlayerDetailFragment extends Fragment {
 	 */
 	private void setText(String text) {
 		Log.d(TAG, "setText");
-		if (getView() != null) {
-			((TextView) getView()).setText(text);
+		if (scoreView != null) {
+			scoreView.setText(text);
 		}
 	}
 
@@ -96,6 +96,7 @@ public class PlayerDetailFragment extends Fragment {
 	 * The Player which is being shown
 	 */
 	private Player mPlayer;
+	private TextView scoreView;
 
 	private static final String TAG = "PlayerDetailFragment";
 }

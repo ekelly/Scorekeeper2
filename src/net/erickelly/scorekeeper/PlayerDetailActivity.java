@@ -87,6 +87,9 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		adjustOperationIsPositive = getIntent().getExtras().getBoolean(
 				NumpadFragment.ARG_POS_NEG, true);
 
+		returnToList = getIntent().getExtras().getBoolean(ARG_RETURN_TO_LIST,
+				false);
+
 		// Set the keypad to be positive or negative
 		setOperationSign(adjustOperationIsPositive);
 	}
@@ -178,6 +181,10 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		PlayerManager.getInstance().adjustScore(this, p.getId(),
 				getCurrentAdjustAmount(), null);
 		clearState(mViewPager.getCurrentItem());
+		Log.d(TAG, "returnToList: " + returnToList);
+		if (returnToList) {
+			this.finish();
+		}
 	}
 
 	@Override
@@ -241,6 +248,11 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	}
 
 	/**
+	 * Should the activity return to the player screen when enter is clicked?
+	 */
+	public static final String ARG_RETURN_TO_LIST = "return";
+
+	/**
 	 * The fragment argument representing the state of the +/- button
 	 */
 	public static final String ARG_POS_NEG = "pos_neg";
@@ -258,6 +270,7 @@ public class PlayerDetailActivity extends FragmentActivity implements
 
 	private String adjustAmount = "";
 	private boolean adjustOperationIsPositive = true;
+	private boolean returnToList = false;
 
 	private static final String TAG = "PlayerDetailActivity";
 }
