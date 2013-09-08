@@ -13,4 +13,8 @@ Todo:
 - Add landscape layout
 - Fix list view selection bug
 - Nicify list view
+  - Add icons/selectable images for selecting listview items
+  - taller rows
+  - Better fonts / colors
 - Fix text so that it doesn't overflow badly
+- Add tablet layout
