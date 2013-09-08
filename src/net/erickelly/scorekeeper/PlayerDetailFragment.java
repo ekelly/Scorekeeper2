@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import net.erickelly.scorekeeper.data.Player;
 import net.erickelly.scorekeeper.data.PlayerManager;
@@ -39,15 +40,25 @@ public class PlayerDetailFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		Log.d(TAG, "onCreateView");
-		scoreView = (TextView) inflater.inflate(
+		detailView = (LinearLayout) inflater.inflate(
 				R.layout.fragment_player_detail, container, false);
 
+		largeScoreView = (TextView) detailView
+				.findViewById(R.id.player_score_large);
+		scoreView = (TextView) detailView.findViewById(R.id.player_detail);
+		totalScoreView = (TextView) detailView.findViewById(R.id.total_score);
+		signView = (TextView) detailView.findViewById(R.id.plus_minus);
+		adjustAmtView = (TextView) detailView.findViewById(R.id.adjust_amt);
+		notesView = (TextView) detailView.findViewById(R.id.score_notes);
+		playerEditScoreView = (LinearLayout) detailView
+				.findViewById(R.id.player_edit_score);
+
 		if (mPlayer != null) {
-			scoreView.setText(String.valueOf(mPlayer.getScore()));
-			scoreView.setTag(mPlayer.getId());
+			setScore(mPlayer.getScore());
+			detailView.setTag(mPlayer.getId());
 		}
 
-		return scoreView;
+		return detailView;
 	}
 
 	/**
@@ -56,17 +67,97 @@ public class PlayerDetailFragment extends Fragment {
 	public void clear() {
 		mPlayer = PlayerManager.getInstance().getPlayer(getActivity(),
 				mPlayer.getId());
-		setText(String.valueOf(mPlayer.getScore()));
+		setScore(mPlayer.getScore());
+		setAdjustAmt(0);
+		setFinalScore(mPlayer.getScore());
 	}
 
 	/**
-	 * Set the textview to display the given text
-	 * @param text
+	 * Display the "starting" score
+	 * 
+	 * @param score
 	 */
-	private void setText(String text) {
-		Log.d(TAG, "setText");
+	private void setScore(int score) {
+		Log.d(TAG, "setScore: " + score);
 		if (scoreView != null) {
-			scoreView.setText(text);
+			String scoreText = String.valueOf(score);
+			scoreView.setText(scoreText);
+			largeScoreView.setText(scoreText);
+		}
+	}
+
+	/**
+	 * Display the correct sign for the operation
+	 * 
+	 * @param positive
+	 */
+	private void setSign(boolean positive) {
+		Log.d(TAG, "setSign: " + positive);
+		if (signView != null) {
+			signView.setText(positive ? "+" : "-");
+		}
+	}
+
+	/**
+	 * Display the adjust amount. If the adjust amount is zero, it will not
+	 * display any text
+	 * 
+	 * @param amt
+	 */
+	private void setAdjustAmt(int amt) {
+		Log.d(TAG, "setAdjustAmt: " + amt);
+		if (adjustAmtView != null) {
+			if (amt != 0) {
+				adjustAmtView.setText(String.valueOf(Math.abs(amt)));
+			} else {
+				adjustAmtView.setText("");
+			}
+		}
+	}
+
+	/**
+	 * Display the final score. If the given score is the same as mPlayer's
+	 * current score, it will not display any text
+	 * 
+	 * @param finalScore
+	 */
+	private void setFinalScore(int finalScore) {
+		Log.d(TAG, "setFinalScore: " + finalScore);
+		if (totalScoreView != null) {
+			if (finalScore != mPlayer.getScore()) {
+				totalScoreView.setText(String.valueOf(finalScore));
+			} else {
+				totalScoreView.setText("");
+			}
+		}
+	}
+
+	/**
+	 * Display the contents of the notes
+	 * 
+	 * @param notes
+	 */
+	@SuppressWarnings("unused")
+	private void setNotesArea(String notes) {
+		Log.d(TAG, "setNotesArea: " + notes);
+		if (notesView != null) {
+			notesView.setText(notes);
+		}
+	}
+
+	/**
+	 * Swap showing the "editing" a score view and displaying a score view
+	 * 
+	 * @param visible
+	 *            If true, the "large" view is visible. If false, the "edit"
+	 *            view is visible
+	 */
+	private void setPlayerScoreVisibility(boolean visible) {
+		Log.d(TAG, "setPlayerScoreVisibility: " + visible);
+		if (playerEditScoreView != null && largeScoreView != null) {
+			playerEditScoreView.setVisibility(visible ? View.GONE
+					: View.VISIBLE);
+			largeScoreView.setVisibility(visible ? View.VISIBLE : View.GONE);
 		}
 	}
 
@@ -76,14 +167,15 @@ public class PlayerDetailFragment extends Fragment {
 	 * @param amt
 	 */
 	public void adjustScore(int amt) {
-		String content = "" + mPlayer.getScore();
+		setScore(mPlayer.getScore());
 		if (amt != 0) {
-			content += amt < 0 ? " - " : " + ";
-			content += Math.abs(amt);
-			content += " = ";
-			content += (mPlayer.getScore() + amt);
+			setAdjustAmt(amt);
+			setFinalScore(mPlayer.getScore() + amt);
+			setSign(amt > 0);
+			setPlayerScoreVisibility(false);
+		} else {
+			setPlayerScoreVisibility(true);
 		}
-		setText(content);
 	}
 
 	/**
@@ -96,7 +188,14 @@ public class PlayerDetailFragment extends Fragment {
 	 * The Player which is being shown
 	 */
 	private Player mPlayer;
+	private LinearLayout detailView;
+	private LinearLayout playerEditScoreView;
 	private TextView scoreView;
+	private TextView totalScoreView;
+	private TextView signView;
+	private TextView adjustAmtView;
+	private TextView notesView;
+	private TextView largeScoreView;
 
 	private static final String TAG = "PlayerDetailFragment";
 }

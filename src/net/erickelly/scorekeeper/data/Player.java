@@ -13,7 +13,6 @@ import android.util.Pair;
 public class Player {
 	private String name;
 	private int score;
-	private String extra;
 	private long id;
 	private List<Pair<Integer, String>> history;
 
@@ -60,24 +59,6 @@ public class Player {
 	 */
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	/**
-	 * Setter for extra
-	 * 
-	 * @param extra
-	 */
-	public void setExtra(String extra) {
-		this.extra = extra;
-	}
-
-	/**
-	 * Getter for extra
-	 * 
-	 * @return
-	 */
-	public String getExtra() {
-		return this.extra;
 	}
 
 	/**
