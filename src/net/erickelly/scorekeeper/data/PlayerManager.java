@@ -13,8 +13,9 @@ import static net.erickelly.scorekeeper.data.Players.*;
 
 /**
  * This class encapsulates all player management
+ * 
  * @author eric
- *
+ * 
  */
 public class PlayerManager {
 
@@ -47,15 +48,40 @@ public class PlayerManager {
 	 */
 	public void deletePlayer(Context c, long id) {
 		Log.d(TAG, "deletePlayer: " + id);
+		resetPlayerScore(c, id);
 		c.getContentResolver().delete(
 				Uri.withAppendedPath(PLAYERS_URI, "/" + id), null, null);
-		c.getContentResolver().delete(
-				Uri.withAppendedPath(SCORES_URI, "/" + id), null, null);
 		if (mPlayerCount == null) {
 			mPlayerCount = getPlayerCount(c);
 		} else {
 			mPlayerCount--;
 		}
+	}
+
+	/**
+	 * Reset the given player's score to 0
+	 * 
+	 * @param c
+	 * @param playerId
+	 *            ID of the player to reset
+	 */
+	public void resetPlayerScore(Context c, long playerId) {
+		Log.d(TAG, "resetPlayerScore: " + playerId);
+		c.getContentResolver().delete(
+				Uri.withAppendedPath(SCORES_URI, "/" + playerId), null, null);
+	}
+	
+	/**
+	 * Reset all players scores to 0
+	 * @param c
+	 */
+	public void resetAllPlayers(Context c) {
+		Cursor cursor = getAllPlayers(c);
+		final int idColumn = cursor.getColumnIndex(_ID);
+		while (cursor.moveToNext()) {
+			resetPlayerScore(c, cursor.getLong(idColumn));
+		}
+		cursor.close();
 	}
 
 	/**
@@ -81,7 +107,7 @@ public class PlayerManager {
 				.insert(Uri.withAppendedPath(SCORES_URI,
 						"/" + String.valueOf(playerId)), values);
 	}
-	
+
 	/**
 	 * Adjust the player's score
 	 * 
@@ -135,11 +161,13 @@ public class PlayerManager {
 		List<Pair<Integer, String>> history = getPlayerHistory(c, playerId);
 		return new Player(playerId, name, history);
 	}
-	
+
 	/**
 	 * Return the score history for the given player
+	 * 
 	 * @param c
-	 * @param id ID of the player to query
+	 * @param id
+	 *            ID of the player to query
 	 * @return
 	 */
 	private List<Pair<Integer, String>> getPlayerHistory(Context c, long id) {
@@ -208,6 +236,7 @@ public class PlayerManager {
 
 	/**
 	 * Retrieve a PlayerManager instance
+	 * 
 	 * @return
 	 */
 	public static PlayerManager getInstance() {

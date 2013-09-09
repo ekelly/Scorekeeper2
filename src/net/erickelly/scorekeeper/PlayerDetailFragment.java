@@ -70,6 +70,7 @@ public class PlayerDetailFragment extends Fragment {
 		setScore(mPlayer.getScore());
 		setAdjustAmt(0);
 		setFinalScore(mPlayer.getScore());
+		setPlayerScoreVisibility(true);
 	}
 
 	/**
@@ -107,11 +108,7 @@ public class PlayerDetailFragment extends Fragment {
 	private void setAdjustAmt(int amt) {
 		Log.d(TAG, "setAdjustAmt: " + amt);
 		if (adjustAmtView != null) {
-			if (amt != 0) {
-				adjustAmtView.setText(String.valueOf(Math.abs(amt)));
-			} else {
-				adjustAmtView.setText("");
-			}
+			adjustAmtView.setText(String.valueOf(Math.abs(amt)));
 		}
 	}
 
@@ -124,11 +121,7 @@ public class PlayerDetailFragment extends Fragment {
 	private void setFinalScore(int finalScore) {
 		Log.d(TAG, "setFinalScore: " + finalScore);
 		if (totalScoreView != null) {
-			if (finalScore != mPlayer.getScore()) {
-				totalScoreView.setText(String.valueOf(finalScore));
-			} else {
-				totalScoreView.setText("");
-			}
+			totalScoreView.setText(String.valueOf(finalScore));
 		}
 	}
 
@@ -165,13 +158,15 @@ public class PlayerDetailFragment extends Fragment {
 	 * Display the score adjust amount
 	 * 
 	 * @param amt
+	 * @param true if the sign is +, false if the sign is - This parameter
+	 *        cannot be guessed from the sign of the amt due to the 0 case
 	 */
-	public void adjustScore(int amt) {
+	public void adjustScore(Integer amt, boolean sign) {
 		setScore(mPlayer.getScore());
-		if (amt != 0) {
+		if (amt != null) {
 			setAdjustAmt(amt);
 			setFinalScore(mPlayer.getScore() + amt);
-			setSign(amt > 0);
+			setSign(sign);
 			setPlayerScoreVisibility(false);
 		} else {
 			setPlayerScoreVisibility(true);

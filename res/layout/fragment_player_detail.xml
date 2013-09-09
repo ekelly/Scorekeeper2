@@ -5,6 +5,21 @@
     android:baselineAligned="false"
     android:orientation="horizontal" >
     
+    <LinearLayout 
+	    android:orientation="vertical"
+	    android:layout_weight="1"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" >
+	    
+	    <TextView 
+		    android:id="@+id/score_notes"
+		    style="@style/ScorecardText"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    tools:context=".PlayerDetailFragment" />
+	
+	</LinearLayout>
+    
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -71,18 +86,4 @@
 		    tools:context=".PlayerDetailFragment" />
 	</LinearLayout>
 	
-	<LinearLayout 
-	    android:orientation="vertical"
-	    android:layout_weight="1"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent" >
-	    
-	    <TextView 
-		    android:id="@+id/score_notes"
-		    style="@style/ScorecardText"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    tools:context=".PlayerDetailFragment" />
-	
-	</LinearLayout>
 </LinearLayout>

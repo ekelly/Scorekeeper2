@@ -29,6 +29,7 @@ public class Players extends ContentProvider {
 	public static final String NAME = "name";
 	public static final String SCORE = "score";
 	public static final String ADJUST_AMT = "adjust_amt";
+	public static final String SCORE_SUM = "IFNULL(SUM(" + ADJUST_AMT + "), 0) AS " + SCORE;
 	public static final String NOTES = "notes";
 
 	public static final Uri BASE_URI = Uri
@@ -223,8 +224,7 @@ public class Players extends ContentProvider {
 	private void checkColumns(String[] projection) {
 		String[] available = { _ID, PLAYERS_TABLE_NAME + "." + _ID,
 				SCORES_TABLE_NAME + "." + _ID, NAME,
-				"SUM(" + ADJUST_AMT + ") AS " + SCORE, PLAYER_ID, ADJUST_AMT,
-				NOTES };
+				SCORE_SUM, PLAYER_ID, ADJUST_AMT, NOTES };
 		if (projection != null) {
 			HashSet<String> requestedColumns = new HashSet<String>(
 					Arrays.asList(projection));
@@ -233,7 +233,7 @@ public class Players extends ContentProvider {
 			// Check if all columns which are requested are available
 			if (!availableColumns.containsAll(requestedColumns)) {
 				throw new IllegalArgumentException(
-						"Unknown columns in projection");
+						"Unknown columns in projection: " + requestedColumns);
 			}
 		}
 	}

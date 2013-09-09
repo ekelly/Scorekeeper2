@@ -8,6 +8,8 @@
     <string name="add_player">Add Player</string>
     <string name="remove_player">Delete Player</string>
     <string name="edit_player">Edit Player</string>
+    <string name="reset_player">Reset Player</string>
+    <string name="reset_players">Reset Players</string>
 
     <!-- NumpadFragment -->
     <string name="one">1</string>

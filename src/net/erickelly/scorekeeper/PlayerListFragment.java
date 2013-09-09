@@ -96,6 +96,9 @@ public class PlayerListFragment extends ListFragment implements
 					editPlayerName(mSelectedId);
 					mode.finish();
 					return true;
+				case R.id.menu_reset_player:
+					resetPlayer(mSelectedId);
+					mode.finish();
 				default:
 					return false;
 				}
@@ -187,6 +190,14 @@ public class PlayerListFragment extends ListFragment implements
 
 		mActivatedPosition = position;
 	}
+	
+	/**
+	 * Reset the score of the given player
+	 * @param playerId ID of the player to reset
+	 */
+	private void resetPlayer(long playerId) {
+		PlayerManager.getInstance().resetPlayerScore(getActivity(), playerId);
+	}
 
 	/**
 	 * Delete the player identified by the player id
@@ -195,7 +206,6 @@ public class PlayerListFragment extends ListFragment implements
 	 */
 	private void deletePlayer(long playerId) {
 		PlayerManager.getInstance().deletePlayer(getActivity(), playerId);
-		getLoaderManager().getLoader(0).forceLoad();
 	}
 
 	/**
@@ -226,8 +236,7 @@ public class PlayerListFragment extends ListFragment implements
 		// Now create and return a CursorLoader that will take care of
 		// creating a Cursor for the data being displayed.
 		return new CursorLoader(getActivity(), PLAYERS_WITH_SCORE_URI, new String[] {
-				PLAYERS_TABLE_NAME + "." + _ID, NAME,
-				"SUM(" + ADJUST_AMT + ") AS " + SCORE, ADJUST_AMT }, null,
+				PLAYERS_TABLE_NAME + "." + _ID, NAME, SCORE_SUM, ADJUST_AMT }, null,
 				null, PLAYERS_TABLE_NAME + "." + _ID);
 	}
 

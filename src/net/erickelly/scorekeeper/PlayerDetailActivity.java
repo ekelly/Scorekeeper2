@@ -3,6 +3,7 @@ package net.erickelly.scorekeeper;
 import net.erickelly.scorekeeper.NumpadFragment.NumpadListener;
 import net.erickelly.scorekeeper.data.Player;
 import net.erickelly.scorekeeper.data.PlayerManager;
+import net.erickelly.scorekeeper.data.Sign;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -84,14 +85,14 @@ public class PlayerDetailActivity extends FragmentActivity implements
 			}
 		});
 
-		adjustOperationIsPositive = getIntent().getExtras().getBoolean(
-				NumpadFragment.ARG_POS_NEG, true);
+		mSign = Sign.valueOf(getIntent().getExtras().getBoolean(
+				NumpadFragment.ARG_POS_NEG, true));
 
 		returnToList = getIntent().getExtras().getBoolean(ARG_RETURN_TO_LIST,
 				false);
 
 		// Set the keypad to be positive or negative
-		setOperationSign(adjustOperationIsPositive);
+		setOperationSign(mSign);
 	}
 
 	@Override
@@ -159,8 +160,8 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	public void onNumberClicked(String number) {
 		Log.d(TAG, "onNumberClicked: " + number);
 		adjustAmount += number;
-		int amt = getCurrentAdjustAmount();
-		getCurrentPlayerFragment().adjustScore(amt);
+		Integer amt = getCurrentAdjustAmount();
+		getCurrentPlayerFragment().adjustScore(amt, mSign.isPositive());
 	}
 
 	@Override
@@ -169,8 +170,8 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		if (adjustAmount.length() > 0) {
 			adjustAmount = adjustAmount.substring(0, adjustAmount.length() - 1);
 		}
-		int amt = getCurrentAdjustAmount();
-		getCurrentPlayerFragment().adjustScore(amt);
+		Integer amt = getCurrentAdjustAmount();
+		getCurrentPlayerFragment().adjustScore(amt, mSign.isPositive());
 	}
 
 	@Override
@@ -188,10 +189,11 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onSignClicked(boolean positive) {
-		Log.d(TAG, "onSignClicked: " + (positive ? "+" : "-"));
-		adjustOperationIsPositive = positive;
-		getCurrentPlayerFragment().adjustScore(getCurrentAdjustAmount());
+	public void onSignClicked(Sign sign) {
+		Log.d(TAG, "onSignClicked: " + sign.toString());
+		mSign = sign;
+		getCurrentPlayerFragment().adjustScore(getCurrentAdjustAmount(),
+				mSign.isPositive());
 	}
 
 	/**
@@ -207,21 +209,22 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		((PlayerDetailFragment) mViewPager.getAdapter().instantiateItem(
 				mViewPager, previousPagePosition)).clear();
 		adjustAmount = "";
-		adjustOperationIsPositive = true;
-		setOperationSign(adjustOperationIsPositive);
+		mSign = Sign.POSITIVE;
+		setOperationSign(mSign);
 	}
 
 	/**
-	 * Returns the current temporary adjust amount as an integer.
+	 * Returns the current temporary adjust amount
 	 * 
-	 * @return The adjust amount as an integer (could be + or -)
+	 * @return The adjust amount as an Integer, or null if there is no current
+	 *         adjust amount
 	 */
-	private int getCurrentAdjustAmount() {
+	private Integer getCurrentAdjustAmount() {
 		if (!adjustAmount.isEmpty()) {
-			return Integer.parseInt((adjustOperationIsPositive ? "" : "-")
+			return Integer.parseInt((mSign.isPositive() ? "" : "-")
 					+ adjustAmount);
 		} else {
-			return 0;
+			return null;
 		}
 	}
 
@@ -229,9 +232,9 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	 * Set the sign of the numpad to the given boolean value (true for +, false
 	 * for -)
 	 * 
-	 * @param sign
+	 * @param operationIsPositive
 	 */
-	private void setOperationSign(boolean sign) {
+	private void setOperationSign(Sign sign) {
 		((NumpadFragment) getSupportFragmentManager().findFragmentById(
 				R.id.numpad)).setOperationSign(sign);
 	}
@@ -269,7 +272,7 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	ViewPager mViewPager;
 
 	private String adjustAmount = "";
-	private boolean adjustOperationIsPositive = true;
+	private Sign mSign = Sign.POSITIVE;
 	private boolean returnToList = false;
 
 	private static final String TAG = "PlayerDetailActivity";

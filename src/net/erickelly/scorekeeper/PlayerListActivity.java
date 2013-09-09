@@ -78,6 +78,9 @@ public class PlayerListActivity extends FragmentActivity implements
 		case R.id.menu_add_player:
 			showNewPlayerDialog();
 			return true;
+		case R.id.menu_reset_players:
+			resetPlayers();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -147,25 +150,19 @@ public class PlayerListActivity extends FragmentActivity implements
 		i.putExtra(PlayerDetailActivity.ARG_RETURN_TO_LIST, returnToList);
 		startActivity(i);
 	}
+	
+	/**
+	 * Reset the scores of all the players
+	 */
+	private void resetPlayers() {
+		PlayerManager.getInstance().resetAllPlayers(this);
+	}
 
 	/**
 	 * Add a player to the list
 	 */
-	public void addPlayer(String playerName) {
+	private void addPlayer(String playerName) {
 		PlayerManager.getInstance().addPlayer(this, playerName);
-		// TODO: Why do I have to force it to load?
-		((PlayerListFragment) getSupportFragmentManager().findFragmentById(
-				R.id.player_list)).getLoaderManager().getLoader(0).forceLoad();
-	}
-
-	/**
-	 * Edit the player name given an id and a new name
-	 */
-	public void editPlayer(int playerId, String playerName) {
-		PlayerManager.getInstance().editPlayerName(this, playerId, playerName);
-		// TODO: Why do I have to force it to load?
-		((PlayerListFragment) getSupportFragmentManager().findFragmentById(
-				R.id.player_list)).getLoaderManager().getLoader(0).forceLoad();
 	}
 
 	/**

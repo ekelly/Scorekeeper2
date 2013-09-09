@@ -1,5 +1,6 @@
 package net.erickelly.scorekeeper;
 
+import net.erickelly.scorekeeper.data.Sign;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,7 +26,7 @@ public class NumpadFragment extends Fragment {
 		Log.d(TAG, "onCreate");
 	
 		if (getArguments() != null && getArguments().containsKey(ARG_POS_NEG)) {
-			mNumpadIsPositive = getArguments().getBoolean(ARG_POS_NEG, true);
+			mSign = Sign.valueOf(getArguments().getBoolean(ARG_POS_NEG, true));
 		}
 	}
 
@@ -126,9 +127,9 @@ public class NumpadFragment extends Fragment {
 	 * 
 	 * @param positive
 	 */
-	public void setOperationSign(boolean positive) {
+	public void setOperationSign(Sign sign) {
 		Log.d(TAG, "setOperationSign");
-		mNumpadIsPositive = positive;
+		mSign = sign;
 		refreshOperationSign();
 	}
 
@@ -137,11 +138,13 @@ public class NumpadFragment extends Fragment {
 	 */
 	private void refreshOperationSign() {
 		Log.d(TAG, "refreshOperationSign");
-		if (!mNumpadIsPositive) {
-			plusMinus.setText(getResources().getString(R.string.minus));
+		plusMinus.setText(mSign.toString());
+		Log.d(TAG, "setting sign to: " + mSign.toString());
+		switch (mSign) {
+		case NEGATIVE:
 			plusMinus.setTextColor(getResources().getColor(R.color.red));
-		} else {
-			plusMinus.setText(getResources().getString(R.string.plus));
+			break;
+		default:
 			plusMinus.setTextColor(getResources().getColor(R.color.green));
 		}
 	}
@@ -181,9 +184,9 @@ public class NumpadFragment extends Fragment {
 	 * to handle the event before passing it up to the attached activity
 	 */
 	private void onSignClicked() {
-		Log.d(TAG, "onSignClicked: " + mNumpadIsPositive);
-		setOperationSign(!mNumpadIsPositive);
-		mCallbacks.onSignClicked(mNumpadIsPositive);
+		Log.d(TAG, "onSignClicked: " + mSign.inverse().toString());
+		setOperationSign(mSign.inverse());
+		mCallbacks.onSignClicked(mSign);
 	}
 
 	/**
@@ -218,9 +221,8 @@ public class NumpadFragment extends Fragment {
 		 * the new sign
 		 * 
 		 * @param sign
-		 *            Sign will be true if positive, false if negative
 		 */
-		public void onSignClicked(boolean sign);
+		public void onSignClicked(Sign sign);
 	}
 
 	/**
@@ -228,11 +230,11 @@ public class NumpadFragment extends Fragment {
 	 * represents.
 	 */
 	public static final String ARG_POS_NEG = "pos_neg";
-
+	
 	/**
-	 * Whether the keypad should be positive or negative (default positive)
+	 * The sign of the keypad (default positive)
 	 */
-	private boolean mNumpadIsPositive;
+	private Sign mSign = Sign.POSITIVE;
 
 	/**
 	 * Plus/Minus button reference
@@ -264,7 +266,7 @@ public class NumpadFragment extends Fragment {
 		}
 	
 		@Override
-		public void onSignClicked(boolean sign) {
+		public void onSignClicked(Sign sign) {
 		}
 	};
 
