@@ -161,7 +161,7 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		Log.d(TAG, "onNumberClicked: " + number);
 		adjustAmount += number;
 		Integer amt = getCurrentAdjustAmount();
-		getCurrentPlayerFragment().adjustScore(amt, mSign.isPositive());
+		getCurrentPlayerFragment().adjustScore(amt);
 	}
 
 	@Override
@@ -171,7 +171,7 @@ public class PlayerDetailActivity extends FragmentActivity implements
 			adjustAmount = adjustAmount.substring(0, adjustAmount.length() - 1);
 		}
 		Integer amt = getCurrentAdjustAmount();
-		getCurrentPlayerFragment().adjustScore(amt, mSign.isPositive());
+		getCurrentPlayerFragment().adjustScore(amt);
 	}
 
 	@Override
@@ -192,8 +192,16 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	public void onSignClicked(Sign sign) {
 		Log.d(TAG, "onSignClicked: " + sign.toString());
 		mSign = sign;
-		getCurrentPlayerFragment().adjustScore(getCurrentAdjustAmount(),
-				mSign.isPositive());
+		getCurrentPlayerFragment().adjustScore(getCurrentAdjustAmount());
+	}
+	
+	@Override
+	public void onHistoryClicked() {
+		Log.d(TAG, "onHistoryClicked");
+		long id = getCurrentPlayerFragment().getPlayer().getId();
+		Intent i = new Intent(this, PlayerHistoryListActivity.class);
+		i.putExtra(PlayerHistoryListFragment.ARG_PLAYER_ID, id);
+		startActivity(i);
 	}
 
 	/**
@@ -229,10 +237,9 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	}
 
 	/**
-	 * Set the sign of the numpad to the given boolean value (true for +, false
-	 * for -)
+	 * Set the sign of the numpad to the given Sign
 	 * 
-	 * @param operationIsPositive
+	 * @param sign
 	 */
 	private void setOperationSign(Sign sign) {
 		((NumpadFragment) getSupportFragmentManager().findFragmentById(

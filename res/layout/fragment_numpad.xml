@@ -10,12 +10,21 @@
         android:layout_height="wrap_content"
         android:gravity="right" >
 
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/history" />
+
         <ImageButton
             style="?android:attr/buttonBarButtonStyle"
             android:contentDescription="@string/delete"
             android:id="@+id/delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="10dp"
             android:src="@android:drawable/ic_input_delete" />
 
     </LinearLayout>

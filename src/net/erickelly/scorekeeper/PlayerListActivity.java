@@ -117,10 +117,7 @@ public class PlayerListActivity extends FragmentActivity implements
 	 * @param v
 	 */
 	public void onAdjustScore(View v) {
-		boolean isPositive = true;
-		if (v.getId() == R.id.minus) {
-			isPositive = false;
-		}
+		boolean isPositive = (v.getId() == R.id.plus);
 		RelativeLayout row = ((RelativeLayout) v.getParent());
 		PlayerListFragment listFragment = ((PlayerListFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.player_list));

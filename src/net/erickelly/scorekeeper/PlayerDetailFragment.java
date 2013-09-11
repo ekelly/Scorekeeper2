@@ -158,19 +158,24 @@ public class PlayerDetailFragment extends Fragment {
 	 * Display the score adjust amount
 	 * 
 	 * @param amt
-	 * @param true if the sign is +, false if the sign is - This parameter
-	 *        cannot be guessed from the sign of the amt due to the 0 case
 	 */
-	public void adjustScore(Integer amt, boolean sign) {
+	public void adjustScore(Integer amt) {
 		setScore(mPlayer.getScore());
 		if (amt != null) {
 			setAdjustAmt(amt);
 			setFinalScore(mPlayer.getScore() + amt);
-			setSign(sign);
+			setSign(amt >= 0);
 			setPlayerScoreVisibility(false);
 		} else {
 			setPlayerScoreVisibility(true);
 		}
+	}
+	
+	/**
+	 * Returns the player associated with this detail fragment
+	 */
+	public Player getPlayer() {
+		return mPlayer;
 	}
 
 	/**

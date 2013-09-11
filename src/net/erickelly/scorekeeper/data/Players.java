@@ -31,6 +31,12 @@ public class Players extends ContentProvider {
 	public static final String ADJUST_AMT = "adjust_amt";
 	public static final String SCORE_SUM = "IFNULL(SUM(" + ADJUST_AMT + "), 0) AS " + SCORE;
 	public static final String NOTES = "notes";
+	
+	private static final String COMBINED_PLAYERS_AND_SCORES = PLAYERS_TABLE_NAME 
+			+ " LEFT OUTER JOIN " + "(SELECT MAX(" + _ID + "), " + PLAYER_ID 
+			+ ", " + SCORE + " FROM " + SCORES_TABLE_NAME + " GROUP BY " + PLAYER_ID 
+			+ ") AS " + SCORES_TABLE_NAME + " ON (" + PLAYERS_TABLE_NAME 
+			+ "." + _ID + "=" + SCORES_TABLE_NAME + "." + PLAYER_ID + ")";
 
 	public static final Uri BASE_URI = Uri
 			.parse("content://" + AUTHORITY + "/");
@@ -117,6 +123,10 @@ public class Players extends ContentProvider {
 			table = PLAYERS_TABLE_NAME;
 			break;
 		case SCORES_BY_ID:
+			if (!values.containsKey(PLAYER_ID)) {
+				long player_id = Long.valueOf(uri.getLastPathSegment());
+				values.put(PLAYER_ID, player_id);
+			}
 			id = db.insert(SCORES_TABLE_NAME, null, values);
 			table = SCORES_TABLE_NAME;
 			break;
@@ -165,9 +175,7 @@ public class Players extends ContentProvider {
 			break;
 		case PLAYERS_WITH_SCORE:
 			// Set the table
-			queryBuilder.setTables(PLAYERS_TABLE_NAME + " LEFT OUTER JOIN "
-					+ SCORES_TABLE_NAME + " ON (" + PLAYERS_TABLE_NAME + "."
-					+ _ID + "=" + SCORES_TABLE_NAME + "." + PLAYER_ID + ")");
+			queryBuilder.setTables(COMBINED_PLAYERS_AND_SCORES);
 			groupBy = PLAYERS_TABLE_NAME + "." + _ID;
 			break;
 		default:
@@ -221,19 +229,22 @@ public class Players extends ContentProvider {
 		return rowsUpdated;
 	}
 
+	@SuppressWarnings("unused")
 	private void checkColumns(String[] projection) {
-		String[] available = { _ID, PLAYERS_TABLE_NAME + "." + _ID,
-				SCORES_TABLE_NAME + "." + _ID, NAME,
-				SCORE_SUM, PLAYER_ID, ADJUST_AMT, NOTES };
-		if (projection != null) {
-			HashSet<String> requestedColumns = new HashSet<String>(
-					Arrays.asList(projection));
-			HashSet<String> availableColumns = new HashSet<String>(
-					Arrays.asList(available));
-			// Check if all columns which are requested are available
-			if (!availableColumns.containsAll(requestedColumns)) {
-				throw new IllegalArgumentException(
-						"Unknown columns in projection: " + requestedColumns);
+		if (false) {
+			String[] available = { _ID, PLAYERS_TABLE_NAME + "." + _ID,
+					SCORES_TABLE_NAME + "." + _ID, NAME, SCORE, SCORE_SUM,
+					"IFNULL( " + SCORE + ", 0) AS " + SCORE, PLAYER_ID, ADJUST_AMT, NOTES };
+			if (projection != null) {
+				HashSet<String> requestedColumns = new HashSet<String>(
+						Arrays.asList(projection));
+				HashSet<String> availableColumns = new HashSet<String>(
+						Arrays.asList(available));
+				// Check if all columns which are requested are available
+				if (!availableColumns.containsAll(requestedColumns)) {
+					throw new IllegalArgumentException(
+							"Unknown columns in projection: " + requestedColumns);
+				}
 			}
 		}
 	}

@@ -50,6 +50,7 @@ public class NumpadFragment extends Fragment {
 	
 		ImageButton delete = (ImageButton) rootView.findViewById(R.id.delete);
 		Button enter = (Button) rootView.findViewById(R.id.enter);
+		Button history = (Button) rootView.findViewById(R.id.history);
 	
 		OnClickListener listener = new OnClickListener() {
 			@Override
@@ -79,6 +80,12 @@ public class NumpadFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				onEnterClicked();
+			}
+		});
+		history.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onHistoryClicked();
 			}
 		});
 	
@@ -188,6 +195,15 @@ public class NumpadFragment extends Fragment {
 		setOperationSign(mSign.inverse());
 		mCallbacks.onSignClicked(mSign);
 	}
+	
+	/**
+	 * This function is called when the sign button is clicked, and allows the fragment
+	 * to handle the event before passing it up to the attached activity
+	 */
+	private void onHistoryClicked() {
+		Log.d(TAG, "onHistoryClicked");
+		mCallbacks.onHistoryClicked();
+	}
 
 	/**
 	 * Activities containing a numpad must implement NumpadListener to listen
@@ -223,6 +239,11 @@ public class NumpadFragment extends Fragment {
 		 * @param sign
 		 */
 		public void onSignClicked(Sign sign);
+		
+		/**
+		 * When the history button is clicked, used to see a player's history
+		 */
+		public void onHistoryClicked();
 	}
 
 	/**
@@ -267,6 +288,10 @@ public class NumpadFragment extends Fragment {
 	
 		@Override
 		public void onSignClicked(Sign sign) {
+		}
+		
+		@Override
+		public void onHistoryClicked() {
 		}
 	};
 

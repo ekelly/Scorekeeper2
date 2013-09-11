@@ -190,10 +190,12 @@ public class PlayerListFragment extends ListFragment implements
 
 		mActivatedPosition = position;
 	}
-	
+
 	/**
 	 * Reset the score of the given player
-	 * @param playerId ID of the player to reset
+	 * 
+	 * @param playerId
+	 *            ID of the player to reset
 	 */
 	private void resetPlayer(long playerId) {
 		PlayerManager.getInstance().resetPlayerScore(getActivity(), playerId);
@@ -235,15 +237,19 @@ public class PlayerListFragment extends ListFragment implements
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		// Now create and return a CursorLoader that will take care of
 		// creating a Cursor for the data being displayed.
-		return new CursorLoader(getActivity(), PLAYERS_WITH_SCORE_URI, new String[] {
-				PLAYERS_TABLE_NAME + "." + _ID, NAME, SCORE_SUM, ADJUST_AMT }, null,
-				null, PLAYERS_TABLE_NAME + "." + _ID);
+		Log.d(TAG, "onCreateLoader");
+		return new CursorLoader(getActivity(), PLAYERS_WITH_SCORE_URI,
+				new String[] { PLAYERS_TABLE_NAME + "." + _ID, NAME,
+						"IFNULL(" + SCORE + ", 0) AS " + SCORE }, null, null,
+				PLAYERS_TABLE_NAME + "." + _ID);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		// Swap the new cursor in. (The framework will take care of closing the
 		// old cursor once we return.)
+		Log.d(TAG, "onLoadFinished");
+		Log.d("onLoadFinished: ", String.valueOf(data.getCount()));
 		mAdapter.swapCursor(data);
 	}
 
@@ -287,7 +293,7 @@ public class PlayerListFragment extends ListFragment implements
 		 * Callback for when an item has been selected.
 		 */
 		public void onItemSelected(long id, int position);
-	
+
 		/**
 		 * Callback for when a player's score is being adjusted
 		 */
@@ -302,7 +308,7 @@ public class PlayerListFragment extends ListFragment implements
 		@Override
 		public void onItemSelected(long id, int position) {
 		}
-	
+
 		@Override
 		public void onAdjustScore(View v) {
 		}

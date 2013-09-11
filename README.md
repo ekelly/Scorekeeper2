@@ -7,9 +7,9 @@ Todo:
 =====
 - Add "Notes" functionality
 - Add history functionality (button next to delete which launches history activity for that player)
-- Add history view
 - Nicify detail view
 - Fix performance bugs
+  - Change numpad to tableview
 - Add landscape layout
 - Fix list view selection bug
 - Nicify list view

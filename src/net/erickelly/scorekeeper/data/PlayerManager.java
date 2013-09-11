@@ -96,10 +96,12 @@ public class PlayerManager {
 	 */
 	public void adjustScore(Context c, long playerId, int adjustAmt,
 			String extra) {
+		int score = getPlayerScore(c, playerId);
 		Log.d(TAG, "adjustScore: " + playerId + ", " + adjustAmt + ", " + extra);
 		ContentValues values = new ContentValues();
 		values.put(PLAYER_ID, playerId);
 		values.put(ADJUST_AMT, adjustAmt);
+		values.put(SCORE, score + adjustAmt);
 		if (extra != null) {
 			values.put(NOTES, extra);
 		}
@@ -170,7 +172,7 @@ public class PlayerManager {
 	 *            ID of the player to query
 	 * @return
 	 */
-	private List<Pair<Integer, String>> getPlayerHistory(Context c, long id) {
+	public List<Pair<Integer, String>> getPlayerHistory(Context c, long id) {
 		Cursor cursor = c.getContentResolver().query(
 				Uri.withAppendedPath(SCORES_URI, "/" + id),
 				new String[] { _ID, ADJUST_AMT, NOTES }, null, null, null);
