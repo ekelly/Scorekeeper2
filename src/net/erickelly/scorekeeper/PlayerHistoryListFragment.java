@@ -45,6 +45,7 @@ public class PlayerHistoryListFragment extends ListFragment implements
 					boolean isPositive = cursor.getInt(columnIndex) >= 0;
 					TextView sign = ((TextView) view.findViewById(R.id.plus_minus));
 					sign.setText(isPositive ? Sign.POSITIVE.toString() : Sign.NEGATIVE.toString());
+					return true;
 				}
 				return false;
 			}
