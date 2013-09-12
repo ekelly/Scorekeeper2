@@ -256,7 +256,7 @@ public class PlayerDetailFragment extends Fragment {
 		ActionFocus focus = (v.getId() == R.id.score_container) ? ActionFocus.SCORE
 				: ActionFocus.NOTES;
 		setFocus(focus);
-		mCallbacks.onSwitchFocus(ActionFocus.NOTES);
+		mCallbacks.onSwitchFocus(focus);
 	}
 
 	public interface Callbacks {
