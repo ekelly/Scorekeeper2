@@ -98,6 +98,7 @@ public class Players extends ContentProvider {
 				rowsDeleted = db.delete(SCORES_TABLE_NAME, PLAYER_ID + "=" + id
 						+ " and " + selection, selectionArgs);
 			}
+			getContext().getContentResolver().notifyChange(SCORES_URI, null);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);

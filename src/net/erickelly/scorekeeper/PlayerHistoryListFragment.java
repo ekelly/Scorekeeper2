@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 public class PlayerHistoryListFragment extends ListFragment implements
 		LoaderManager.LoaderCallbacks<Cursor> {
-	
+
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
@@ -29,38 +29,44 @@ public class PlayerHistoryListFragment extends ListFragment implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		if (getArguments().containsKey(ARG_PLAYER_ID)) {
 			mId = getArguments().getLong(ARG_PLAYER_ID);
 		}
 
 		mAdapter = new SimpleCursorAdapter(getActivity(),
-				R.layout.player_history_item, null, new String[] { ADJUST_AMT, ADJUST_AMT, SCORE },
-				new int[] { R.id.adjust_amt, R.id.plus_minus, R.id.total_score }, 0);
+				R.layout.player_history_item, null, new String[] { ADJUST_AMT,
+						ADJUST_AMT, SCORE }, new int[] { R.id.adjust_amt,
+						R.id.plus_minus, R.id.total_score }, 0);
 		mAdapter.setViewBinder(new ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor,
 					int columnIndex) {
 				if (view.getId() == R.id.plus_minus) {
 					boolean isPositive = cursor.getInt(columnIndex) >= 0;
-					TextView sign = ((TextView) view.findViewById(R.id.plus_minus));
-					sign.setText(isPositive ? Sign.POSITIVE.toString() : Sign.NEGATIVE.toString());
+					TextView sign = ((TextView) view
+							.findViewById(R.id.plus_minus));
+					sign.setText(isPositive ? Sign.POSITIVE.toString()
+							: Sign.NEGATIVE.toString());
 					return true;
 				}
 				return false;
 			}
 		});
-		setListAdapter(mAdapter);
 
 		// Prepare the loader. Either re-connect with an existing one,
 		// or start a new one.
 		getLoaderManager().initLoader(0, null, this);
 	}
-	
+
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		getListView().setChoiceMode(ListView.CHOICE_MODE_NONE);
+		ListView lv = getListView();
+		lv.setChoiceMode(ListView.CHOICE_MODE_NONE);
+		lv.addHeaderView(getActivity().getLayoutInflater().inflate(
+				R.layout.player_history_list_header, null));
+		setListAdapter(mAdapter);
 	}
 
 	@Override
@@ -68,8 +74,8 @@ public class PlayerHistoryListFragment extends ListFragment implements
 		// Now create and return a CursorLoader that will take care of
 		// creating a Cursor for the data being displayed.
 		return new CursorLoader(getActivity(), Uri.withAppendedPath(SCORES_URI,
-				"/" + mId), new String[] { _ID, ADJUST_AMT, SCORE }, null, null,
-				null);
+				"/" + mId), new String[] { _ID, ADJUST_AMT, SCORE }, null,
+				null, null);
 	}
 
 	@Override
@@ -92,12 +98,12 @@ public class PlayerHistoryListFragment extends ListFragment implements
 	 * This is the Adapter being used to display the list's data.
 	 */
 	SimpleCursorAdapter mAdapter;
-	
+
 	/**
 	 * This is the id of the player that we're viewing history information about
 	 */
 	private long mId;
-	
+
 	public static final String ARG_PLAYER_ID = "player_id";
 
 	private static final String TAG = "PlayerHistoryListFragment";

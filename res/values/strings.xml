@@ -24,6 +24,7 @@
     <string name="zero">0</string>
     <string name="delete">delete</string>
     <string name="history">history</string>
+    <string name="undo">undo</string>
     <string name="plus">+</string>
     <string name="minus">-</string>
     <string name="posneg">+/-</string>

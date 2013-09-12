@@ -70,9 +70,10 @@ public class PlayerManager {
 		c.getContentResolver().delete(
 				Uri.withAppendedPath(SCORES_URI, "/" + playerId), null, null);
 	}
-	
+
 	/**
 	 * Reset all players scores to 0
+	 * 
 	 * @param c
 	 */
 	public void resetAllPlayers(Context c) {
@@ -96,8 +97,8 @@ public class PlayerManager {
 	 */
 	public void adjustScore(Context c, long playerId, int adjustAmt,
 			String extra) {
-		int score = getPlayerScore(c, playerId);
 		Log.d(TAG, "adjustScore: " + playerId + ", " + adjustAmt + ", " + extra);
+		int score = getPlayerScore(c, playerId);
 		ContentValues values = new ContentValues();
 		values.put(PLAYER_ID, playerId);
 		values.put(ADJUST_AMT, adjustAmt);
@@ -108,6 +109,21 @@ public class PlayerManager {
 		c.getContentResolver()
 				.insert(Uri.withAppendedPath(SCORES_URI,
 						"/" + String.valueOf(playerId)), values);
+	}
+
+	/**
+	 * Undo the last score commit for the player
+	 * 
+	 * @param c
+	 * @param playerId
+	 *            ID of the player to "undo" the last score
+	 */
+	public void undoLastAdjustment(Context c, long playerId) {
+		Log.d(TAG, "undoLastAdjustment: " + playerId);
+		c.getContentResolver().delete(
+				Uri.withAppendedPath(SCORES_URI, "/" + playerId),
+				_ID + " = (SELECT MAX(" + _ID + ") FROM " + SCORES_TABLE_NAME
+						+ " WHERE " + PLAYER_ID + " = " + playerId + ")", null);
 	}
 
 	/**

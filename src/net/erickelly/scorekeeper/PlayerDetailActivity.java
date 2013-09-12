@@ -194,7 +194,7 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		mSign = sign;
 		getCurrentPlayerFragment().adjustScore(getCurrentAdjustAmount());
 	}
-	
+
 	@Override
 	public void onHistoryClicked() {
 		Log.d(TAG, "onHistoryClicked");
@@ -202,6 +202,14 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		Intent i = new Intent(this, PlayerHistoryListActivity.class);
 		i.putExtra(PlayerHistoryListFragment.ARG_PLAYER_ID, id);
 		startActivity(i);
+	}
+
+	@Override
+	public void onUndoClicked() {
+		Log.d(TAG, "onUndoClicked");
+		PlayerManager.getInstance().undoLastAdjustment(this,
+				getCurrentPlayerFragment().getPlayer().getId());
+		getCurrentPlayerFragment().clear();
 	}
 
 	/**

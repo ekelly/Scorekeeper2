@@ -51,6 +51,7 @@ public class NumpadFragment extends Fragment {
 		ImageButton delete = (ImageButton) rootView.findViewById(R.id.delete);
 		Button enter = (Button) rootView.findViewById(R.id.enter);
 		Button history = (Button) rootView.findViewById(R.id.history);
+		Button undo = (Button) rootView.findViewById(R.id.undo);
 	
 		OnClickListener listener = new OnClickListener() {
 			@Override
@@ -86,6 +87,12 @@ public class NumpadFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				onHistoryClicked();
+			}
+		});
+		undo.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onUndoClicked();
 			}
 		});
 	
@@ -204,6 +211,15 @@ public class NumpadFragment extends Fragment {
 		Log.d(TAG, "onHistoryClicked");
 		mCallbacks.onHistoryClicked();
 	}
+	
+	/**
+	 * This function is called when the undo button is clicked, and allows the fragment
+	 * to handle the event before passing it up to the attached activity
+	 */
+	private void onUndoClicked() {
+		Log.d(TAG, "onUndoClicked");
+		mCallbacks.onUndoClicked();
+	}
 
 	/**
 	 * Activities containing a numpad must implement NumpadListener to listen
@@ -244,6 +260,11 @@ public class NumpadFragment extends Fragment {
 		 * When the history button is clicked, used to see a player's history
 		 */
 		public void onHistoryClicked();
+		
+		/**
+		 * When the undo button is clicked, this function is called
+		 */
+		public void onUndoClicked();
 	}
 
 	/**
@@ -292,6 +313,10 @@ public class NumpadFragment extends Fragment {
 		
 		@Override
 		public void onHistoryClicked() {
+		}
+		
+		@Override
+		public void onUndoClicked() {
 		}
 	};
 
