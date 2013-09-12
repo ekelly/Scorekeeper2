@@ -107,6 +107,31 @@ public class PlayerManager {
 			values.put(NOTES, extra);
 		}
 		c.getContentResolver()
+				.update(Uri.withAppendedPath(SCORES_URI,
+						"/" + String.valueOf(playerId)),
+						values,
+						_ID + " = (SELECT MAX(" + _ID + ") FROM "
+								+ SCORES_TABLE_NAME + " WHERE " + PLAYER_ID
+								+ " = " + playerId + ")", null);
+
+	}
+
+	/**
+	 * Update the note associated with the last score
+	 * 
+	 * @param playerId
+	 *            The id of the player to update the score
+	 * @param extra
+	 *            Extra information associated with this round
+	 */
+	public void updateScoreNotes(Context c, long playerId, String extra) {
+		Log.d(TAG, "updateScoreNotes: " + playerId + ", " + extra);
+		int score = getPlayerScore(c, playerId);
+		ContentValues values = new ContentValues();
+		values.put(PLAYER_ID, playerId);
+		values.put(SCORE, score);
+		values.put(NOTES, extra);
+		c.getContentResolver()
 				.insert(Uri.withAppendedPath(SCORES_URI,
 						"/" + String.valueOf(playerId)), values);
 	}
@@ -140,7 +165,9 @@ public class PlayerManager {
 		int score = 0;
 		int adjustAmtColumn = cursor.getColumnIndex(ADJUST_AMT);
 		while (cursor.moveToNext()) {
-			score += cursor.getInt(adjustAmtColumn);
+			try {
+				score += cursor.getInt(adjustAmtColumn);
+			} catch (Exception e) {}
 		}
 		return score;
 	}

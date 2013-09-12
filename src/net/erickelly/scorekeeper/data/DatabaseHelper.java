@@ -10,7 +10,7 @@ import static net.erickelly.scorekeeper.data.Players.*;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "players.db";
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 
 	public static DatabaseHelper getInstance(Context c) {
 		if (mInstance == null) {
@@ -30,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ " TEXT NOT NULL);");
 		db.execSQL("CREATE TABLE " + SCORES_TABLE_NAME + " (" + _ID
 				+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + PLAYER_ID
-				+ " INTEGER NOT NULL, " + ADJUST_AMT + " INTEGER NOT NULL, "
+				+ " INTEGER NOT NULL, " + ADJUST_AMT + " INTEGER, "
 				+ SCORE + " INTEGER NOT NULL, "
 				+ NOTES + " TEXT);");
 		ContentValues cv = new ContentValues();

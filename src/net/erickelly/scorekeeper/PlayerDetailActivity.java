@@ -1,6 +1,7 @@
 package net.erickelly.scorekeeper;
 
 import net.erickelly.scorekeeper.NumpadFragment.NumpadListener;
+import net.erickelly.scorekeeper.data.ActionFocus;
 import net.erickelly.scorekeeper.data.Player;
 import net.erickelly.scorekeeper.data.PlayerManager;
 import net.erickelly.scorekeeper.data.Sign;
@@ -26,7 +27,7 @@ import android.view.MenuItem;
  * a {@link PlayerDetailFragment}.
  */
 public class PlayerDetailActivity extends FragmentActivity implements
-		NumpadListener {
+		NumpadListener, PlayerDetailFragment.Callbacks {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +89,7 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		mSign = Sign.valueOf(getIntent().getExtras().getBoolean(
 				NumpadFragment.ARG_POS_NEG, true));
 
-		returnToList = getIntent().getExtras().getBoolean(ARG_RETURN_TO_LIST,
+		mReturnToList = getIntent().getExtras().getBoolean(ARG_RETURN_TO_LIST,
 				false);
 
 		// Set the keypad to be positive or negative
@@ -159,31 +160,48 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	@Override
 	public void onNumberClicked(String number) {
 		Log.d(TAG, "onNumberClicked: " + number);
-		adjustAmount += number;
-		Integer amt = getCurrentAdjustAmount();
-		getCurrentPlayerFragment().adjustScore(amt);
+		if (mFocus.equals(ActionFocus.SCORE)) {
+			mAdjustAmount += number;
+			Integer amt = getCurrentAdjustAmount();
+			getCurrentPlayerFragment().adjustScore(amt);
+		} else {
+			mNotes += number;
+			getCurrentPlayerFragment().editNotes(mNotes);
+		}
 	}
 
 	@Override
 	public void onDeleteClicked() {
 		Log.d(TAG, "onDeleteClicked");
-		if (adjustAmount.length() > 0) {
-			adjustAmount = adjustAmount.substring(0, adjustAmount.length() - 1);
+		if (mFocus.equals(ActionFocus.SCORE)) {
+			if (mAdjustAmount.length() > 0) {
+				mAdjustAmount = mAdjustAmount.substring(0,
+						mAdjustAmount.length() - 1);
+				Integer amt = getCurrentAdjustAmount();
+				getCurrentPlayerFragment().adjustScore(amt);
+			}
+		} else {
+			if (mNotes.length() > 0) {
+				mNotes = mNotes.substring(0, mNotes.length() - 1);
+				getCurrentPlayerFragment().editNotes(mNotes);
+			}
 		}
-		Integer amt = getCurrentAdjustAmount();
-		getCurrentPlayerFragment().adjustScore(amt);
 	}
 
 	@Override
 	public void onEnterClicked() {
 		Log.d(TAG, "onEnterClicked");
-		Player p = PlayerManager.getInstance().getPlayerByIndex(this,
-				mViewPager.getCurrentItem());
-		PlayerManager.getInstance().adjustScore(this, p.getId(),
-				getCurrentAdjustAmount(), null);
-		clearState(mViewPager.getCurrentItem());
-		Log.d(TAG, "returnToList: " + returnToList);
-		if (returnToList) {
+		if (mFocus.equals(ActionFocus.SCORE)) {
+			Player p = PlayerManager.getInstance().getPlayerByIndex(this,
+					mViewPager.getCurrentItem());
+			PlayerManager.getInstance().adjustScore(this, p.getId(),
+					getCurrentAdjustAmount(), null);
+			clearState(mViewPager.getCurrentItem());
+		} else {
+			updateNote(mNotes);
+		}
+		Log.d(TAG, "returnToList: " + mReturnToList);
+		if (mReturnToList) {
 			this.finish();
 		}
 	}
@@ -191,8 +209,10 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	@Override
 	public void onSignClicked(Sign sign) {
 		Log.d(TAG, "onSignClicked: " + sign.toString());
-		mSign = sign;
-		getCurrentPlayerFragment().adjustScore(getCurrentAdjustAmount());
+		if (mFocus.equals(ActionFocus.SCORE)) {
+			mSign = sign;
+			getCurrentPlayerFragment().adjustScore(getCurrentAdjustAmount());
+		}
 	}
 
 	@Override
@@ -207,9 +227,40 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	@Override
 	public void onUndoClicked() {
 		Log.d(TAG, "onUndoClicked");
-		PlayerManager.getInstance().undoLastAdjustment(this,
-				getCurrentPlayerFragment().getPlayer().getId());
-		getCurrentPlayerFragment().clear();
+		if (mFocus.equals(ActionFocus.SCORE)) {
+			PlayerManager.getInstance().undoLastAdjustment(this,
+					getCurrentPlayerFragment().getPlayer().getId());
+			getCurrentPlayerFragment().clear();
+		} else {
+			updateNote("");
+		}
+	}
+
+	/**
+	 * Update the current player's note
+	 * 
+	 * @param note
+	 */
+	private void updateNote(String note) {
+		updateNote(getCurrentPlayerFragment().getPlayer().getId(), note);
+	}
+
+	/**
+	 * Update the note associated with the given player id
+	 * 
+	 * @param playerId
+	 * @param note
+	 */
+	private void updateNote(long playerId, String note) {
+		PlayerManager.getInstance().updateScoreNotes(this, playerId, note);
+	}
+
+	@Override
+	public void onSwitchFocus(ActionFocus focus) {
+		this.mFocus = focus;
+		// Change undo to clear?
+		// Enter takes you back to "score" focus
+		// +/- sign?
 	}
 
 	/**
@@ -224,9 +275,13 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		Log.d(TAG, "clearState");
 		((PlayerDetailFragment) mViewPager.getAdapter().instantiateItem(
 				mViewPager, previousPagePosition)).clear();
-		adjustAmount = "";
+		updateNote(getPlayerIdByPosition(previousPagePosition), mNotes);
+		mAdjustAmount = "";
+		mNotes = "";
+		mFocus = ActionFocus.SCORE;
 		mSign = Sign.POSITIVE;
 		setOperationSign(mSign);
+		setFocus(mFocus);
 	}
 
 	/**
@@ -236,9 +291,9 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	 *         adjust amount
 	 */
 	private Integer getCurrentAdjustAmount() {
-		if (!adjustAmount.isEmpty()) {
+		if (!mAdjustAmount.isEmpty()) {
 			return Integer.parseInt((mSign.isPositive() ? "" : "-")
-					+ adjustAmount);
+					+ mAdjustAmount);
 		} else {
 			return null;
 		}
@@ -252,6 +307,25 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	private void setOperationSign(Sign sign) {
 		((NumpadFragment) getSupportFragmentManager().findFragmentById(
 				R.id.numpad)).setOperationSign(sign);
+	}
+	
+	/**
+	 * Set the focus of the PlayerDetail view to the given ActionFocus
+	 * 
+	 * @param sign
+	 */
+	private void setFocus(ActionFocus focus) {
+		getCurrentPlayerFragment().setFocus(focus);
+	}
+	
+	/**
+	 * Return the id associated with the position in the viewpager
+	 * @param pos
+	 * @return
+	 */
+	private long getPlayerIdByPosition(int pos) {
+		return ((PlayerDetailFragment) mViewPager.getAdapter().instantiateItem(
+				mViewPager, pos)).getPlayer().getId();
 	}
 
 	/**
@@ -286,9 +360,11 @@ public class PlayerDetailActivity extends FragmentActivity implements
 
 	ViewPager mViewPager;
 
-	private String adjustAmount = "";
+	private String mNotes = "";
+	private String mAdjustAmount = "";
 	private Sign mSign = Sign.POSITIVE;
-	private boolean returnToList = false;
+	private boolean mReturnToList = false;
+	private ActionFocus mFocus = ActionFocus.SCORE;
 
 	private static final String TAG = "PlayerDetailActivity";
 }

@@ -51,6 +51,18 @@ public class Player {
 	public List<Pair<Integer, String>> getHistory() {
 		return this.history;
 	}
+	
+	/**
+	 * Get the latest "notes" field
+	 * @return
+	 */
+	public String getLastNotesField() {
+		String notes = "";
+		if (history.size() > 0) {
+			notes = history.get(history.size() - 1).second;
+		}
+		return notes;
+	}
 
 	/**
 	 * Setter for name

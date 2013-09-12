@@ -6,9 +6,12 @@
     android:orientation="horizontal" >
     
     <LinearLayout 
+        android:id="@+id/notes_container"
+        android:background="@drawable/action_state_background"
 	    android:orientation="vertical"
 	    android:layout_weight="1"
-	    android:layout_width="match_parent"
+	    android:layout_width="0dp"
+	    android:onClick="onFocusChanged"
 	    android:layout_height="match_parent" >
 	    
 	    <TextView 
@@ -19,71 +22,79 @@
 		    tools:context=".PlayerDetailFragment" />
 	
 	</LinearLayout>
-    
-    <TextView
-        android:layout_width="match_parent"
+
+    <FrameLayout
+        android:id="@+id/score_container"
+        android:background="@drawable/action_state_background"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:textSize="48sp"
-        android:layout_weight="1"
-        android:id="@+id/player_score_large"
-        style="@style/ScorecardText" />
-    
-	<LinearLayout 
-	    android:orientation="vertical"
-	    android:id="@+id/player_edit_score"
-	    android:layout_weight="1"
-	    android:visibility="gone"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent" >
-	    
-	    <TextView
-	        android:id="@+id/player_detail"
-	        style="@style/ScorecardText"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        tools:context=".PlayerDetailFragment" />
-	
-	    <LinearLayout
-	        android:orientation="horizontal"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_marginLeft="10dp"
-	        android:layout_marginRight="10dp" >
-	        
-	        <TextView
-	            android:id="@+id/plus_minus"
-	            style="@style/ScorecardText"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_gravity="center"
-			    android:text="@string/plus"
-			    tools:context=".PlayerDetailFragment" />
-	        
-	        <TextView
-	            android:id="@+id/adjust_amt"
-	            style="@style/ScorecardText"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginRight="0dp"
-			    tools:context=".PlayerDetailFragment" />
-	    </LinearLayout>
-	    
-	    <LinearLayout
-	        android:orientation="horizontal"
-	        android:layout_width="match_parent"
-	        android:id="@+id/horizontal_bar"
-	        android:layout_height="1dp"
-	        android:layout_marginLeft="10dp"
-	        android:layout_marginRight="10dp"
-	        android:background="@color/black" />
-	    
-	    <TextView
-	        android:id="@+id/total_score"
-	        style="@style/ScorecardText"
-	        android:layout_width="match_parent"
-	    	android:layout_height="match_parent"
-		    tools:context=".PlayerDetailFragment" />
-	</LinearLayout>
+        android:onClick="onFocusChanged"
+        android:layout_weight="1" >
+
+        <TextView
+            android:id="@+id/player_score_large"
+            style="@style/ScorecardText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="48sp" />
+
+        <LinearLayout
+            android:id="@+id/player_edit_score"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone" >
+
+            <TextView
+                android:id="@+id/player_detail"
+                style="@style/ScorecardText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:context=".PlayerDetailFragment" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/plus_minus"
+                    style="@style/ScorecardText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/plus"
+                    tools:context=".PlayerDetailFragment" />
+
+                <TextView
+                    android:id="@+id/adjust_amt"
+                    style="@style/ScorecardText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="0dp"
+                    tools:context=".PlayerDetailFragment" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/horizontal_bar"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/black"
+                android:orientation="horizontal" >
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/total_score"
+                style="@style/ScorecardText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".PlayerDetailFragment" />
+        </LinearLayout>
+    </FrameLayout>
 	
 </LinearLayout>

@@ -1,20 +1,25 @@
 package net.erickelly.scorekeeper;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import net.erickelly.scorekeeper.data.ActionFocus;
 import net.erickelly.scorekeeper.data.Player;
 import net.erickelly.scorekeeper.data.PlayerManager;
 
 /**
  * A fragment representing a single Player detail screen. This fragment is
  * either contained in a {@link PlayerListActivity} in two-pane mode (on
- * tablets) or a {@link PlayerDetailActivity} on handsets.
+ * tablets) or a {@link PlayerDetailActivity} on handsets. Activities using this
+ * fragment must implement its Callbacks interface
  */
 public class PlayerDetailFragment extends Fragment {
 	/**
@@ -43,6 +48,11 @@ public class PlayerDetailFragment extends Fragment {
 		detailView = (LinearLayout) inflater.inflate(
 				R.layout.fragment_player_detail, container, false);
 
+		scoreContainerView = (FrameLayout) detailView
+				.findViewById(R.id.score_container);
+		notesContainerView = (LinearLayout) detailView
+				.findViewById(R.id.notes_container);
+
 		largeScoreView = (TextView) detailView
 				.findViewById(R.id.player_score_large);
 		scoreView = (TextView) detailView.findViewById(R.id.player_detail);
@@ -55,10 +65,46 @@ public class PlayerDetailFragment extends Fragment {
 
 		if (mPlayer != null) {
 			setScore(mPlayer.getScore());
+			setNotesArea(mPlayer.getLastNotesField());
 			detailView.setTag(mPlayer.getId());
 		}
 
+		notesContainerView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onFocusChanged(v);
+			}
+		});
+		scoreContainerView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onFocusChanged(v);
+			}
+		});
+		scoreContainerView.setSelected(true);
+
 		return detailView;
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+
+		// Activities containing this fragment must implement its callbacks.
+		if (!(activity instanceof Callbacks)) {
+			throw new IllegalStateException(
+					"Activity must implement fragment's callbacks.");
+		}
+
+		mCallbacks = (Callbacks) activity;
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+
+		// Reset the active callbacks interface to the dummy implementation.
+		mCallbacks = sDummyCallbacks;
 	}
 
 	/**
@@ -70,6 +116,7 @@ public class PlayerDetailFragment extends Fragment {
 		setScore(mPlayer.getScore());
 		setAdjustAmt(0);
 		setFinalScore(mPlayer.getScore());
+		setNotesArea(mPlayer.getLastNotesField());
 		setPlayerScoreVisibility(true);
 	}
 
@@ -130,7 +177,6 @@ public class PlayerDetailFragment extends Fragment {
 	 * 
 	 * @param notes
 	 */
-	@SuppressWarnings("unused")
 	private void setNotesArea(String notes) {
 		Log.d(TAG, "setNotesArea: " + notes);
 		if (notesView != null) {
@@ -170,13 +216,66 @@ public class PlayerDetailFragment extends Fragment {
 			setPlayerScoreVisibility(true);
 		}
 	}
-	
+
+	/**
+	 * Display the notes
+	 */
+	public void editNotes(String notes) {
+		setNotesArea(notes);
+	}
+
 	/**
 	 * Returns the player associated with this detail fragment
 	 */
 	public Player getPlayer() {
 		return mPlayer;
 	}
+
+	/**
+	 * Set the focus to the given focus
+	 * 
+	 * @param focus
+	 */
+	public void setFocus(ActionFocus focus) {
+		Log.d(TAG, "setFocus: " + focus);
+		if (scoreContainerView != null && notesContainerView != null) {
+			scoreContainerView.setSelected(focus.equals(ActionFocus.SCORE));
+			notesContainerView.setSelected(focus.equals(ActionFocus.NOTES));
+		}
+	}
+
+	/**
+	 * When a user taps a particular part of the DetailView, this function is
+	 * called. It allows the user to select between typing notes and adjusting a
+	 * player's score
+	 * 
+	 * @param v
+	 */
+	public void onFocusChanged(View v) {
+		// Change the "selected" background color
+		ActionFocus focus = (v.getId() == R.id.score_container) ? ActionFocus.SCORE
+				: ActionFocus.NOTES;
+		setFocus(focus);
+		mCallbacks.onSwitchFocus(ActionFocus.NOTES);
+	}
+
+	public interface Callbacks {
+		/**
+		 * When a user focuses on one action or another (entering notes or
+		 * entering score), this function will be triggered
+		 * 
+		 * @param focus
+		 */
+		public void onSwitchFocus(ActionFocus focus);
+	}
+
+	private static final Callbacks sDummyCallbacks = new Callbacks() {
+		@Override
+		public void onSwitchFocus(ActionFocus focus) {
+		}
+	};
+
+	private static Callbacks mCallbacks = sDummyCallbacks;
 
 	/**
 	 * The fragment argument representing the player ID that this fragment
@@ -190,6 +289,8 @@ public class PlayerDetailFragment extends Fragment {
 	private Player mPlayer;
 	private LinearLayout detailView;
 	private LinearLayout playerEditScoreView;
+	private LinearLayout notesContainerView;
+	private FrameLayout scoreContainerView;
 	private TextView scoreView;
 	private TextView totalScoreView;
 	private TextView signView;

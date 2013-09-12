@@ -1,6 +1,7 @@
 package net.erickelly.scorekeeper;
 
 import net.erickelly.scorekeeper.PlayerNameDialogFragment.PlayerNamePromptListener;
+import net.erickelly.scorekeeper.data.ActionFocus;
 import net.erickelly.scorekeeper.data.PlayerManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,7 +29,7 @@ import android.widget.RelativeLayout;
  * {@link PlayerListFragment.Callbacks} interface to listen for item selections.
  */
 public class PlayerListActivity extends FragmentActivity implements
-		PlayerListFragment.Callbacks {
+		PlayerListFragment.Callbacks, PlayerDetailFragment.Callbacks {
 
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -124,6 +125,12 @@ public class PlayerListActivity extends FragmentActivity implements
 		int index = listFragment.getListView().getPositionForView(row);
 		Long id = listFragment.getListAdapter().getItemId(index);
 		gotoPlayerDetail(index, id, isPositive, true);
+	}
+
+	@Override
+	public void onSwitchFocus(ActionFocus focus) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**
