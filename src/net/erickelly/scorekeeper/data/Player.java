@@ -60,6 +60,8 @@ public class Player {
 		String notes = "";
 		if (history.size() > 0) {
 			notes = history.get(history.size() - 1).second;
+			if (notes == null)
+				notes = "";
 		}
 		return notes;
 	}

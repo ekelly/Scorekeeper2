@@ -37,7 +37,12 @@ public class PlayerDetailFragment extends Fragment {
 		if (getArguments().containsKey(ARG_PLAYER_ID)) {
 			long id = getArguments().getLong(ARG_PLAYER_ID);
 			Log.d(TAG, "Creating fragment for Player@" + id);
-			mPlayer = PlayerManager.getInstance().getPlayer(getActivity(), id);
+			mPlayer = PlayerManager.getPlayer(getActivity(), id);
+		}
+		
+		if (getArguments().containsKey(ARG_NOTES)) {
+			mUsingNotes = getArguments().getBoolean(ARG_NOTES);
+			Log.d(TAG, mUsingNotes ? "Using notes" : "Not using notes");
 		}
 	}
 
@@ -45,13 +50,17 @@ public class PlayerDetailFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		Log.d(TAG, "onCreateView");
-		detailView = (LinearLayout) inflater.inflate(
-				R.layout.fragment_player_detail, container, false);
+		
+		if (mUsingNotes) {
+			detailView = (LinearLayout) inflater.inflate(
+					R.layout.fragment_player_detail, container, false);
+		} else {
+			detailView = (LinearLayout) inflater.inflate(
+					R.layout.fragment_player_detail_no_notes, container, false);
+		}
 
 		scoreContainerView = (FrameLayout) detailView
 				.findViewById(R.id.score_container);
-		notesContainerView = (LinearLayout) detailView
-				.findViewById(R.id.notes_container);
 
 		largeScoreView = (TextView) detailView
 				.findViewById(R.id.player_score_large);
@@ -59,7 +68,6 @@ public class PlayerDetailFragment extends Fragment {
 		totalScoreView = (TextView) detailView.findViewById(R.id.total_score);
 		signView = (TextView) detailView.findViewById(R.id.plus_minus);
 		adjustAmtView = (TextView) detailView.findViewById(R.id.adjust_amt);
-		notesView = (TextView) detailView.findViewById(R.id.score_notes);
 		playerEditScoreView = (LinearLayout) detailView
 				.findViewById(R.id.player_edit_score);
 
@@ -69,18 +77,25 @@ public class PlayerDetailFragment extends Fragment {
 			detailView.setTag(mPlayer.getId());
 		}
 
-		notesContainerView.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onFocusChanged(v);
-			}
-		});
-		scoreContainerView.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onFocusChanged(v);
-			}
-		});
+		if (mUsingNotes) {
+			notesContainerView = (LinearLayout) detailView
+					.findViewById(R.id.notes_container);
+			notesView = (TextView) detailView.findViewById(R.id.score_notes);
+			notesContainerView.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					onFocusChanged(v);
+				}
+			});
+			
+			scoreContainerView.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					onFocusChanged(v);
+				}
+			});
+		}
+		
 		scoreContainerView.setSelected(true);
 
 		return detailView;
@@ -111,13 +126,19 @@ public class PlayerDetailFragment extends Fragment {
 	 * Reset the displayed score to the player's actual current score
 	 */
 	public void clear() {
-		mPlayer = PlayerManager.getInstance().getPlayer(getActivity(),
-				mPlayer.getId());
+		refreshPlayer();
 		setScore(mPlayer.getScore());
 		setAdjustAmt(0);
 		setFinalScore(mPlayer.getScore());
 		setNotesArea(mPlayer.getLastNotesField());
 		setPlayerScoreVisibility(true);
+	}
+	
+	/**
+	 * Reloads the player with the latest information from the database
+	 */
+	public void refreshPlayer() {
+		mPlayer = PlayerManager.getPlayer(getActivity(), mPlayer.getId());
 	}
 
 	/**
@@ -220,7 +241,7 @@ public class PlayerDetailFragment extends Fragment {
 	/**
 	 * Display the notes
 	 */
-	public void editNotes(String notes) {
+	public void setNotes(String notes) {
 		setNotesArea(notes);
 	}
 
@@ -282,6 +303,12 @@ public class PlayerDetailFragment extends Fragment {
 	 * represents.
 	 */
 	public static final String ARG_PLAYER_ID = "player_id";
+	
+	/**
+	 * The fragment argument representing whether the notes/bidding area
+	 * will be displayed
+	 */
+	public static final String ARG_NOTES = "notes";
 
 	/**
 	 * The Player which is being shown
@@ -297,6 +324,8 @@ public class PlayerDetailFragment extends Fragment {
 	private TextView adjustAmtView;
 	private TextView notesView;
 	private TextView largeScoreView;
+	
+	private boolean mUsingNotes = false;
 
 	private static final String TAG = "PlayerDetailFragment";
 }

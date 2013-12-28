@@ -5,6 +5,7 @@ import net.erickelly.scorekeeper.data.ActionFocus;
 import net.erickelly.scorekeeper.data.PlayerManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -41,6 +42,9 @@ public class PlayerListActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_player_list);
+		
+		// Make sure the settings are set to their default values on initial launch
+		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
 		if (findViewById(R.id.player_detail_container) != null) {
 			// The detail container view will be present only in the
@@ -81,6 +85,9 @@ public class PlayerListActivity extends FragmentActivity implements
 			return true;
 		case R.id.menu_reset_players:
 			resetPlayers();
+			return true;
+		case R.id.menu_settings:
+			launchSettings();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -159,7 +166,7 @@ public class PlayerListActivity extends FragmentActivity implements
 	 * Reset the scores of all the players
 	 */
 	private void resetPlayers() {
-		PlayerManager.getInstance().resetAllPlayers(this);
+		PlayerManager.resetAllPlayers(this);
 	}
 
 	/**
@@ -167,6 +174,15 @@ public class PlayerListActivity extends FragmentActivity implements
 	 */
 	private void addPlayer(String playerName) {
 		PlayerManager.getInstance().addPlayer(this, playerName);
+	}
+	
+	/**
+	 * Launch the settings activity
+	 */
+	private void launchSettings() {
+		Log.d(TAG, "launchSettings");
+		Intent i = new Intent(this, SettingsActivity.class);
+		startActivity(i);
 	}
 
 	/**

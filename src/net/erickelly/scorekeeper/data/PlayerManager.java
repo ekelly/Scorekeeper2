@@ -49,13 +49,30 @@ public class PlayerManager {
 	public void deletePlayer(Context c, long id) {
 		Log.d(TAG, "deletePlayer: " + id);
 		resetPlayerScore(c, id);
-		c.getContentResolver().delete(
-				Uri.withAppendedPath(PLAYERS_URI, "/" + id), null, null);
+		c.getContentResolver()
+				.delete(Uri.withAppendedPath(PLAYERS_URI, appendedPath(id)),
+						null, null);
 		if (mPlayerCount == null) {
 			mPlayerCount = getPlayerCount(c);
 		} else {
 			mPlayerCount--;
 		}
+	}
+
+	/**
+	 * Get the player count
+	 * 
+	 * @return The total number of players
+	 */
+	public int getPlayerCount(Context c) {
+		// Log.d(TAG, "getPlayerCount");
+		if (mPlayerCount == null) {
+			Cursor cursor = c.getContentResolver().query(PLAYERS_URI,
+					new String[] { _ID, NAME }, null, null, null);
+			mPlayerCount = cursor.getCount();
+			cursor.close();
+		}
+		return mPlayerCount;
 	}
 
 	/**
@@ -65,10 +82,11 @@ public class PlayerManager {
 	 * @param playerId
 	 *            ID of the player to reset
 	 */
-	public void resetPlayerScore(Context c, long playerId) {
+	public static void resetPlayerScore(Context c, long playerId) {
 		Log.d(TAG, "resetPlayerScore: " + playerId);
 		c.getContentResolver().delete(
-				Uri.withAppendedPath(SCORES_URI, "/" + playerId), null, null);
+				Uri.withAppendedPath(SCORES_URI, appendedPath(playerId)), null,
+				null);
 	}
 
 	/**
@@ -76,7 +94,7 @@ public class PlayerManager {
 	 * 
 	 * @param c
 	 */
-	public void resetAllPlayers(Context c) {
+	public static void resetAllPlayers(Context c) {
 		Cursor cursor = getAllPlayers(c);
 		final int idColumn = cursor.getColumnIndex(_ID);
 		while (cursor.moveToNext()) {
@@ -94,9 +112,11 @@ public class PlayerManager {
 	 *            The amount with which to update the score
 	 * @param extra
 	 *            Extra information associated with this round
+	 * @param update
+	 *            Should this update an existing record or insert a new record?
 	 */
-	public void adjustScore(Context c, long playerId, int adjustAmt,
-			String extra) {
+	public static void adjustScore(Context c, long playerId, int adjustAmt,
+			String extra, boolean update) {
 		Log.d(TAG, "adjustScore: " + playerId + ", " + adjustAmt + ", " + extra);
 		int score = getPlayerScore(c, playerId);
 		ContentValues values = new ContentValues();
@@ -106,14 +126,15 @@ public class PlayerManager {
 		if (extra != null) {
 			values.put(NOTES, extra);
 		}
-		c.getContentResolver()
-				.update(Uri.withAppendedPath(SCORES_URI,
-						"/" + String.valueOf(playerId)),
-						values,
-						_ID + " = (SELECT MAX(" + _ID + ") FROM "
-								+ SCORES_TABLE_NAME + " WHERE " + PLAYER_ID
-								+ " = " + playerId + ")", null);
-
+		if (update) {
+			c.getContentResolver().update(
+					Uri.withAppendedPath(SCORES_URI, appendedPath(playerId)),
+					values, where(playerId), null);
+		} else {
+			c.getContentResolver().insert(
+					Uri.withAppendedPath(SCORES_URI, appendedPath(playerId)),
+					values);
+		}
 	}
 
 	/**
@@ -123,17 +144,26 @@ public class PlayerManager {
 	 *            The id of the player to update the score
 	 * @param extra
 	 *            Extra information associated with this round
+	 * @param update
+	 *            Should this update an existing record or insert a new record?
 	 */
-	public void updateScoreNotes(Context c, long playerId, String extra) {
+	public static void updateScoreNotes(Context c, long playerId, String extra,
+			boolean update) {
 		Log.d(TAG, "updateScoreNotes: " + playerId + ", " + extra);
 		int score = getPlayerScore(c, playerId);
 		ContentValues values = new ContentValues();
 		values.put(PLAYER_ID, playerId);
 		values.put(SCORE, score);
 		values.put(NOTES, extra);
-		c.getContentResolver()
-				.insert(Uri.withAppendedPath(SCORES_URI,
-						"/" + String.valueOf(playerId)), values);
+		if (update) {
+			c.getContentResolver().update(
+					Uri.withAppendedPath(SCORES_URI, appendedPath(playerId)),
+					values, where(playerId), null);
+		} else {
+			c.getContentResolver().insert(
+					Uri.withAppendedPath(SCORES_URI, appendedPath(playerId)),
+					values);
+		}
 	}
 
 	/**
@@ -143,7 +173,7 @@ public class PlayerManager {
 	 * @param playerId
 	 *            ID of the player to "undo" the last score
 	 */
-	public void undoLastAdjustment(Context c, long playerId) {
+	public static void undoLastAdjustment(Context c, long playerId) {
 		Log.d(TAG, "undoLastAdjustment: " + playerId);
 		c.getContentResolver().delete(
 				Uri.withAppendedPath(SCORES_URI, "/" + playerId),
@@ -157,17 +187,18 @@ public class PlayerManager {
 	 * @param playerId
 	 *            The id of the player to update the score
 	 */
-	public int getPlayerScore(Context c, long playerId) {
+	public static int getPlayerScore(Context c, long playerId) {
 		Log.d(TAG, "getPlayerScore: " + playerId);
 		Cursor cursor = c.getContentResolver().query(
-				Uri.withAppendedPath(SCORES_URI, "/" + playerId),
+				Uri.withAppendedPath(SCORES_URI, appendedPath(playerId)),
 				new String[] { PLAYER_ID, ADJUST_AMT }, null, null, null);
 		int score = 0;
 		int adjustAmtColumn = cursor.getColumnIndex(ADJUST_AMT);
 		while (cursor.moveToNext()) {
 			try {
 				score += cursor.getInt(adjustAmtColumn);
-			} catch (Exception e) {}
+			} catch (Exception e) {
+			}
 		}
 		return score;
 	}
@@ -180,13 +211,14 @@ public class PlayerManager {
 	 * @param playerName
 	 *            The new name of the player
 	 */
-	public void editPlayerName(Context c, long playerId, String playerName) {
+	public static void editPlayerName(Context c, long playerId,
+			String playerName) {
 		Log.d(TAG, "editPlayerName: " + playerId + ", " + playerName);
 		ContentValues values = new ContentValues();
 		values.put(NAME, playerName);
 		c.getContentResolver().update(
-				Uri.withAppendedPath(PLAYERS_URI,
-						"/" + String.valueOf(playerId)), values, null, null);
+				Uri.withAppendedPath(PLAYERS_URI, appendedPath(playerId)),
+				values, null, null);
 	}
 
 	/**
@@ -195,10 +227,10 @@ public class PlayerManager {
 	 * @param playerId
 	 * @return
 	 */
-	public Player getPlayer(Context c, long playerId) {
+	public static Player getPlayer(Context c, long playerId) {
 		Log.d(TAG, "getPlayer: " + playerId);
 		Cursor cursor = c.getContentResolver().query(
-				Uri.withAppendedPath(PLAYERS_URI, "/" + playerId),
+				Uri.withAppendedPath(PLAYERS_URI, appendedPath(playerId)),
 				new String[] { _ID, NAME }, null, null, null);
 		cursor.moveToFirst();
 		String name = cursor.getString(cursor.getColumnIndex(NAME));
@@ -215,9 +247,10 @@ public class PlayerManager {
 	 *            ID of the player to query
 	 * @return
 	 */
-	public List<Pair<Integer, String>> getPlayerHistory(Context c, long id) {
+	public static List<Pair<Integer, String>> getPlayerHistory(Context c,
+			long id) {
 		Cursor cursor = c.getContentResolver().query(
-				Uri.withAppendedPath(SCORES_URI, "/" + id),
+				Uri.withAppendedPath(SCORES_URI, appendedPath(id)),
 				new String[] { _ID, ADJUST_AMT, NOTES }, null, null, null);
 		List<Pair<Integer, String>> history = new LinkedList<Pair<Integer, String>>();
 		while (cursor.moveToNext()) {
@@ -235,7 +268,7 @@ public class PlayerManager {
 	 * @param playerId
 	 * @return
 	 */
-	public Player getPlayerByIndex(Context c, int idx) {
+	public static Player getPlayerByIndex(Context c, int idx) {
 		Log.d(TAG, "getPlayerByIndex: " + idx);
 		Cursor cursor = c.getContentResolver().query(PLAYERS_URI,
 				new String[] { _ID, NAME }, null, null, null);
@@ -257,26 +290,33 @@ public class PlayerManager {
 	 * 
 	 * @return Cursor
 	 */
-	public Cursor getAllPlayers(Context c) {
+	public static Cursor getAllPlayers(Context c) {
 		Log.d(TAG, "getAllPlayers");
 		return c.getContentResolver().query(PLAYERS_URI,
 				new String[] { _ID, NAME }, null, null, null);
 	}
 
 	/**
-	 * Get the player count
+	 * Given a player id, return the string identifying that player to be
+	 * appended to the URI
 	 * 
-	 * @return The total number of players
+	 * @param playerId
+	 * @return
 	 */
-	public int getPlayerCount(Context c) {
-		Log.d(TAG, "getPlayerCount");
-		if (mPlayerCount == null) {
-			Cursor cursor = c.getContentResolver().query(PLAYERS_URI,
-					new String[] { _ID, NAME }, null, null, null);
-			mPlayerCount = cursor.getCount();
-			cursor.close();
-		}
-		return mPlayerCount;
+	private static String appendedPath(long playerId) {
+		return "/" + String.valueOf(playerId);
+	}
+
+	/**
+	 * Return the String where clause which reduces the scores table to the
+	 * single last-added row (for the given player)
+	 * 
+	 * @param playerId
+	 * @return
+	 */
+	private static String where(long playerId) {
+		return _ID + " = (SELECT MAX(" + _ID + ") FROM " + SCORES_TABLE_NAME
+				+ " WHERE " + PLAYER_ID + " = " + playerId + ")";
 	}
 
 	/**

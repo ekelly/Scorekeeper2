@@ -198,7 +198,7 @@ public class PlayerListFragment extends ListFragment implements
 	 *            ID of the player to reset
 	 */
 	private void resetPlayer(long playerId) {
-		PlayerManager.getInstance().resetPlayerScore(getActivity(), playerId);
+		PlayerManager.resetPlayerScore(getActivity(), playerId);
 	}
 
 	/**
@@ -217,8 +217,7 @@ public class PlayerListFragment extends ListFragment implements
 	 */
 	private void editPlayerName(final long playerId) {
 		Log.d(TAG, "editPlayerName: " + playerId);
-		Player p = PlayerManager.getInstance().getPlayer(getActivity(),
-				playerId);
+		Player p = PlayerManager.getPlayer(getActivity(), playerId);
 		PlayerNameDialogFragment.newInstance(new PlayerNamePromptListener() {
 			/**
 			 * When the new player's name is entered, this method is called. Use
@@ -226,8 +225,7 @@ public class PlayerListFragment extends ListFragment implements
 			 */
 			@Override
 			public void onPlayerNameEntry(String name) {
-				PlayerManager.getInstance().editPlayerName(getActivity(),
-						playerId, name);
+				PlayerManager.editPlayerName(getActivity(), playerId, name);
 				mAdapter.notifyDataSetChanged();
 			}
 		}, p.getName()).show(getFragmentManager(), "EditPlayerName");

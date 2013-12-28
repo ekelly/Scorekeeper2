@@ -10,6 +10,7 @@
     <string name="edit_player">Edit Player</string>
     <string name="reset_player">Reset Player</string>
     <string name="reset_players">Reset Players</string>
+    <string name="settings">Settings</string>
 
     <!-- NumpadFragment -->
     <string name="one">1</string>
@@ -25,6 +26,7 @@
     <string name="delete">delete</string>
     <string name="history">history</string>
     <string name="undo">undo</string>
+    <string name="clear">clear</string>
     <string name="plus">+</string>
     <string name="minus">-</string>
     <string name="posneg">+/-</string>
@@ -37,4 +39,9 @@
     <string name="player_name">Player Name</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    
+    <!-- Settings -->
+    <string name="bidding_title">Bidding</string>
+    <string name="bidding_enabled">Bidding area is enabled</string>
+    <string name="bidding_disabled">Bidding area is disabled</string>
 </resources>

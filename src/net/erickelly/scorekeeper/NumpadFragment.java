@@ -1,5 +1,6 @@
 package net.erickelly.scorekeeper;
 
+import net.erickelly.scorekeeper.data.ActionFocus;
 import net.erickelly.scorekeeper.data.Sign;
 import android.app.Activity;
 import android.os.Bundle;
@@ -19,12 +20,12 @@ import android.widget.ImageButton;
  * 
  */
 public class NumpadFragment extends Fragment {
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "onCreate");
-	
+
 		if (getArguments() != null && getArguments().containsKey(ARG_POS_NEG)) {
 			mSign = Sign.valueOf(getArguments().getBoolean(ARG_POS_NEG, true));
 		}
@@ -36,7 +37,7 @@ public class NumpadFragment extends Fragment {
 		Log.d(TAG, "onCreateView");
 		View rootView = inflater.inflate(R.layout.fragment_numpad, container,
 				false);
-	
+
 		Button oneButton = (Button) rootView.findViewById(R.id.one);
 		Button twoButton = (Button) rootView.findViewById(R.id.two);
 		Button threeButton = (Button) rootView.findViewById(R.id.three);
@@ -47,12 +48,12 @@ public class NumpadFragment extends Fragment {
 		Button eightButton = (Button) rootView.findViewById(R.id.eight);
 		Button nineButton = (Button) rootView.findViewById(R.id.nine);
 		Button zeroButton = (Button) rootView.findViewById(R.id.zero);
-	
+
 		ImageButton delete = (ImageButton) rootView.findViewById(R.id.delete);
 		Button enter = (Button) rootView.findViewById(R.id.enter);
 		Button history = (Button) rootView.findViewById(R.id.history);
 		Button undo = (Button) rootView.findViewById(R.id.undo);
-	
+
 		OnClickListener listener = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -70,7 +71,7 @@ public class NumpadFragment extends Fragment {
 		eightButton.setOnClickListener(listener);
 		nineButton.setOnClickListener(listener);
 		zeroButton.setOnClickListener(listener);
-	
+
 		delete.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -95,7 +96,7 @@ public class NumpadFragment extends Fragment {
 				onUndoClicked();
 			}
 		});
-	
+
 		plusMinus = (Button) rootView.findViewById(R.id.plus_minus);
 		plusMinus.setOnClickListener(new OnClickListener() {
 			@Override
@@ -104,27 +105,27 @@ public class NumpadFragment extends Fragment {
 			}
 		});
 		refreshOperationSign();
-	
+
 		return rootView;
 	}
 
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-	
+
 		// Activities containing this fragment must implement its callbacks.
 		if (!(activity instanceof NumpadListener)) {
 			throw new IllegalStateException(
 					"Activity must implement fragment's callbacks.");
 		}
-	
+
 		mCallbacks = (NumpadListener) activity;
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
-	
+
 		// Reset the active callbacks interface to the dummy implementation.
 		mCallbacks = sDummyCallbacks;
 	}
@@ -145,6 +146,23 @@ public class NumpadFragment extends Fragment {
 		Log.d(TAG, "setOperationSign");
 		mSign = sign;
 		refreshOperationSign();
+	}
+
+	/**
+	 * Set the text of the undo button to the appropriate label given the
+	 * current focus
+	 * 
+	 * @param focus
+	 */
+	public void setUndoText(ActionFocus focus) {
+		Button undo = (Button) getView().findViewById(R.id.undo);
+		switch (focus) {
+		case NOTES:
+			undo.setText(getResources().getString(R.string.clear));
+			break;
+		default:
+			undo.setText(getResources().getString(R.string.undo));
+		}
 	}
 
 	/**
@@ -185,8 +203,8 @@ public class NumpadFragment extends Fragment {
 	}
 
 	/**
-	 * This function is called when enter is clicked, and allows the fragment
-	 * to handle the event before passing it up to the attached activity
+	 * This function is called when enter is clicked, and allows the fragment to
+	 * handle the event before passing it up to the attached activity
 	 */
 	private void onEnterClicked() {
 		Log.d(TAG, "onEnterClicked");
@@ -194,27 +212,30 @@ public class NumpadFragment extends Fragment {
 	}
 
 	/**
-	 * This function is called when the sign button is clicked, and allows the fragment
-	 * to handle the event before passing it up to the attached activity
+	 * This function is called when the sign button is clicked, and allows the
+	 * fragment to handle the event before passing it up to the attached
+	 * activity
 	 */
 	private void onSignClicked() {
 		Log.d(TAG, "onSignClicked: " + mSign.inverse().toString());
 		setOperationSign(mSign.inverse());
 		mCallbacks.onSignClicked(mSign);
 	}
-	
+
 	/**
-	 * This function is called when the sign button is clicked, and allows the fragment
-	 * to handle the event before passing it up to the attached activity
+	 * This function is called when the sign button is clicked, and allows the
+	 * fragment to handle the event before passing it up to the attached
+	 * activity
 	 */
 	private void onHistoryClicked() {
 		Log.d(TAG, "onHistoryClicked");
 		mCallbacks.onHistoryClicked();
 	}
-	
+
 	/**
-	 * This function is called when the undo button is clicked, and allows the fragment
-	 * to handle the event before passing it up to the attached activity
+	 * This function is called when the undo button is clicked, and allows the
+	 * fragment to handle the event before passing it up to the attached
+	 * activity
 	 */
 	private void onUndoClicked() {
 		Log.d(TAG, "onUndoClicked");
@@ -237,17 +258,17 @@ public class NumpadFragment extends Fragment {
 		 *            The String representation of the tapped number
 		 */
 		public void onNumberClicked(String number);
-	
+
 		/**
 		 * When the delete button is clicked, this function will be called
 		 */
 		public void onDeleteClicked();
-	
+
 		/**
 		 * When the enter button is clicked, this function will be called
 		 */
 		public void onEnterClicked();
-	
+
 		/**
 		 * When the change sign button is clicked, this number is called with
 		 * the new sign
@@ -255,12 +276,12 @@ public class NumpadFragment extends Fragment {
 		 * @param sign
 		 */
 		public void onSignClicked(Sign sign);
-		
+
 		/**
 		 * When the history button is clicked, used to see a player's history
 		 */
 		public void onHistoryClicked();
-		
+
 		/**
 		 * When the undo button is clicked, this function is called
 		 */
@@ -272,7 +293,7 @@ public class NumpadFragment extends Fragment {
 	 * represents.
 	 */
 	public static final String ARG_POS_NEG = "pos_neg";
-	
+
 	/**
 	 * The sign of the keypad (default positive)
 	 */
@@ -294,27 +315,27 @@ public class NumpadFragment extends Fragment {
 	 * nothing. Used only when this fragment is not attached to an activity.
 	 */
 	private static NumpadListener sDummyCallbacks = new NumpadListener() {
-	
+
 		@Override
 		public void onNumberClicked(String number) {
 		}
-	
+
 		@Override
 		public void onDeleteClicked() {
 		}
-	
+
 		@Override
 		public void onEnterClicked() {
 		}
-	
+
 		@Override
 		public void onSignClicked(Sign sign) {
 		}
-		
+
 		@Override
 		public void onHistoryClicked() {
 		}
-		
+
 		@Override
 		public void onUndoClicked() {
 		}

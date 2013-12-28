@@ -23,6 +23,13 @@
             tools:context=".PlayerHistoryListFragment" />
 
         <TextView
+            android:id="@+id/notes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/unselected_background"
+            style="@style/ScorecardText" />
+
+        <TextView
             android:id="@+id/adjust_amt"
             style="@style/ScorecardText"
             android:layout_width="match_parent"

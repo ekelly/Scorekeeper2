@@ -9,6 +9,9 @@ public class PlayerHistoryListActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_player_history);
+		
+		// Show the Up button in the action bar.
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// Check whether the activity is using the layout version with
 		// the fragment_container FrameLayout. If so, we must add the first
