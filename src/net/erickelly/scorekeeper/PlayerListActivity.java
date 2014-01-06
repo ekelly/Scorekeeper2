@@ -42,8 +42,9 @@ public class PlayerListActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_player_list);
-		
-		// Make sure the settings are set to their default values on initial launch
+
+		// Make sure the settings are set to their default values on initial
+		// launch
 		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
 		if (findViewById(R.id.player_detail_container) != null) {
@@ -137,7 +138,7 @@ public class PlayerListActivity extends FragmentActivity implements
 	@Override
 	public void onSwitchFocus(ActionFocus focus) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/**
@@ -150,9 +151,10 @@ public class PlayerListActivity extends FragmentActivity implements
 	 * @param isPositive
 	 *            Should the numpad be positive?
 	 * @param returnToList
-	 * 	          Should hitting enter cause the screen to return to this list
+	 *            Should hitting enter cause the screen to return to this list
 	 */
-	private void gotoPlayerDetail(int index, long id, boolean isPositive, boolean returnToList) {
+	private void gotoPlayerDetail(int index, long id, boolean isPositive,
+			boolean returnToList) {
 		Log.d(TAG, "gotoPlayerDetail: " + index + ", " + id + ", " + isPositive);
 		Intent i = new Intent(this, PlayerDetailActivity.class);
 		i.putExtra(PlayerDetailActivity.ARG_PLAYER_INDEX, index);
@@ -161,7 +163,7 @@ public class PlayerListActivity extends FragmentActivity implements
 		i.putExtra(PlayerDetailActivity.ARG_RETURN_TO_LIST, returnToList);
 		startActivity(i);
 	}
-	
+
 	/**
 	 * Reset the scores of all the players
 	 */
@@ -175,7 +177,7 @@ public class PlayerListActivity extends FragmentActivity implements
 	private void addPlayer(String playerName) {
 		PlayerManager.getInstance().addPlayer(this, playerName);
 	}
-	
+
 	/**
 	 * Launch the settings activity
 	 */

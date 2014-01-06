@@ -8,5 +8,7 @@
     http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
     -->
     <item name="activity_player_list" type="layout">@layout/activity_player_twopane</item>
+    <item name="activity_player_detail" type="layout">@layout/activity_player_detail_twopane</item>
+    <item name="player_list_item" type="layout">@layout/player_list_item_twopane</item>
 
 </resources>

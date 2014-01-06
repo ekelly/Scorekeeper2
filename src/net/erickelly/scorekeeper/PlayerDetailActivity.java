@@ -296,7 +296,7 @@ public class PlayerDetailActivity extends FragmentActivity implements
 
 	/**
 	 * Resets the state of the given fragment position. When switching between
-	 * players using the view flipper, the player you are exiting must have its
+	 * players using the view pager, the player you are exiting must have its
 	 * unsaved state cleared. This resets the view, temporary adjust amount, and
 	 * default operation sign.
 	 * 
@@ -304,7 +304,7 @@ public class PlayerDetailActivity extends FragmentActivity implements
 	 */
 	private void clearState(int previousPagePosition) {
 		Log.d(TAG, "clearState");
-		// TODO: Do this in the background
+		// TODO: Do this in the background?
 
 		// Reset the old fragment
 		PlayerDetailFragment fragment = ((PlayerDetailFragment) mViewPager

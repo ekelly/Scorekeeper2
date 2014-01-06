@@ -226,6 +226,8 @@ public class Players extends ContentProvider {
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
+		getContext().getContentResolver().notifyChange(PLAYERS_WITH_SCORE_URI,
+				null);
 		getContext().getContentResolver().notifyChange(uri, null);
 		return rowsUpdated;
 	}
