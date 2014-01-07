@@ -1,5 +1,15 @@
 package net.erickelly.scorekeeper.data;
 
+import static net.erickelly.scorekeeper.data.Players.ADJUST_AMT;
+import static net.erickelly.scorekeeper.data.Players.NAME;
+import static net.erickelly.scorekeeper.data.Players.NOTES;
+import static net.erickelly.scorekeeper.data.Players.PLAYERS_URI;
+import static net.erickelly.scorekeeper.data.Players.PLAYER_ID;
+import static net.erickelly.scorekeeper.data.Players.SCORE;
+import static net.erickelly.scorekeeper.data.Players.SCORES_TABLE_NAME;
+import static net.erickelly.scorekeeper.data.Players.SCORES_URI;
+import static net.erickelly.scorekeeper.data.Players._ID;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,7 +19,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 import android.util.Pair;
-import static net.erickelly.scorekeeper.data.Players.*;
 
 /**
  * This class encapsulates all player management

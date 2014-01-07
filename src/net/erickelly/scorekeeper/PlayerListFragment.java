@@ -1,13 +1,20 @@
 package net.erickelly.scorekeeper;
 
-import static net.erickelly.scorekeeper.data.Players.*;
+import static net.erickelly.scorekeeper.data.Players.NAME;
+import static net.erickelly.scorekeeper.data.Players.PLAYERS_TABLE_NAME;
+import static net.erickelly.scorekeeper.data.Players.PLAYERS_WITH_SCORE_URI;
+import static net.erickelly.scorekeeper.data.Players.SCORE;
+import static net.erickelly.scorekeeper.data.Players._ID;
+import net.erickelly.scorekeeper.PlayerNameDialogFragment.PlayerNamePromptListener;
+import net.erickelly.scorekeeper.data.Player;
+import net.erickelly.scorekeeper.data.PlayerManager;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.app.LoaderManager;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -17,9 +24,6 @@ import android.view.View;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import net.erickelly.scorekeeper.PlayerNameDialogFragment.PlayerNamePromptListener;
-import net.erickelly.scorekeeper.data.Player;
-import net.erickelly.scorekeeper.data.PlayerManager;
 
 /**
  * A list fragment representing a list of Players. This fragment also supports

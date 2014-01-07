@@ -1,5 +1,8 @@
 package net.erickelly.scorekeeper;
 
+import net.erickelly.scorekeeper.data.ActionFocus;
+import net.erickelly.scorekeeper.data.Player;
+import net.erickelly.scorekeeper.data.PlayerManager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,9 +14,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import net.erickelly.scorekeeper.data.ActionFocus;
-import net.erickelly.scorekeeper.data.Player;
-import net.erickelly.scorekeeper.data.PlayerManager;
 
 /**
  * A fragment representing a single Player detail screen. This fragment is

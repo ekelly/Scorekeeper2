@@ -1,11 +1,17 @@
 package net.erickelly.scorekeeper.data;
 
+import static android.provider.BaseColumns._ID;
+import static net.erickelly.scorekeeper.data.Players.ADJUST_AMT;
+import static net.erickelly.scorekeeper.data.Players.NAME;
+import static net.erickelly.scorekeeper.data.Players.NOTES;
+import static net.erickelly.scorekeeper.data.Players.PLAYERS_TABLE_NAME;
+import static net.erickelly.scorekeeper.data.Players.PLAYER_ID;
+import static net.erickelly.scorekeeper.data.Players.SCORE;
+import static net.erickelly.scorekeeper.data.Players.SCORES_TABLE_NAME;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import static android.provider.BaseColumns._ID;
-import static net.erickelly.scorekeeper.data.Players.*;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 

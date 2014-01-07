@@ -1,6 +1,10 @@
 package net.erickelly.scorekeeper;
 
-import static net.erickelly.scorekeeper.data.Players.*;
+import static net.erickelly.scorekeeper.data.Players.ADJUST_AMT;
+import static net.erickelly.scorekeeper.data.Players.NOTES;
+import static net.erickelly.scorekeeper.data.Players.SCORE;
+import static net.erickelly.scorekeeper.data.Players.SCORES_URI;
+import static net.erickelly.scorekeeper.data.Players._ID;
 import net.erickelly.scorekeeper.data.Sign;
 import android.database.Cursor;
 import android.net.Uri;
