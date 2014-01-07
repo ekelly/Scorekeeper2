@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/delete"
             android:padding="10dp"
-            android:src="@android:drawable/ic_input_delete" />
+            android:src="@drawable/ic_action_backspace" />
     </TableRow>
 
     <TableRow

@@ -71,7 +71,9 @@ public class PlayerListFragment extends ListFragment implements
 
 		ListView listView = getListView();
 		
-		// Set the padding correctly
+		// Set the listview padding correctly
+		// (need padding above/below listview so that the first item isn't 
+		// squashed into the actionbar)
 		float scale = getResources().getDisplayMetrics().density;
 		// Convert the dps to pixels, based on density scale
 		int sizeInPx = (int) (4*scale + 0.5f);
