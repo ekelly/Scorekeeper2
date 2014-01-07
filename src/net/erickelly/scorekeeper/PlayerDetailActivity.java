@@ -276,8 +276,7 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		Log.d(TAG, "adjustScore");
 		Integer adjustAmt = getCurrentAdjustAmount();
 		if (adjustAmt != null) {
-			Player p = PlayerManager.getPlayerByIndex(this,
-					mViewPager.getCurrentItem());
+			Player p = getCurrentPlayerFragment().getPlayer();
 			PlayerManager.adjustScore(this, p.getId(), adjustAmt, mNotes,
 					mUpdate);
 			mUpdate = true;
@@ -326,11 +325,11 @@ public class PlayerDetailActivity extends FragmentActivity implements
 		Log.d(TAG, "reset");
 		// Notes
 		PlayerDetailFragment fragment = getCurrentPlayerFragment();
-		fragment.refreshPlayer();
 		mNotes = fragment.getPlayer().getLastNotesField();
 		if (mNotes == null)
 			mNotes = "";
 		fragment.setNotes(mNotes); // TODO: Do I really need this line?
+		fragment.refreshPlayer();
 
 		// Adjust amt
 		mAdjustAmount = "";

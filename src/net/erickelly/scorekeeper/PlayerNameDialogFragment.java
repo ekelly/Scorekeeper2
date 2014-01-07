@@ -9,6 +9,7 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager.LayoutParams;
 import android.widget.EditText;
 
 public class PlayerNameDialogFragment extends DialogFragment {
@@ -61,15 +62,18 @@ public class PlayerNameDialogFragment extends DialogFragment {
 		final View v = inflater.inflate(R.layout.dialog_fragment_new_player,
 				null);
 		EditText nameInput = (EditText) v.findViewById(R.id.dialog_player_name);
+		String editTextInitialContent;
 		if (!prefill.isEmpty()) {
 			Log.d(TAG, "using prefill: " + prefill);
-			nameInput.setText(prefill);
+			editTextInitialContent = prefill;
 		} else {
 			int numPlayers = PlayerManager.getInstance().getPlayerCount(
 					getActivity());
-			nameInput.setText("Player " + (numPlayers + 1));
-			Log.d(TAG, "using new name: Player" + (numPlayers + 1));
+			editTextInitialContent = "Player " + (numPlayers + 1);
+			Log.d(TAG, "using new name: " + editTextInitialContent);
 		}
+		nameInput.setText(editTextInitialContent);
+		nameInput.setSelection(editTextInitialContent.length());
 		builder.setTitle(getResources().getString(R.string.player_name))
 				.setView(v)
 				.setPositiveButton(R.string.ok,
@@ -78,7 +82,7 @@ public class PlayerNameDialogFragment extends DialogFragment {
 								EditText nameInput = (EditText) v
 										.findViewById(R.id.dialog_player_name);
 								mListener.onPlayerNameEntry(nameInput.getText()
-										.toString());
+										.toString().trim());
 							}
 						})
 				.setNegativeButton(R.string.cancel,
@@ -87,7 +91,9 @@ public class PlayerNameDialogFragment extends DialogFragment {
 								dialog.dismiss();
 							}
 						});
-		return builder.create();
+		Dialog d = builder.create();
+		d.getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		return d;
 	}
 
 	/**

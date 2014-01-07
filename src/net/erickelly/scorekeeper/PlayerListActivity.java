@@ -191,16 +191,18 @@ public class PlayerListActivity extends FragmentActivity implements
 	 * Open a diolog prompting input for a new player's name
 	 */
 	private void showNewPlayerDialog() {
-		PlayerNameDialogFragment.newInstance(new PlayerNamePromptListener() {
-			/**
-			 * When the new player's name is entered, this method is called. Use
-			 * this to actually set the new player name
-			 */
-			@Override
-			public void onPlayerNameEntry(String name) {
-				addPlayer(name);
-			}
-		}).show(getSupportFragmentManager(), "NewPlayerDialog");
+		PlayerNameDialogFragment dialog = PlayerNameDialogFragment
+				.newInstance(new PlayerNamePromptListener() {
+					/**
+					 * When the new player's name is entered, this method is
+					 * called. Use this to actually set the new player name
+					 */
+					@Override
+					public void onPlayerNameEntry(String name) {
+						addPlayer(name);
+					}
+				});
+		dialog.show(getSupportFragmentManager(), "NewPlayerDialog");
 	}
 
 	private static final String TAG = "PlayerListActivity";
