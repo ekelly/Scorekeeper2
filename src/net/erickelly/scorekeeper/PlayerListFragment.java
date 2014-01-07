@@ -70,6 +70,16 @@ public class PlayerListFragment extends ListFragment implements
 		}
 
 		ListView listView = getListView();
+		
+		// Set the padding correctly
+		float scale = getResources().getDisplayMetrics().density;
+		// Convert the dps to pixels, based on density scale
+		int sizeInPx = (int) (4*scale + 0.5f);
+		listView.setPadding(0, sizeInPx, 0, sizeInPx);
+		listView.setClipToPadding(false);
+		
+		listView.setBackgroundColor(getResources().getColor(R.color.unselected_background));
+		listView.setDividerHeight(0);
 		listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 		listView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
 			private Long mSelectedId;

@@ -1,54 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?android:attr/buttonBarStyle"
-    android:descendantFocusability="blocksDescendants"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/player_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="20dp"
-        android:text="@string/player" />
+    <RelativeLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="125dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_card"
+        android:descendantFocusability="blocksDescendants"
+        android:padding="10dp" >
 
-    <Button
-        android:id="@+id/plus"
-        android:padding="0dp"
-        android:textSize="24sp"
-        android:onClick="onAdjustScore"
-        android:textColor="@color/green"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:text="@string/plus" />
+        <TextView
+            android:id="@+id/player_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="@string/player"
+            android:textColor="@color/android_blue"
+            android:textSize="36sp"
+            android:textStyle="italic|bold" />
 
-    <TextView
-        android:id="@+id/score"
-        android:textSize="24sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/plus"
-        android:layout_alignBottom="@+id/plus"
-        android:layout_toLeftOf="@+id/plus"
-        android:text="@string/zero" />
+        <Button
+            android:id="@+id/plus"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:onClick="onAdjustScore"
+            android:padding="0dp"
+            android:text="@string/plus"
+            android:textColor="@color/green"
+            android:textSize="36sp" />
 
-    <Button
-        android:id="@+id/minus"
-        style="?android:attr/buttonBarButtonStyle"
-        android:padding="0dp"
-        android:onClick="onAdjustScore"
-        android:textSize="24sp"
-        android:textColor="@color/red"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/plus"
-        android:layout_alignBaseline="@+id/plus"
-        android:layout_toLeftOf="@+id/score"
-        android:text="@string/minus" />
+        <TextView
+            android:id="@+id/score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="8dp"
+            android:text="@string/zero"
+            android:textColor="@color/black"
+            android:textSize="24sp" />
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/minus"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/plus"
+            android:layout_alignBottom="@+id/plus"
+            android:layout_alignParentLeft="true"
+            android:onClick="onAdjustScore"
+            android:padding="0dp"
+            android:text="@string/minus"
+            android:textColor="@color/red"
+            android:textSize="36sp" />
+    </RelativeLayout>
+
+</LinearLayout>
