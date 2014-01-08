@@ -7,13 +7,11 @@ Todo:
 =====
 - Add "Notes" functionality
 - Nicify detail view
+  - Make it so that the entire thing (numpad and all) swipes
 - Fix performance bugs
-- Add landscape layout
 - Fix list view selection bug
 - Nicify list view
-  - Add icons/selectable images for selecting listview items
-  - taller rows
-  - Better fonts / colors
+  - Add icons/colors for listview items
+  - Make the "selectable" state more obvious
 - Fix text so that it doesn't overflow badly
 - Add tablet layout
-- Add horizontal layout
