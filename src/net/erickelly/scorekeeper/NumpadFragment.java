@@ -2,7 +2,6 @@ package net.erickelly.scorekeeper;
 
 import net.erickelly.scorekeeper.data.ActionFocus;
 import net.erickelly.scorekeeper.data.Sign;
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -26,8 +25,14 @@ public class NumpadFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "onCreate");
 
-		if (getArguments() != null && getArguments().containsKey(ARG_POS_NEG)) {
-			mSign = Sign.valueOf(getArguments().getBoolean(ARG_POS_NEG, true));
+		if (getArguments() != null) {
+			if (getArguments().containsKey(ARG_POS_NEG)) {
+				mSign = Sign.valueOf(getArguments().getBoolean(ARG_POS_NEG,
+						true));
+			}
+		} else {
+			throw new RuntimeException(
+					"Provide arguments when creating the NumpadFragment");
 		}
 	}
 
@@ -109,17 +114,12 @@ public class NumpadFragment extends Fragment {
 		return rootView;
 	}
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void registerListener(NumpadListener listener) {
+		mCallbacks = listener;
+	}
 
-		// Activities containing this fragment must implement its callbacks.
-		if (!(activity instanceof NumpadListener)) {
-			throw new IllegalStateException(
-					"Activity must implement fragment's callbacks.");
-		}
-
-		mCallbacks = (NumpadListener) activity;
+	public void deregisterListener() {
+		mCallbacks = sDummyCallbacks;
 	}
 
 	@Override

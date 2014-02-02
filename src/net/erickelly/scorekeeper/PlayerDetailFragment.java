@@ -1,10 +1,14 @@
 package net.erickelly.scorekeeper;
 
+import net.erickelly.scorekeeper.NumpadFragment.NumpadListener;
 import net.erickelly.scorekeeper.data.ActionFocus;
 import net.erickelly.scorekeeper.data.Player;
 import net.erickelly.scorekeeper.data.PlayerManager;
-import android.app.Activity;
+import net.erickelly.scorekeeper.data.Sign;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +25,7 @@ import android.widget.TextView;
  * tablets) or a {@link PlayerDetailActivity} on handsets. Activities using this
  * fragment must implement its Callbacks interface
  */
-public class PlayerDetailFragment extends Fragment {
+public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
@@ -39,93 +43,102 @@ public class PlayerDetailFragment extends Fragment {
 			Log.d(TAG, "Creating fragment for Player@" + id);
 			mPlayer = PlayerManager.getPlayer(getActivity(), id);
 		}
-		
-		if (getArguments().containsKey(ARG_NOTES)) {
-			mUsingNotes = getArguments().getBoolean(ARG_NOTES);
-			Log.d(TAG, mUsingNotes ? "Using notes" : "Not using notes");
+
+		if (getArguments().containsKey(ARG_RETURN_TO_LIST)) {
+			mReturnToList = getArguments().getBoolean(ARG_RETURN_TO_LIST);
 		}
+
+		// Are we using the notes area or not?
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(getActivity());
+		mUsingNotes = prefs.getBoolean(SettingsFragment.PREF_NOTES, false);
+		Log.d(TAG, mUsingNotes ? "Using notes" : "Not using notes");
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		Log.d(TAG, "onCreateView");
-		
+
 		if (mUsingNotes) {
-			detailView = (LinearLayout) inflater.inflate(
+			mDetailView = (LinearLayout) inflater.inflate(
 					R.layout.fragment_player_detail, container, false);
 		} else {
-			detailView = (LinearLayout) inflater.inflate(
+			mDetailView = (LinearLayout) inflater.inflate(
 					R.layout.fragment_player_detail_no_notes, container, false);
 		}
 
-		scoreContainerView = (FrameLayout) detailView
+		mScoreContainerView = (FrameLayout) mDetailView
 				.findViewById(R.id.score_container);
 
-		largeScoreView = (TextView) detailView
+		mLargeScoreView = (TextView) mDetailView
 				.findViewById(R.id.player_score_large);
-		scoreView = (TextView) detailView.findViewById(R.id.player_detail);
-		totalScoreView = (TextView) detailView.findViewById(R.id.total_score);
-		signView = (TextView) detailView.findViewById(R.id.plus_minus);
-		adjustAmtView = (TextView) detailView.findViewById(R.id.adjust_amt);
-		playerEditScoreView = (LinearLayout) detailView
+		mScoreView = (TextView) mDetailView.findViewById(R.id.player_detail);
+		mTotalScoreView = (TextView) mDetailView.findViewById(R.id.total_score);
+		mSignView = (TextView) mDetailView.findViewById(R.id.plus_minus);
+		mAdjustAmtView = (TextView) mDetailView.findViewById(R.id.adjust_amt);
+		mPlayerEditScoreView = (LinearLayout) mDetailView
 				.findViewById(R.id.player_edit_score);
 
 		if (mPlayer != null) {
 			setScore(mPlayer.getScore());
 			setNotesArea(mPlayer.getLastNotesField());
-			detailView.setTag(mPlayer.getId());
+			mDetailView.setTag(mPlayer.getId());
 		}
 
 		if (mUsingNotes) {
-			notesContainerView = (LinearLayout) detailView
+			mNotesContainerView = (LinearLayout) mDetailView
 					.findViewById(R.id.notes_container);
-			notesView = (TextView) detailView.findViewById(R.id.score_notes);
-			notesContainerView.setOnClickListener(new OnClickListener() {
+			mNotesView = (TextView) mDetailView.findViewById(R.id.score_notes);
+			mNotesContainerView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					onFocusChanged(v);
 				}
 			});
-			
-			scoreContainerView.setOnClickListener(new OnClickListener() {
+
+			mScoreContainerView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					onFocusChanged(v);
 				}
 			});
 		}
-		
-		scoreContainerView.setSelected(true);
 
-		return detailView;
+		mScoreContainerView.setSelected(true);
+
+		return mDetailView;
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		Log.d(TAG, "onViewCreated");
 
-		// Activities containing this fragment must implement its callbacks.
-		if (!(activity instanceof Callbacks)) {
-			throw new IllegalStateException(
-					"Activity must implement fragment's callbacks.");
+		if (savedInstanceState == null) {
+			// Create the detail fragment and add it to the activity
+			// using a fragment transaction.
+			Bundle args = new Bundle();
+			NumpadFragment fragment = new NumpadFragment();
+			args.putBoolean(NumpadFragment.ARG_POS_NEG, mSign.isPositive());
+			fragment.setArguments(args);
+			getChildFragmentManager().beginTransaction()
+					.add(R.id.numpad_container, fragment, NUMPAD_FRAGMENT)
+					.commit();
 		}
-
-		mCallbacks = (Callbacks) activity;
 	}
 
 	@Override
-	public void onDetach() {
-		super.onDetach();
-
-		// Reset the active callbacks interface to the dummy implementation.
-		mCallbacks = sDummyCallbacks;
+	public void onResume() {
+		super.onResume();
+		getNumpadFragment().registerListener(this);
 	}
 
 	/**
 	 * Reset the displayed score to the player's actual current score
 	 */
 	public void clear() {
+		Log.d(TAG, "clear");
 		refreshPlayer();
 		setScore(mPlayer.getScore());
 		setAdjustAmt(0);
@@ -133,7 +146,27 @@ public class PlayerDetailFragment extends Fragment {
 		setNotesArea(mPlayer.getLastNotesField());
 		setPlayerScoreVisibility(true);
 	}
-	
+
+	/**
+	 * Resets the state of the Activity
+	 */
+	public void reset() {
+		Log.d(TAG, "reset");
+		// Notes
+		mNotes = getPlayer().getLastNotesField();
+		if (mNotes == null)
+			mNotes = "";
+		setNotes(mNotes); // TODO: Do I really need this line?
+		refreshPlayer();
+
+		// Adjust amt
+		mAdjustAmount = "";
+		setSign(Sign.POSITIVE);
+
+		// Focus resets
+		setFocus(mFocus);
+	}
+
 	/**
 	 * Reloads the player with the latest information from the database
 	 */
@@ -148,10 +181,10 @@ public class PlayerDetailFragment extends Fragment {
 	 */
 	private void setScore(int score) {
 		Log.d(TAG, "setScore: " + score);
-		if (scoreView != null) {
+		if (mScoreView != null) {
 			String scoreText = String.valueOf(score);
-			scoreView.setText(scoreText);
-			largeScoreView.setText(scoreText);
+			mScoreView.setText(scoreText);
+			mLargeScoreView.setText(scoreText);
 		}
 	}
 
@@ -161,9 +194,10 @@ public class PlayerDetailFragment extends Fragment {
 	 * @param positive
 	 */
 	private void setSign(boolean positive) {
-		Log.d(TAG, "setSign: " + positive);
-		if (signView != null) {
-			signView.setText(positive ? "+" : "-");
+		Log.d(TAG, "setSign: " + mSign);
+		if (mSignView != null) {
+			// mSignView.setText(positive ? "+" : "-");
+			mSignView.setText(mSign.toString());
 		}
 	}
 
@@ -175,8 +209,8 @@ public class PlayerDetailFragment extends Fragment {
 	 */
 	private void setAdjustAmt(int amt) {
 		Log.d(TAG, "setAdjustAmt: " + amt);
-		if (adjustAmtView != null) {
-			adjustAmtView.setText(String.valueOf(Math.abs(amt)));
+		if (mAdjustAmtView != null) {
+			mAdjustAmtView.setText(String.valueOf(Math.abs(amt)));
 		}
 	}
 
@@ -188,8 +222,8 @@ public class PlayerDetailFragment extends Fragment {
 	 */
 	private void setFinalScore(int finalScore) {
 		Log.d(TAG, "setFinalScore: " + finalScore);
-		if (totalScoreView != null) {
-			totalScoreView.setText(String.valueOf(finalScore));
+		if (mTotalScoreView != null) {
+			mTotalScoreView.setText(String.valueOf(finalScore));
 		}
 	}
 
@@ -200,8 +234,8 @@ public class PlayerDetailFragment extends Fragment {
 	 */
 	private void setNotesArea(String notes) {
 		Log.d(TAG, "setNotesArea: " + notes);
-		if (notesView != null) {
-			notesView.setText(notes);
+		if (mNotesView != null) {
+			mNotesView.setText(notes);
 		}
 	}
 
@@ -214,10 +248,10 @@ public class PlayerDetailFragment extends Fragment {
 	 */
 	private void setPlayerScoreVisibility(boolean visible) {
 		Log.d(TAG, "setPlayerScoreVisibility: " + visible);
-		if (playerEditScoreView != null && largeScoreView != null) {
-			playerEditScoreView.setVisibility(visible ? View.GONE
+		if (mPlayerEditScoreView != null && mLargeScoreView != null) {
+			mPlayerEditScoreView.setVisibility(visible ? View.GONE
 					: View.VISIBLE);
-			largeScoreView.setVisibility(visible ? View.VISIBLE : View.GONE);
+			mLargeScoreView.setVisibility(visible ? View.VISIBLE : View.GONE);
 		}
 	}
 
@@ -259,10 +293,12 @@ public class PlayerDetailFragment extends Fragment {
 	 */
 	public void setFocus(ActionFocus focus) {
 		Log.d(TAG, "setFocus: " + focus);
-		if (scoreContainerView != null && notesContainerView != null) {
-			scoreContainerView.setSelected(focus.equals(ActionFocus.SCORE));
-			notesContainerView.setSelected(focus.equals(ActionFocus.NOTES));
+		if (mScoreContainerView != null && mNotesContainerView != null) {
+			mScoreContainerView.setSelected(focus.equals(ActionFocus.SCORE));
+			mNotesContainerView.setSelected(focus.equals(ActionFocus.NOTES));
 		}
+		mFocus = focus;
+		getNumpadFragment().setUndoText(focus);
 	}
 
 	/**
@@ -277,55 +313,208 @@ public class PlayerDetailFragment extends Fragment {
 		ActionFocus focus = (v.getId() == R.id.score_container) ? ActionFocus.SCORE
 				: ActionFocus.NOTES;
 		setFocus(focus);
-		mCallbacks.onSwitchFocus(focus);
 	}
 
-	public interface Callbacks {
-		/**
-		 * When a user focuses on one action or another (entering notes or
-		 * entering score), this function will be triggered
-		 * 
-		 * @param focus
-		 */
-		public void onSwitchFocus(ActionFocus focus);
+	/**
+	 * Return the numpad fragment
+	 * 
+	 * @return
+	 */
+	public NumpadFragment getNumpadFragment() {
+		return (NumpadFragment) getChildFragmentManager().findFragmentByTag(
+				NUMPAD_FRAGMENT);
 	}
 
-	private static final Callbacks sDummyCallbacks = new Callbacks() {
-		@Override
-		public void onSwitchFocus(ActionFocus focus) {
+	@Override
+	public void onNumberClicked(String number) {
+		Log.d(TAG, "onNumberClicked: " + number);
+		if (mFocus.equals(ActionFocus.SCORE)) {
+			mAdjustAmount += number;
+			Integer amt = getCurrentAdjustAmount();
+			adjustScore(amt);
+		} else {
+			mNotes += number;
+			setNotes(mNotes);
 		}
-	};
+	}
 
-	private static Callbacks mCallbacks = sDummyCallbacks;
+	@Override
+	public void onDeleteClicked() {
+		Log.d(TAG, "onDeleteClicked");
+		if (mFocus.equals(ActionFocus.SCORE)) {
+			if (mAdjustAmount.length() > 0) {
+				mAdjustAmount = mAdjustAmount.substring(0,
+						mAdjustAmount.length() - 1);
+				Integer amt = getCurrentAdjustAmount();
+				adjustScore(amt);
+			}
+		} else {
+			if (mNotes.length() > 0) {
+				mNotes = mNotes.substring(0, mNotes.length() - 1);
+				setNotes(mNotes);
+				// updateNote(mNotes);
+			}
+		}
+	}
+
+	@Override
+	public void onEnterClicked() {
+		Log.d(TAG, "onEnterClicked");
+		if (mFocus.equals(ActionFocus.SCORE)) {
+			if (adjustScore()) {
+				clear();
+				reset();
+				mUpdate = false;
+			}
+		} else {
+			updateNote(mNotes);
+			reset();
+		}
+		if (mReturnToList) {
+			getActivity().finish();
+		}
+	}
+
+	@Override
+	public void onSignClicked(Sign sign) {
+		Log.d(TAG, "onSignClicked: " + sign.toString());
+		if (mFocus.equals(ActionFocus.SCORE)) {
+			mSign = sign;
+			adjustScore(getCurrentAdjustAmount());
+		}
+	}
+
+	@Override
+	public void onHistoryClicked() {
+		Log.d(TAG, "onHistoryClicked");
+		long id = getPlayer().getId();
+		Intent i = new Intent(getActivity(), PlayerHistoryListActivity.class);
+		i.putExtra(PlayerHistoryListFragment.ARG_PLAYER_ID, id);
+		startActivity(i);
+	}
+
+	@Override
+	public void onUndoClicked() {
+		Log.d(TAG, "onUndoClicked");
+		if (mFocus.equals(ActionFocus.SCORE)) {
+			PlayerManager
+					.undoLastAdjustment(getActivity(), getPlayer().getId());
+			clear();
+		} else {
+			resetNotes();
+		}
+	}
+
+	/**
+	 * Update the current player's note
+	 * 
+	 * @param note
+	 */
+	private void updateNote(String note) {
+		updateNote(getPlayer().getId(), note);
+	}
+
+	/**
+	 * Update the note associated with the given player id
+	 * 
+	 * @param playerId
+	 * @param note
+	 */
+	private void updateNote(long playerId, String note) {
+		Log.d(TAG, "updateNote: " + playerId + ", " + note);
+		PlayerManager.updateScoreNotes(getActivity(), playerId, note, mUpdate);
+		mUpdate = true;
+	}
+
+	/**
+	 * Returns the current temporary adjust amount
+	 * 
+	 * @return The adjust amount as an Integer, or null if there is no current
+	 *         adjust amount
+	 */
+	private Integer getCurrentAdjustAmount() {
+		if (!mAdjustAmount.isEmpty()) {
+			return Integer.parseInt((mSign.isPositive() ? "" : "-")
+					+ mAdjustAmount);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Adjust the score to the "current" adjust amount
+	 */
+	private boolean adjustScore() {
+		Log.d(TAG, "adjustScore");
+		Integer adjustAmt = getCurrentAdjustAmount();
+		if (adjustAmt != null) {
+			Player p = getPlayer();
+			PlayerManager.adjustScore(getActivity(), p.getId(), adjustAmt,
+					mNotes, mUpdate);
+			mUpdate = true;
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Set the notes field to an empty string and show it
+	 */
+	private void resetNotes() {
+		mNotes = "";
+		setNotes(mNotes);
+	}
+
+	/**
+	 ******************************************************************** 
+	 * The below functions pass on values to the Numpad Fragment *
+	 ******************************************************************** 
+	 */
+
+	/**
+	 * Sets the sign
+	 * 
+	 * @author eric
+	 */
+	public void setSign(Sign sign) {
+		mSign = sign;
+	}
 
 	/**
 	 * The fragment argument representing the player ID that this fragment
 	 * represents.
 	 */
 	public static final String ARG_PLAYER_ID = "player_id";
-	
+
 	/**
-	 * The fragment argument representing whether the notes/bidding area
-	 * will be displayed
+	 * Should the activity return to the player screen when enter is clicked?
 	 */
-	public static final String ARG_NOTES = "notes";
+	public static final String ARG_RETURN_TO_LIST = "return";
 
 	/**
 	 * The Player which is being shown
 	 */
 	private Player mPlayer;
-	private LinearLayout detailView;
-	private LinearLayout playerEditScoreView;
-	private LinearLayout notesContainerView;
-	private FrameLayout scoreContainerView;
-	private TextView scoreView;
-	private TextView totalScoreView;
-	private TextView signView;
-	private TextView adjustAmtView;
-	private TextView notesView;
-	private TextView largeScoreView;
-	
+	private LinearLayout mDetailView;
+	private LinearLayout mPlayerEditScoreView;
+	private LinearLayout mNotesContainerView;
+	private FrameLayout mScoreContainerView;
+	private TextView mScoreView;
+	private TextView mTotalScoreView;
+	private TextView mSignView;
+	private TextView mAdjustAmtView;
+	private TextView mNotesView;
+	private TextView mLargeScoreView;
+
+	private String mNotes = "";
+	private String mAdjustAmount = "";
+	private Sign mSign = Sign.POSITIVE;
+	private boolean mReturnToList = false;
+	private boolean mUpdate = false; // Insert/Update a new record
+	private ActionFocus mFocus = ActionFocus.SCORE;
 	private boolean mUsingNotes = false;
+
+	private static final String NUMPAD_FRAGMENT = "numpad";
 
 	private static final String TAG = "PlayerDetailFragment";
 }

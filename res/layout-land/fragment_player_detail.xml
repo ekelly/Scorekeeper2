@@ -1,21 +1,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="horizontal" >
 
     <LinearLayout
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_weight="1"
         android:baselineAligned="false"
         android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/notes_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/action_state_background"
+            android:onClick="onFocusChanged"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/score_notes"
+                style="@style/ScorecardText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:context=".PlayerDetailFragment" />
+        </LinearLayout>
 
         <FrameLayout
             android:id="@+id/score_container"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/action_state_background" >
+            android:background="@drawable/action_state_background"
+            android:onClick="onFocusChanged" >
 
             <TextView
                 android:id="@+id/player_score_large"
@@ -83,11 +101,11 @@
             </LinearLayout>
         </FrameLayout>
     </LinearLayout>
-    
+
     <FrameLayout
         android:id="@+id/numpad_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
     </FrameLayout>
-
 </LinearLayout>
