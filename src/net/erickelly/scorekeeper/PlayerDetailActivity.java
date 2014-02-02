@@ -62,18 +62,26 @@ public class PlayerDetailActivity extends FragmentActivity {
 				getSupportFragmentManager());
 		mViewPager = (ViewPager) findViewById(R.id.player_detail_container);
 		mViewPager.setAdapter(mPlayersCollectionPagerAdapter);
-		mViewPager.setCurrentItem(getIntent().getIntExtra(ARG_PLAYER_INDEX, 0));
+		final int index = getIntent().getIntExtra(ARG_PLAYER_INDEX, 0);
+		mViewPager.setCurrentItem(index);
 		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
-			private int mPreviousPage = 0;
+			private int mPreviousPage = index;
+			private boolean mTriggered = false;
 
 			@Override
 			public void onPageScrollStateChanged(int scrollState) {
 				String scroll = "";
 				switch (scrollState) {
 				case ViewPager.SCROLL_STATE_DRAGGING:
+					Log.d(TAG, "clearing the state of: " + mPreviousPage);
+					if (!mTriggered) {
+						clearState(mPreviousPage);
+						mTriggered = true;
+					}
 					scroll = "Dragging";
 					break;
 				case ViewPager.SCROLL_STATE_IDLE:
+					mTriggered = false;
 					scroll = "Idle";
 					break;
 				case ViewPager.SCROLL_STATE_SETTLING:
@@ -86,15 +94,12 @@ public class PlayerDetailActivity extends FragmentActivity {
 			@Override
 			public void onPageScrolled(int position, float positionOffset,
 					int positionOffsetPixels) {
-				mPreviousPage = position;
 			}
 
 			@Override
 			public void onPageSelected(int position) {
-				Log.d("erickell", "onPageSelected: " + position);
-				Log.d("erickell", "clearing the state of: " + mPreviousPage);
-				clearState(position);
-				// clearState(mPreviousPage);
+				Log.d(TAG, "onPageSelected: " + position);
+				mPreviousPage = position;
 			}
 		});
 

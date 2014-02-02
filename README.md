@@ -6,8 +6,6 @@ Rebuilding Scorekeeper from the ground up.  This app will provide an easy and co
 Todo:
 =====
 - Add "Notes" functionality
-- Nicify detail view
-  - Make it so that the entire thing (numpad and all) swipes
 - Fix performance bugs
 - Fix list view selection bug
 - Nicify list view
