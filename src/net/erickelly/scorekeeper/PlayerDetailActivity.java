@@ -34,28 +34,6 @@ public class PlayerDetailActivity extends FragmentActivity {
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-		// savedInstanceState is non-null when there is fragment state
-		// saved from previous configurations of this activity
-		// (e.g. when rotating the screen from portrait to landscape).
-		// In this case, the fragment will automatically be re-added
-		// to its container so we don't need to manually add it.
-		// For more information, see the Fragments API guide at:
-		//
-		// http://developer.android.com/guide/components/fragments.html
-		//
-		if (savedInstanceState == null) {
-			// Create the detail fragment and add it to the activity
-			// using a fragment transaction.
-			Bundle arguments = new Bundle();
-			arguments.putLong(PlayerDetailFragment.ARG_PLAYER_ID, getIntent()
-					.getLongExtra(PlayerDetailFragment.ARG_PLAYER_ID, 0));
-			PlayerDetailFragment fragment = new PlayerDetailFragment();
-			fragment.setArguments(arguments);
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.player_detail_container, fragment).commit();
-
-		}
-
 		// ViewPager and its adapters use support library
 		// fragments, so use getSupportFragmentManager.
 		mPlayersCollectionPagerAdapter = new PlayersPagerAdapter(
@@ -109,6 +87,9 @@ public class PlayerDetailActivity extends FragmentActivity {
 		mReturnToList = getIntent().getExtras().getBoolean(ARG_RETURN_TO_LIST,
 				false);
 
+		mStartInNotes = getIntent().getExtras().getBoolean(ARG_START_IN_NOTES,
+				false);
+
 	}
 
 	@Override
@@ -147,6 +128,8 @@ public class PlayerDetailActivity extends FragmentActivity {
 			args.putBoolean(PlayerDetailFragment.ARG_RETURN_TO_LIST,
 					mReturnToList);
 			args.putBoolean(NumpadFragment.ARG_POS_NEG, mSign.isPositive());
+			args.putBoolean(PlayerDetailFragment.ARG_START_IN_NOTES,
+					mStartInNotes);
 			fragment.setArguments(args);
 			return fragment;
 		}
@@ -190,7 +173,6 @@ public class PlayerDetailActivity extends FragmentActivity {
 		// Reset the old fragment
 		PlayerDetailFragment fragment = ((PlayerDetailFragment) mViewPager
 				.getAdapter().instantiateItem(mViewPager, previousPagePosition));
-		fragment.clear();
 		fragment.reset();
 
 		// Save the notes field into the database
@@ -213,6 +195,11 @@ public class PlayerDetailActivity extends FragmentActivity {
 	 */
 	public static final String ARG_PLAYER_INDEX = "player_index";
 
+	/**
+	 * Should the user start with the notes area selected?
+	 */
+	public static final String ARG_START_IN_NOTES = "start_in_notes";
+
 	// When requested, this adapter returns a PageDetailFragment,
 	// representing an object in the collection.
 	PlayersPagerAdapter mPlayersCollectionPagerAdapter;
@@ -220,6 +207,7 @@ public class PlayerDetailActivity extends FragmentActivity {
 	ViewPager mViewPager;
 
 	private boolean mReturnToList = false;
+	private boolean mStartInNotes = false;
 	private Sign mSign = Sign.POSITIVE;
 
 	private static final String TAG = "PlayerDetailActivity";

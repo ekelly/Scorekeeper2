@@ -41,11 +41,15 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		if (getArguments().containsKey(ARG_PLAYER_ID)) {
 			long id = getArguments().getLong(ARG_PLAYER_ID);
 			Log.d(TAG, "Creating fragment for Player@" + id);
-			mPlayer = PlayerManager.getPlayer(getActivity(), id);
+			loadPlayer(id);
 		}
 
 		if (getArguments().containsKey(ARG_RETURN_TO_LIST)) {
 			mReturnToList = getArguments().getBoolean(ARG_RETURN_TO_LIST);
+		}
+
+		if (getArguments().containsKey(ARG_START_IN_NOTES)) {
+			mStartInNotes = getArguments().getBoolean(ARG_START_IN_NOTES);
 		}
 
 		// Are we using the notes area or not?
@@ -80,12 +84,6 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		mPlayerEditScoreView = (LinearLayout) mDetailView
 				.findViewById(R.id.player_edit_score);
 
-		if (mPlayer != null) {
-			setScore(mPlayer.getScore());
-			setNotesArea(mPlayer.getLastNotesField());
-			mDetailView.setTag(mPlayer.getId());
-		}
-
 		if (mUsingNotes) {
 			mNotesContainerView = (LinearLayout) mDetailView
 					.findViewById(R.id.notes_container);
@@ -103,9 +101,14 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 					onFocusChanged(v);
 				}
 			});
+
 		}
 
-		mScoreContainerView.setSelected(true);
+		if (mPlayer != null) {
+			setScore(mPlayer.getScore());
+			setNotesArea(mPlayer.getLastNotesField());
+			mDetailView.setTag(mPlayer.getId());
+		}
 
 		return mDetailView;
 	}
@@ -132,19 +135,8 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	public void onResume() {
 		super.onResume();
 		getNumpadFragment().registerListener(this);
-	}
 
-	/**
-	 * Reset the displayed score to the player's actual current score
-	 */
-	public void clear() {
-		Log.d(TAG, "clear");
-		refreshPlayer();
-		setScore(mPlayer.getScore());
-		setAdjustAmt(0);
-		setFinalScore(mPlayer.getScore());
-		setNotesArea(mPlayer.getLastNotesField());
-		setPlayerScoreVisibility(true);
+		setFocus(mStartInNotes ? ActionFocus.NOTES : ActionFocus.SCORE);
 	}
 
 	/**
@@ -152,26 +144,36 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	 */
 	public void reset() {
 		Log.d(TAG, "reset");
-		// Notes
-		mNotes = getPlayer().getLastNotesField();
-		if (mNotes == null)
-			mNotes = "";
-		setNotes(mNotes); // TODO: Do I really need this line?
 		refreshPlayer();
 
 		// Adjust amt
 		mAdjustAmount = "";
-		setSign(Sign.POSITIVE);
 
-		// Focus resets
-		setFocus(mFocus);
+		setSign(Sign.POSITIVE);
+		setScore(mPlayer.getScore());
+		setAdjustAmt(0);
+		setFinalScore(mPlayer.getScore());
+		setNotesArea(mNotes);
+		setPlayerScoreVisibility(true);
+		setFocus(mStartInNotes ? ActionFocus.NOTES : ActionFocus.SCORE);
 	}
 
 	/**
 	 * Reloads the player with the latest information from the database
 	 */
 	public void refreshPlayer() {
-		mPlayer = PlayerManager.getPlayer(getActivity(), mPlayer.getId());
+		loadPlayer(mPlayer.getId());
+	}
+
+	/**
+	 * Loads the player with the given id
+	 * 
+	 * @param id
+	 */
+	public void loadPlayer(long id) {
+		mPlayer = PlayerManager.getPlayer(getActivity(), id);
+		mNotes = mPlayer.getLastNotesField();
+		mUpdate = mPlayer.shouldUpdate();
 	}
 
 	/**
@@ -273,13 +275,6 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	}
 
 	/**
-	 * Display the notes
-	 */
-	public void setNotes(String notes) {
-		setNotesArea(notes);
-	}
-
-	/**
 	 * Returns the player associated with this detail fragment
 	 */
 	public Player getPlayer() {
@@ -334,7 +329,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 			adjustScore(amt);
 		} else {
 			mNotes += number;
-			setNotes(mNotes);
+			setNotesArea(mNotes);
 		}
 	}
 
@@ -351,8 +346,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		} else {
 			if (mNotes.length() > 0) {
 				mNotes = mNotes.substring(0, mNotes.length() - 1);
-				setNotes(mNotes);
-				// updateNote(mNotes);
+				setNotesArea(mNotes);
 			}
 		}
 	}
@@ -362,13 +356,15 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		Log.d(TAG, "onEnterClicked");
 		if (mFocus.equals(ActionFocus.SCORE)) {
 			if (adjustScore()) {
-				clear();
 				reset();
+				mNotes = "";
+				updateNote(mNotes);
 				mUpdate = false;
 			}
 		} else {
 			updateNote(mNotes);
 			reset();
+			setFocus(ActionFocus.SCORE);
 		}
 		if (mReturnToList) {
 			getActivity().finish();
@@ -397,11 +393,15 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	public void onUndoClicked() {
 		Log.d(TAG, "onUndoClicked");
 		if (mFocus.equals(ActionFocus.SCORE)) {
-			PlayerManager
-					.undoLastAdjustment(getActivity(), getPlayer().getId());
-			clear();
+			if (mAdjustAmount.isEmpty()) {
+				PlayerManager.undoLastAdjustment(getActivity(), getPlayer()
+						.getId());
+			} else {
+				reset();
+			}
 		} else {
-			resetNotes();
+			mNotes = "";
+			setNotesArea(mNotes);
 		}
 	}
 
@@ -458,14 +458,6 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	}
 
 	/**
-	 * Set the notes field to an empty string and show it
-	 */
-	private void resetNotes() {
-		mNotes = "";
-		setNotes(mNotes);
-	}
-
-	/**
 	 ******************************************************************** 
 	 * The below functions pass on values to the Numpad Fragment *
 	 ******************************************************************** 
@@ -492,6 +484,11 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	public static final String ARG_RETURN_TO_LIST = "return";
 
 	/**
+	 * Should the notes be selected first?
+	 */
+	public static final String ARG_START_IN_NOTES = "start_in_notes";
+
+	/**
 	 * The Player which is being shown
 	 */
 	private Player mPlayer;
@@ -506,13 +503,14 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	private TextView mNotesView;
 	private TextView mLargeScoreView;
 
-	private String mNotes = "";
+	private String mNotes;
 	private String mAdjustAmount = "";
 	private Sign mSign = Sign.POSITIVE;
 	private boolean mReturnToList = false;
-	private boolean mUpdate = false; // Insert/Update a new record
+	private Boolean mUpdate; // Insert/Update a new record
 	private ActionFocus mFocus = ActionFocus.SCORE;
 	private boolean mUsingNotes = false;
+	private boolean mStartInNotes = false;
 
 	private static final String NUMPAD_FRAGMENT = "numpad";
 

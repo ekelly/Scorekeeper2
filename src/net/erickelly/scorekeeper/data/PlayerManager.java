@@ -126,7 +126,8 @@ public class PlayerManager {
 	 */
 	public static void adjustScore(Context c, long playerId, int adjustAmt,
 			String extra, boolean update) {
-		Log.d(TAG, "adjustScore: " + playerId + ", " + adjustAmt + ", " + extra);
+		Log.d(TAG, "adjustScore: " + playerId + ", " + adjustAmt + ", " + extra
+				+ ", " + update);
 		int score = getPlayerScore(c, playerId);
 		ContentValues values = new ContentValues();
 		values.put(PLAYER_ID, playerId);
@@ -158,7 +159,8 @@ public class PlayerManager {
 	 */
 	public static void updateScoreNotes(Context c, long playerId, String extra,
 			boolean update) {
-		Log.d(TAG, "updateScoreNotes: " + playerId + ", " + extra);
+		Log.d(TAG, "updateScoreNotes: " + playerId + ", " + extra
+				+ ", update? " + update);
 		int score = getPlayerScore(c, playerId);
 		ContentValues values = new ContentValues();
 		values.put(PLAYER_ID, playerId);
@@ -261,11 +263,15 @@ public class PlayerManager {
 		Cursor cursor = c.getContentResolver().query(
 				Uri.withAppendedPath(SCORES_URI, appendedPath(id)),
 				new String[] { _ID, ADJUST_AMT, NOTES }, null, null, null);
+		int adjustColumn = cursor.getColumnIndex(ADJUST_AMT);
+		int notesColumn = cursor.getColumnIndex(NOTES);
 		List<Pair<Integer, String>> history = new LinkedList<Pair<Integer, String>>();
 		while (cursor.moveToNext()) {
-			history.add(Pair.create(
-					cursor.getInt(cursor.getColumnIndex(ADJUST_AMT)),
-					cursor.getString(cursor.getColumnIndex(NOTES))));
+			Integer adjustAmt = null;
+			if (!cursor.isNull(adjustColumn)) {
+				adjustAmt = cursor.getInt(adjustColumn);
+			}
+			history.add(Pair.create(adjustAmt, cursor.getString(notesColumn)));
 		}
 		cursor.close();
 		return history;

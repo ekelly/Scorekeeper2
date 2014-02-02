@@ -85,6 +85,13 @@
     </LinearLayout>
     
     <FrameLayout
+        android:layout_height="1dp"
+        android:layout_width="match_parent"
+        android:background="@color/android_blue">
+        
+    </FrameLayout>
+    
+    <FrameLayout
         android:id="@+id/numpad_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >

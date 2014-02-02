@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "players.db";
-	private static final int DATABASE_VERSION = 4;
+	private static final int DATABASE_VERSION = 5;
 
 	public static DatabaseHelper getInstance(Context c) {
 		if (mInstance == null) {
@@ -36,9 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ " TEXT NOT NULL);");
 		db.execSQL("CREATE TABLE " + SCORES_TABLE_NAME + " (" + _ID
 				+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + PLAYER_ID
-				+ " INTEGER NOT NULL, " + ADJUST_AMT + " INTEGER, "
-				+ SCORE + " INTEGER NOT NULL, "
-				+ NOTES + " TEXT);");
+				+ " INTEGER NOT NULL, " + ADJUST_AMT + " INTEGER, " + SCORE
+				+ " INTEGER, " + NOTES + " TEXT);");
 		ContentValues cv = new ContentValues();
 		cv.put(NAME, "Player 1");
 		db.insert(PLAYERS_TABLE_NAME, null, cv);

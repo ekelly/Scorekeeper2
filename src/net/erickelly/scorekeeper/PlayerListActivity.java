@@ -107,6 +107,7 @@ public class PlayerListActivity extends FragmentActivity implements
 			Bundle arguments = new Bundle();
 			arguments.putLong(PlayerDetailFragment.ARG_PLAYER_ID, id);
 			arguments.putInt(PlayerDetailActivity.ARG_PLAYER_INDEX, position);
+			arguments.putBoolean(PlayerDetailFragment.ARG_START_IN_NOTES, true);
 			PlayerDetailFragment fragment = new PlayerDetailFragment();
 			fragment.setArguments(arguments);
 			getSupportFragmentManager().beginTransaction()
@@ -115,7 +116,7 @@ public class PlayerListActivity extends FragmentActivity implements
 		} else {
 			// In single-pane mode, simply start the detail activity
 			// for the selected item ID.
-			gotoPlayerDetail(position, id, true, false);
+			gotoPlayerDetail(position, id, true, false, true);
 		}
 	}
 
@@ -131,7 +132,7 @@ public class PlayerListActivity extends FragmentActivity implements
 				.findFragmentById(R.id.player_list));
 		int index = listFragment.getListView().getPositionForView(row);
 		Long id = listFragment.getListAdapter().getItemId(index);
-		gotoPlayerDetail(index, id, isPositive, true);
+		gotoPlayerDetail(index, id, isPositive, true, false);
 	}
 
 	/**
@@ -145,15 +146,18 @@ public class PlayerListActivity extends FragmentActivity implements
 	 *            Should the numpad be positive?
 	 * @param returnToList
 	 *            Should hitting enter cause the screen to return to this list
+	 * @param startInNotes
+	 *            Should you start with notes selected?
 	 */
 	private void gotoPlayerDetail(int index, long id, boolean isPositive,
-			boolean returnToList) {
+			boolean returnToList, boolean startInNotes) {
 		Log.d(TAG, "gotoPlayerDetail: " + index + ", " + id + ", " + isPositive);
 		Intent i = new Intent(this, PlayerDetailActivity.class);
 		i.putExtra(PlayerDetailActivity.ARG_PLAYER_INDEX, index);
 		i.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, id);
 		i.putExtra(NumpadFragment.ARG_POS_NEG, isPositive);
 		i.putExtra(PlayerDetailActivity.ARG_RETURN_TO_LIST, returnToList);
+		i.putExtra(PlayerDetailActivity.ARG_START_IN_NOTES, startInNotes);
 		startActivity(i);
 	}
 

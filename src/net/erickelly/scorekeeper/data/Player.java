@@ -16,12 +16,6 @@ public class Player {
 	private long id;
 	private List<Pair<Integer, String>> history;
 
-	public Player(long id, String name, int score) {
-		this.id = id;
-		this.name = name;
-		this.score = score;
-	}
-
 	public Player(long id, String name, List<Pair<Integer, String>> history) {
 		this.id = id;
 		this.name = name;
@@ -51,9 +45,10 @@ public class Player {
 	public List<Pair<Integer, String>> getHistory() {
 		return this.history;
 	}
-	
+
 	/**
 	 * Get the latest "notes" field
+	 * 
 	 * @return
 	 */
 	public String getLastNotesField() {
@@ -64,6 +59,23 @@ public class Player {
 				notes = "";
 		}
 		return notes;
+	}
+
+	/**
+	 * Get the latest "adjust amount" field
+	 * 
+	 * @return
+	 */
+	public Integer getLastAdjustField() {
+		Integer adjust = null;
+		if (history.size() > 0) {
+			adjust = history.get(history.size() - 1).first;
+		}
+		return adjust;
+	}
+
+	public boolean shouldUpdate() {
+		return history.size() > 0 && getLastAdjustField() == null;
 	}
 
 	/**
@@ -103,7 +115,8 @@ public class Player {
 	private static int calculateScore(List<Pair<Integer, String>> scores) {
 		int score = 0;
 		for (Pair<Integer, String> p : scores) {
-			score += p.first;
+			if (p.first != null)
+				score += p.first;
 		}
 		return score;
 	}

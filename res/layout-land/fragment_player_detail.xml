@@ -10,14 +10,14 @@
         android:layout_width="match_parent"
         android:layout_weight="1"
         android:baselineAligned="false"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
 
         <LinearLayout
             android:id="@+id/notes_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@drawable/action_state_background"
-            android:onClick="onFocusChanged"
             android:orientation="vertical" >
 
             <TextView
@@ -30,10 +30,10 @@
 
         <FrameLayout
             android:id="@+id/score_container"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/action_state_background"
-            android:onClick="onFocusChanged" >
+            android:layout_weight="1"
+            android:background="@drawable/action_state_background" >
 
             <TextView
                 android:id="@+id/player_score_large"
@@ -101,6 +101,13 @@
             </LinearLayout>
         </FrameLayout>
     </LinearLayout>
+    
+    <FrameLayout
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/android_blue">
+        
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/numpad_container"
