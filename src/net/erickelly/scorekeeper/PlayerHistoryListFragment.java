@@ -40,18 +40,28 @@ public class PlayerHistoryListFragment extends ListFragment implements
 
 		mAdapter = new SimpleCursorAdapter(getActivity(),
 				R.layout.player_history_item, null, new String[] { ADJUST_AMT,
-						ADJUST_AMT, NOTES, SCORE }, new int[] { R.id.adjust_amt,
-						R.id.plus_minus, R.id.notes, R.id.total_score }, 0);
+						ADJUST_AMT, NOTES, SCORE }, new int[] {
+						R.id.adjust_amt, R.id.plus_minus, R.id.notes,
+						R.id.total_score }, 0);
 		mAdapter.setViewBinder(new ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor,
 					int columnIndex) {
 				if (view.getId() == R.id.plus_minus) {
-					boolean isPositive = cursor.getInt(columnIndex) >= 0;
+					int adjust = cursor.getInt(columnIndex);
+					boolean isPositive = adjust >= 0;
 					TextView sign = ((TextView) view
 							.findViewById(R.id.plus_minus));
 					sign.setText(isPositive ? Sign.POSITIVE.toString()
 							: Sign.NEGATIVE.toString());
+					sign.setTextColor(getTextColor(adjust));
+					return true;
+				} else if (view.getId() == R.id.adjust_amt) {
+					int adjust = cursor.getInt(columnIndex);
+					TextView adjustAmt = ((TextView) view
+							.findViewById(R.id.adjust_amt));
+					adjustAmt.setText("" + Math.abs(adjust));
+					adjustAmt.setTextColor(getTextColor(adjust));
 					return true;
 				}
 				return false;
@@ -61,6 +71,11 @@ public class PlayerHistoryListFragment extends ListFragment implements
 		// Prepare the loader. Either re-connect with an existing one,
 		// or start a new one.
 		getLoaderManager().initLoader(0, null, this);
+	}
+
+	private int getTextColor(int adjust) {
+		int color = adjust < 0 ? R.color.red : R.color.black;
+		return getResources().getColor(color);
 	}
 
 	@Override
@@ -78,8 +93,8 @@ public class PlayerHistoryListFragment extends ListFragment implements
 		// Now create and return a CursorLoader that will take care of
 		// creating a Cursor for the data being displayed.
 		return new CursorLoader(getActivity(), Uri.withAppendedPath(SCORES_URI,
-				"/" + mId), new String[] { _ID, ADJUST_AMT, NOTES, SCORE }, null,
-				null, null);
+				"/" + mId), new String[] { _ID, ADJUST_AMT, NOTES, SCORE },
+				null, null, null);
 	}
 
 	@Override

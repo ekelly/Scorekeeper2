@@ -106,7 +106,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 
 		if (mPlayer != null) {
 			setScore(mPlayer.getScore());
-			setNotesArea(mPlayer.getLastNotesField());
+			setNotesArea(mNotes);
 			mDetailView.setTag(mPlayer.getId());
 		}
 
@@ -172,8 +172,8 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	 */
 	public void loadPlayer(long id) {
 		mPlayer = PlayerManager.getPlayer(getActivity(), id);
-		mNotes = mPlayer.getLastNotesField();
 		mUpdate = mPlayer.shouldUpdate();
+		mNotes = mUpdate ? mPlayer.getLastNotesField() : "";
 	}
 
 	/**
@@ -198,7 +198,6 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	private void setSign(boolean positive) {
 		Log.d(TAG, "setSign: " + mSign);
 		if (mSignView != null) {
-			// mSignView.setText(positive ? "+" : "-");
 			mSignView.setText(mSign.toString());
 		}
 	}
@@ -358,7 +357,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 			if (adjustScore()) {
 				reset();
 				mNotes = "";
-				updateNote(mNotes);
+				setNotesArea(mNotes);
 				mUpdate = false;
 			}
 		} else {

@@ -5,7 +5,6 @@ Rebuilding Scorekeeper from the ground up.  This app will provide an easy and co
 
 Todo:
 =====
-- Add "Notes" functionality
 - Fix performance bugs
 - Fix list view selection bug
 - Nicify list view
