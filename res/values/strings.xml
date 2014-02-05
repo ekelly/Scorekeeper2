@@ -31,6 +31,10 @@
     <string name="minus">-</string>
     <string name="posneg">+/-</string>
     <string name="enter">Enter</string>
+    <string name="equals">=</string>
+    
+    <!-- Player Detail Fragment -->
+    <string name="bidding"><u>Bidding:</u></string>
     
     <!-- Other -->
     <string name="player">Player</string>

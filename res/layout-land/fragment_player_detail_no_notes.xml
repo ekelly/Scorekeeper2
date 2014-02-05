@@ -6,8 +6,8 @@
     android:orientation="horizontal" >
 
     <LinearLayout
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:baselineAligned="false"
         android:orientation="horizontal" >
@@ -15,21 +15,23 @@
         <FrameLayout
             android:id="@+id/score_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/action_state_background" >
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/player_score_large"
                 style="@style/ScorecardText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:duplicateParentState="true"
                 android:gravity="center"
+                android:textColor="@color/action_state_background"
                 android:textSize="48sp" />
 
             <LinearLayout
                 android:id="@+id/player_edit_score"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:duplicateParentState="true"
                 android:orientation="vertical"
                 android:visibility="gone" >
 
@@ -38,6 +40,8 @@
                     style="@style/ScorecardText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:duplicateParentState="true"
+                    android:textColor="@color/action_state_background"
                     tools:context=".PlayerDetailFragment" />
 
                 <LinearLayout
@@ -45,6 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
+                    android:duplicateParentState="true"
                     android:orientation="horizontal" >
 
                     <TextView
@@ -53,7 +58,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:duplicateParentState="true"
                         android:text="@string/plus"
+                        android:textColor="@color/action_state_background"
                         tools:context=".PlayerDetailFragment" />
 
                     <TextView
@@ -62,6 +69,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="0dp"
+                        android:duplicateParentState="true"
+                        android:textColor="@color/action_state_background"
                         tools:context=".PlayerDetailFragment" />
                 </LinearLayout>
 
@@ -71,7 +80,8 @@
                     android:layout_height="1dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:background="@color/black"
+                    android:background="@drawable/action_state_background"
+                    android:duplicateParentState="true"
                     android:orientation="horizontal" >
                 </LinearLayout>
 
@@ -80,23 +90,24 @@
                     style="@style/ScorecardText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:duplicateParentState="true"
+                    android:textColor="@color/action_state_background"
                     tools:context=".PlayerDetailFragment" />
             </LinearLayout>
         </FrameLayout>
     </LinearLayout>
-    
+
     <FrameLayout
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@color/android_blue">
-        
+        android:background="@color/android_blue" >
     </FrameLayout>
-    
+
     <FrameLayout
         android:id="@+id/numpad_container"
-        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
     </FrameLayout>
 
 </LinearLayout>

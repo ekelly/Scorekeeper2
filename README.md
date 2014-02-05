@@ -10,5 +10,9 @@ Todo:
 - Nicify list view
   - Add icons/colors for listview items
   - Make the "selectable" state more obvious
+  - Landscape view
 - Fix text so that it doesn't overflow badly
 - Add tablet layout
+- Make bidding area look nicer
+- Add first run help text
+- Multiple person add / select (for delete)

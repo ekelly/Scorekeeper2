@@ -287,8 +287,14 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	 */
 	public void setFocus(ActionFocus focus) {
 		Log.d(TAG, "setFocus: " + focus);
-		if (mScoreContainerView != null && mNotesContainerView != null) {
+		// When not using notes, this is the only valid focus
+		if (!mUsingNotes) {
+			focus = ActionFocus.SCORE;
+		}
+		if (mScoreContainerView != null) {
 			mScoreContainerView.setSelected(focus.equals(ActionFocus.SCORE));
+		}
+		if (mNotesContainerView != null) {
 			mNotesContainerView.setSelected(focus.equals(ActionFocus.NOTES));
 		}
 		mFocus = focus;
