@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?android:attr/buttonBarStyle"
+    android:layout_width="match_parent"
+    android:layout_height="125dp"
+    android:background="@color/list_background"
+    android:descendantFocusability="blocksDescendants">
+
+    <RelativeLayout
+        android:gravity="center"
+        android:id="@+id/undo"
+        android:layout_width="match_parent"
+        android:layout_height="125dp" >
+
+        <ImageView
+            android:id="@+id/undo_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-5dp"
+            android:contentDescription="@string/undo"
+            android:src="@android:drawable/ic_menu_revert" />
+
+       <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/undo_image"
+            android:text="@string/undo"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

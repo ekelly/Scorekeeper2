@@ -15,6 +15,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -23,7 +24,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+
+import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter;
+import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter.DeleteItemCallback;
 
 /**
  * A list fragment representing a list of Players. This fragment also supports
@@ -35,7 +38,7 @@ import android.widget.SimpleCursorAdapter;
  * interface.
  */
 public class PlayerListFragment extends ListFragment implements
-		LoaderManager.LoaderCallbacks<Cursor> {
+		LoaderManager.LoaderCallbacks<Cursor>, DeleteItemCallback {
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -49,9 +52,8 @@ public class PlayerListFragment extends ListFragment implements
 		super.onCreate(savedInstanceState);
 
 		mAdapter = new SimpleCursorAdapter(getActivity(),
-				R.layout.player_list_item, null, new String[] { NAME, SCORE },
-				new int[] { R.id.player_name, R.id.score }, 0);
-		setListAdapter(mAdapter);
+				R.layout.player_list_item, null, new String[] { NAME, SCORE,
+						_ID }, new int[] { R.id.player_name, R.id.score }, 0);
 
 		// Prepare the loader. Either re-connect with an existing one,
 		// or start a new one.
@@ -70,17 +72,18 @@ public class PlayerListFragment extends ListFragment implements
 		}
 
 		ListView listView = getListView();
-		
+
 		// Set the listview padding correctly
-		// (need padding above/below listview so that the first item isn't 
+		// (need padding above/below listview so that the first item isn't
 		// squashed into the actionbar)
 		float scale = getResources().getDisplayMetrics().density;
 		// Convert the dps to pixels, based on density scale
-		int sizeInPx = (int) (4*scale + 0.5f);
+		int sizeInPx = (int) (4 * scale + 0.5f);
 		listView.setPadding(0, sizeInPx, 0, sizeInPx);
 		listView.setClipToPadding(false);
-		
-		listView.setBackgroundColor(getResources().getColor(R.color.unselected_background));
+
+		listView.setBackgroundColor(getResources().getColor(
+				R.color.unselected_background));
 		listView.setDividerHeight(0);
 		listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 		listView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
@@ -104,10 +107,6 @@ public class PlayerListFragment extends ListFragment implements
 			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 				// Respond to clicks on the actions in the CAB
 				switch (item.getItemId()) {
-				case R.id.menu_delete_player:
-					deletePlayer(mSelectedId);
-					mode.finish(); // Action picked, so close the CAB
-					return true;
 				case R.id.menu_edit_player:
 					editPlayerName(mSelectedId);
 					mode.finish();
@@ -142,6 +141,13 @@ public class PlayerListFragment extends ListFragment implements
 				return false;
 			}
 		});
+
+		// Somewhere in your adapter creation code
+		ContextualUndoAdapter adapter = new ContextualUndoAdapter(mAdapter,
+				R.layout.deleted_player_list_item, R.id.undo);
+		adapter.setAbsListView(listView);
+		setListAdapter(adapter);
+		adapter.setDeleteItemCallback(this);
 	}
 
 	@Override
@@ -174,6 +180,13 @@ public class PlayerListFragment extends ListFragment implements
 		// fragment is attached to one) that an item has been selected.
 		Log.d(TAG, "Position: " + position + ", ID: " + id);
 		mCallbacks.onItemSelected(id, position);
+	}
+
+	@Override
+	public void deleteItem(int position) {
+		Cursor cursor = (Cursor) mAdapter.getItem(position);
+		long id = cursor.getLong(cursor.getColumnIndex(_ID));
+		PlayerManager.getInstance().deletePlayer(getActivity(), id);
 	}
 
 	@Override
@@ -329,4 +342,5 @@ public class PlayerListFragment extends ListFragment implements
 	};
 
 	private static String TAG = "PlayerListFragment";
+
 }

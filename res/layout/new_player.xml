@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <Spinner
+        android:id="@+id/color_picker"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <EditText
+        android:id="@+id/dialog_player_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:ems="10"
+        android:inputType="textPersonName|text"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:selectAllOnFocus="true"
+        android:layout_weight="8" >
+        
+    </EditText>
+
+</LinearLayout>
