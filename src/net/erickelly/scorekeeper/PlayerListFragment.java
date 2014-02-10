@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter;
 import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter.DeleteItemCallback;
@@ -84,7 +85,7 @@ public class PlayerListFragment extends ListFragment implements
 		listView.setClipToPadding(false);
 
 		listView.setBackgroundColor(getResources().getColor(
-				R.color.unselected_background));
+				R.color.list_background));
 		listView.setDividerHeight(0);
 		listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 		listView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
@@ -180,7 +181,13 @@ public class PlayerListFragment extends ListFragment implements
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
 		Log.d(TAG, "Position: " + position + ", ID: " + id);
-		mCallbacks.onItemSelected(id, position);
+		Log.d(TAG, "View id: " + view.getId());
+		if (view.getId() == R.id.player_name) {
+			Toast.makeText(getActivity(), "Player name tapped",
+					Toast.LENGTH_SHORT).show();
+		} else {
+			mCallbacks.onItemSelected(id, position);
+		}
 	}
 
 	@Override

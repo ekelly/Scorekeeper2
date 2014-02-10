@@ -5,8 +5,9 @@
     <color name="red">#FF0000</color>
     <color name="green">#00FF00</color>
     <color name="unselected_background">#CDCDCD</color>
+    <color name="shadow">@color/unselected_background</color>
     <color name="android_blue">#33B5E5</color>
-    <color name="list_background">#CCC</color>
+    <color name="list_background">#E5E5E5</color>
     
     <!-- For the color picker -->
     <color name="crimson">#DC143C</color>
