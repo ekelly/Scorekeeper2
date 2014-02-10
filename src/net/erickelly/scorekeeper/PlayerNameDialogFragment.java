@@ -1,9 +1,6 @@
 package net.erickelly.scorekeeper;
 
-import java.util.Arrays;
-
 import net.erickelly.scorekeeper.data.PlayerManager;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -12,11 +9,8 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 
 public class PlayerNameDialogFragment extends DialogFragment {
 
@@ -49,6 +43,10 @@ public class PlayerNameDialogFragment extends DialogFragment {
 		PlayerNameDialogFragment d = new PlayerNameDialogFragment();
 		d.setListener(listener);
 		return d;
+	}
+
+	public PlayerNameDialogFragment() {
+		setRetainInstance(true);
 	}
 
 	/**
@@ -110,40 +108,6 @@ public class PlayerNameDialogFragment extends DialogFragment {
 	 */
 	public interface PlayerNamePromptListener {
 		public void onPlayerNameEntry(String name);
-	}
-
-	@SuppressWarnings({ "rawtypes", "unused" })
-	private static class ColorPickerAdapter extends ArrayAdapter {
-		private Activity mActivity;
-		private int[] mColors;
-
-		@SuppressWarnings("unchecked")
-		public ColorPickerAdapter(Activity activity, int resource, int[] colors) {
-			super(activity, resource, Arrays.asList(colors));
-			mActivity = activity;
-			mColors = colors;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			return getCustomView(position, convertView, parent);
-		}
-
-		@Override
-		public View getDropDownView(int position, View convertView,
-				ViewGroup parent) {
-			return getCustomView(position, convertView, parent);
-		}
-
-		private View getCustomView(int position, View convertView,
-				ViewGroup parent) {
-			LayoutInflater inflater = mActivity.getLayoutInflater();
-			FrameLayout colorItem = (FrameLayout) inflater.inflate(
-					R.layout.color_item, parent);
-			colorItem.setBackgroundColor(mActivity.getResources().getColor(
-					mColors[position]));
-			return colorItem;
-		}
 	}
 
 	private static PlayerNamePromptListener mDummyListener = new PlayerNamePromptListener() {
