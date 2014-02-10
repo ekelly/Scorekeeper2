@@ -6,6 +6,7 @@ import static net.erickelly.scorekeeper.data.Players.PLAYERS_WITH_SCORE_URI;
 import static net.erickelly.scorekeeper.data.Players.SCORE;
 import static net.erickelly.scorekeeper.data.Players._ID;
 import net.erickelly.scorekeeper.PlayerNameDialogFragment.PlayerNamePromptListener;
+import net.erickelly.scorekeeper.data.CursorWithDelete;
 import net.erickelly.scorekeeper.data.Player;
 import net.erickelly.scorekeeper.data.PlayerManager;
 import android.app.Activity;
@@ -186,7 +187,10 @@ public class PlayerListFragment extends ListFragment implements
 	public void deleteItem(int position) {
 		Cursor cursor = (Cursor) mAdapter.getItem(position);
 		long id = cursor.getLong(cursor.getColumnIndex(_ID));
-		PlayerManager.getInstance().deletePlayer(getActivity(), id);
+		CursorWithDelete cursorWrapper = new CursorWithDelete(
+				mAdapter.getCursor(), position);
+		mAdapter.swapCursor(cursorWrapper);
+		deletePlayer(id);
 	}
 
 	@Override
