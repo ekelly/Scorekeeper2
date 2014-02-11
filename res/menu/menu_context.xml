@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menu_delete_player"
-        android:icon="@drawable/ic_action_delete"
-        android:title="@string/remove_player">
-    </item>
-    <item
         android:id="@+id/menu_edit_player"
         android:icon="@drawable/ic_action_edit"
         android:title="@string/edit_player">

@@ -5,5 +5,36 @@
     <color name="red">#FF0000</color>
     <color name="green">#00FF00</color>
     <color name="unselected_background">#CDCDCD</color>
+    <color name="shadow">@color/unselected_background</color>
     <color name="android_blue">#33B5E5</color>
+    <color name="list_background">#E5E5E5</color>
+    
+    <!-- For the color picker -->
+    <color name="crimson">#DC143C</color>
+    <color name="lightpink">#FFAEB9</color>
+    <color name="palevioletred">#DB7093</color>
+    <color name="grey">#CDC1C5</color>
+    <color name="hotpink">#FF69B4</color>
+    <color name="maroon">#FF34B3</color>
+    <color name="purple">#DA70D6</color>
+    <color name="lightpurple">#FF83FA</color>
+    <color name="darkpurple">#800080</color>
+    <color name="darkviolet">#9400D3</color>
+    <color name="mediumpurple">#9370DB</color>
+    <color name="slateblue">#836FFF</color>
+    <color name="blue">#0000FF</color>
+    <color name="navyblue">#000080</color>
+    <color name="slategrey">#708090</color>
+    <color name="lightskyblue">#87CEFA</color>
+    <color name="turquoise">#00E5EE</color>
+    <color name="teal">#008080</color>
+    <color name="turquoiseblue">#00C78C</color>
+    <color name="aquamarine">#76EEC6</color>
+    <color name="springgreen">#00FF7F</color>
+    <color name="seagreen">#2E8B57</color>
+    <color name="olivedrab">#6B8E23</color>
+    <color name="mudyellow">#8B8B00</color>
+    <color name="goldenrod">#DAA520</color>
+    <color name="orange">#FFA500</color>
+    <color name="brick">#9C661F</color>
 </resources>

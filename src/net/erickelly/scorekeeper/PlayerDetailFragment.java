@@ -50,6 +50,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 
 		if (getArguments().containsKey(ARG_START_IN_NOTES)) {
 			mStartInNotes = getArguments().getBoolean(ARG_START_IN_NOTES);
+			Log.d("erickell", "Start in notes? " + mStartInNotes);
 		}
 
 		// Are we using the notes area or not?
@@ -102,11 +103,11 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 				}
 			});
 
+			setNotesArea(mNotes);
 		}
 
 		if (mPlayer != null) {
 			setScore(mPlayer.getScore());
-			setNotesArea(mNotes);
 			mDetailView.setTag(mPlayer.getId());
 		}
 
@@ -136,7 +137,16 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		super.onResume();
 		getNumpadFragment().registerListener(this);
 
-		setFocus(mStartInNotes ? ActionFocus.NOTES : ActionFocus.SCORE);
+		startFocus();
+	}
+
+	/**
+	 * Whenever we return to the PlayerDetail, we want to start the focus in the
+	 * right place
+	 */
+	private void startFocus() {
+		boolean startInNotes = mStartInNotes && mNotes.equals("");
+		setFocus(startInNotes ? ActionFocus.NOTES : ActionFocus.SCORE);
 	}
 
 	/**
@@ -155,7 +165,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		setFinalScore(mPlayer.getScore());
 		setNotesArea(mNotes);
 		setPlayerScoreVisibility(true);
-		setFocus(mStartInNotes ? ActionFocus.NOTES : ActionFocus.SCORE);
+		startFocus();
 	}
 
 	/**

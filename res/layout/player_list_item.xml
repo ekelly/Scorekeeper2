@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/card_container"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_container_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:layout_height="@dimen/player_card_container_height" >
 
     <RelativeLayout
-        style="?android:attr/buttonBarStyle"
+        android:id="@+id/card_container"
         android:layout_width="match_parent"
-        android:layout_height="125dp"
+        android:layout_height="@dimen/player_card_height"
         android:layout_marginBottom="4dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="4dp"
         android:background="@drawable/bg_card"
         android:descendantFocusability="blocksDescendants"
+        android:minHeight="@dimen/player_card_height"
         android:padding="10dp" >
 
         <TextView
             android:id="@+id/player_name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:text="@string/player"
@@ -66,4 +66,4 @@
             android:textSize="36sp" />
     </RelativeLayout>
 
-</LinearLayout>
+</FrameLayout>

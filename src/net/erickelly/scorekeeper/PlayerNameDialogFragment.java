@@ -45,6 +45,10 @@ public class PlayerNameDialogFragment extends DialogFragment {
 		return d;
 	}
 
+	public PlayerNameDialogFragment() {
+		setRetainInstance(true);
+	}
+
 	/**
 	 * Set this fragment's listener to the given listener
 	 * 
@@ -62,6 +66,8 @@ public class PlayerNameDialogFragment extends DialogFragment {
 		final View v = inflater.inflate(R.layout.dialog_fragment_new_player,
 				null);
 		EditText nameInput = (EditText) v.findViewById(R.id.dialog_player_name);
+
+		// EditText stuff
 		String editTextInitialContent;
 		if (!prefill.isEmpty()) {
 			Log.d(TAG, "using prefill: " + prefill);

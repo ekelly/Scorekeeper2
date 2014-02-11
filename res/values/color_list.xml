@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer-array name="color_array">
+        <item>@color/black</item>
+        <item>@color/crimson</item>
+        <item>@color/lightpink</item>
+        <item>@color/palevioletred</item>
+        <item>@color/grey</item>
+        <item>@color/hotpink</item>
+        <item>@color/maroon</item>
+        <item>@color/purple</item>
+        <item>@color/lightpurple</item>
+        <item>@color/darkpurple</item>
+        <item>@color/darkviolet</item>
+        <item>@color/mediumpurple</item>
+        <item>@color/slateblue</item>
+        <item>@color/blue</item>
+        <item>@color/navyblue</item>
+        <item>@color/slategrey</item>
+        <item>@color/lightskyblue</item>
+        <item>@color/turquoise</item>
+        <item>@color/teal</item>
+        <item>@color/turquoiseblue</item>
+        <item>@color/aquamarine</item>
+        <item>@color/springgreen</item>
+        <item>@color/seagreen</item>
+        <item>@color/olivedrab</item>
+        <item>@color/mudyellow</item>
+        <item>@color/goldenrod</item>
+        <item>@color/orange</item>
+        <item>@color/brick</item>
+    </integer-array>
+
+</resources>

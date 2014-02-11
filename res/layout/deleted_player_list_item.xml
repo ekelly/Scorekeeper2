@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/undo"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/player_card_height"
+    android:minHeight="@dimen/player_card_container_height"
+    android:background="@color/list_background"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="horizontal"
+    android:gravity="center" >
+
+    <ImageView
+        android:id="@+id/undo_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-2dp"
+        android:contentDescription="@string/undo"
+        android:src="@android:drawable/ic_menu_revert" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/undo"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="22sp" />
+
+</LinearLayout>

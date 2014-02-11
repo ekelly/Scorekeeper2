@@ -15,4 +15,6 @@ Todo:
 - Add tablet layout
 - Make bidding area look nicer
 - Add first run help text
-- Multiple person add / select (for delete)
+- Add reset confirmation popup
+- Add 1-click add player functionality
+- Add 1-tap Edit the name of a player
