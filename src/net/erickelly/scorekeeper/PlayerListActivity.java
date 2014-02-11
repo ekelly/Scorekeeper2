@@ -81,7 +81,9 @@ public class PlayerListActivity extends FragmentActivity implements
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
 		case R.id.menu_add_player:
-			showNewPlayerDialog();
+			// showNewPlayerDialog();
+			((PlayerListFragment) getSupportFragmentManager().findFragmentById(
+					R.id.player_list)).addNewPlayer();
 			return true;
 		case R.id.menu_reset_players:
 			resetPlayers();
@@ -133,6 +135,12 @@ public class PlayerListActivity extends FragmentActivity implements
 		int index = listFragment.getListView().getPositionForView(row);
 		Long id = listFragment.getListAdapter().getItemId(index);
 		gotoPlayerDetail(index, id, isPositive, true, false);
+	}
+
+	public void editName(View v) {
+		PlayerListFragment listFragment = ((PlayerListFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.player_list));
+		listFragment.switchEditName(v);
 	}
 
 	/**

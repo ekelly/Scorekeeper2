@@ -24,8 +24,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView.MultiChoiceModeListener;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter;
 import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter.DeleteItemCallback;
@@ -181,13 +183,7 @@ public class PlayerListFragment extends ListFragment implements
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
 		Log.d(TAG, "Position: " + position + ", ID: " + id);
-		Log.d(TAG, "View id: " + view.getId());
-		if (view.getId() == R.id.player_name) {
-			Toast.makeText(getActivity(), "Player name tapped",
-					Toast.LENGTH_SHORT).show();
-		} else {
-			mCallbacks.onItemSelected(id, position);
-		}
+		mCallbacks.onItemSelected(id, position);
 	}
 
 	@Override
@@ -207,6 +203,19 @@ public class PlayerListFragment extends ListFragment implements
 			// Serialize and persist the activated item position.
 			outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
 		}
+	}
+
+	public void addNewPlayer() {
+		PlayerManager.getInstance().addPlayer(getActivity(),
+				PlayerNameDialogFragment.getDefaultPlayerName(getActivity()));
+		mAdapter.notifyDataSetChanged();
+		getListView().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				getListView().setSelection(mAdapter.getCount() - 1);
+				getListView().smoothScrollToPosition(mAdapter.getCount() - 1);
+			}
+		}, 150L);
 	}
 
 	/**
@@ -248,6 +257,46 @@ public class PlayerListFragment extends ListFragment implements
 	 */
 	private void deletePlayer(long playerId) {
 		PlayerManager.getInstance().deletePlayer(getActivity(), playerId);
+	}
+
+	public void switchEditName(View v) {
+		final RelativeLayout parent = (RelativeLayout) v.getParent();
+		final EditText editName = (EditText) parent
+				.findViewById(R.id.edit_player_name);
+		final TextView name = (TextView) parent.findViewById(R.id.player_name);
+		if (editName.getVisibility() == View.VISIBLE) {
+			// Persist the new player name
+			String newName = editName.getText().toString();
+			int position = getListView().getPositionForView(parent);
+			long id = mAdapter.getItemId(position);
+			PlayerManager.editPlayerName(getActivity(), id, newName);
+
+			getListView().setDescendantFocusability(
+					ListView.FOCUS_BLOCK_DESCENDANTS);
+			getListView().setItemsCanFocus(false);
+			parent.setDescendantFocusability(RelativeLayout.FOCUS_BLOCK_DESCENDANTS);
+
+			editName.setFocusableInTouchMode(false);
+			name.setText(newName);
+
+			name.setVisibility(View.VISIBLE);
+			editName.setVisibility(View.GONE);
+		} else {
+			getListView().setDescendantFocusability(
+					ListView.FOCUS_BEFORE_DESCENDANTS);
+			getListView().setItemsCanFocus(true);
+			parent.setDescendantFocusability(RelativeLayout.FOCUS_BEFORE_DESCENDANTS);
+
+			editName.setFocusableInTouchMode(true);
+			editName.setText(name.getText());
+			editName.setSelectAllOnFocus(true);
+			Log.d(TAG, "Did edit text take focus? " + editName.requestFocus());
+
+			editName.setVisibility(View.VISIBLE);
+			name.setVisibility(View.GONE);
+
+			// TODO: bring up keyboard
+		}
 	}
 
 	/**

@@ -38,6 +38,7 @@
     
     <!-- Other -->
     <string name="player">Player</string>
+    <string name="edit">Edit</string>
     
     <!-- Dialog -->
     <string name="player_name">Player Name</string>

@@ -26,6 +26,21 @@
             android:textColor="@color/android_blue"
             android:textSize="36sp"
             android:textStyle="italic|bold" />
+        
+        <EditText
+            android:id="@+id/edit_player_name"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:minWidth="150dp"
+            android:layout_alignParentLeft="true"
+            android:text="@string/player"
+            android:textColor="@color/android_blue"
+            android:textSize="36sp"
+            android:textStyle="italic|bold"
+            android:inputType="text"
+            android:visibility="gone"
+            android:background="#ffffff"
+            android:focusableInTouchMode="true" />
 
         <Button
             android:id="@+id/plus"
@@ -64,6 +79,17 @@
             android:text="@string/minus"
             android:textColor="@color/red"
             android:textSize="36sp" />
+
+        <ImageButton
+            style="?android:attr/buttonBarButtonStyle"
+            android:contentDescription="@string/edit"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignRight="@+id/plus"
+            android:layout_alignTop="@+id/player_name"
+            android:onClick="editName"
+            android:src="@drawable/ic_action_edit" />
+
     </RelativeLayout>
 
 </FrameLayout>

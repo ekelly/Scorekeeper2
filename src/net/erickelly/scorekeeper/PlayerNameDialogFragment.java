@@ -3,6 +3,7 @@ package net.erickelly.scorekeeper;
 import net.erickelly.scorekeeper.data.PlayerManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -58,6 +59,10 @@ public class PlayerNameDialogFragment extends DialogFragment {
 		mListener = listener;
 	}
 
+	public static String getDefaultPlayerName(Context c) {
+		return "Player " + (PlayerManager.getInstance().getPlayerCount(c) + 1);
+	}
+
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		// Build the dialog and set up the button click handlers
@@ -73,9 +78,7 @@ public class PlayerNameDialogFragment extends DialogFragment {
 			Log.d(TAG, "using prefill: " + prefill);
 			editTextInitialContent = prefill;
 		} else {
-			int numPlayers = PlayerManager.getInstance().getPlayerCount(
-					getActivity());
-			editTextInitialContent = "Player " + (numPlayers + 1);
+			editTextInitialContent = getDefaultPlayerName(getActivity());
 			Log.d(TAG, "using new name: " + editTextInitialContent);
 		}
 		nameInput.setText(editTextInitialContent);
