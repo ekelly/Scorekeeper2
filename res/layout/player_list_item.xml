@@ -17,12 +17,14 @@
         android:minHeight="@dimen/player_card_height"
         android:padding="10dp" >
 
-        <TextView
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/player_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:text="@string/player"
+            android:onClick="editName"
             android:textColor="@color/android_blue"
             android:textSize="36sp"
             android:textStyle="italic|bold" />
@@ -81,6 +83,7 @@
             android:textSize="36sp" />
 
         <ImageButton
+            android:id="@+id/edit_button"
             style="?android:attr/buttonBarButtonStyle"
             android:contentDescription="@string/edit"
             android:layout_width="50dp"
@@ -88,6 +91,7 @@
             android:layout_alignRight="@+id/plus"
             android:layout_alignTop="@+id/player_name"
             android:onClick="editName"
+            android:visibility="gone"
             android:src="@drawable/ic_action_edit" />
 
     </RelativeLayout>

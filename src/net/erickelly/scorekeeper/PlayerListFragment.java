@@ -24,10 +24,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView.MultiChoiceModeListener;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter;
 import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter.DeleteItemCallback;
@@ -263,7 +264,9 @@ public class PlayerListFragment extends ListFragment implements
 		final RelativeLayout parent = (RelativeLayout) v.getParent();
 		final EditText editName = (EditText) parent
 				.findViewById(R.id.edit_player_name);
-		final TextView name = (TextView) parent.findViewById(R.id.player_name);
+		final Button name = (Button) parent.findViewById(R.id.player_name);
+		final ImageButton editButton = (ImageButton) parent
+				.findViewById(R.id.edit_button);
 		if (editName.getVisibility() == View.VISIBLE) {
 			// Persist the new player name
 			String newName = editName.getText().toString();
@@ -281,6 +284,7 @@ public class PlayerListFragment extends ListFragment implements
 
 			name.setVisibility(View.VISIBLE);
 			editName.setVisibility(View.GONE);
+			editButton.setVisibility(View.GONE);
 		} else {
 			getListView().setDescendantFocusability(
 					ListView.FOCUS_BEFORE_DESCENDANTS);
@@ -294,7 +298,7 @@ public class PlayerListFragment extends ListFragment implements
 
 			editName.setVisibility(View.VISIBLE);
 			name.setVisibility(View.GONE);
-
+			editButton.setVisibility(View.VISIBLE);
 			// TODO: bring up keyboard
 		}
 	}
