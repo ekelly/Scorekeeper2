@@ -12,7 +12,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="4dp"
-        android:background="@drawable/bg_card"
+        android:background="@drawable/card"
         android:descendantFocusability="blocksDescendants"
         android:minHeight="@dimen/player_card_height"
         android:padding="10dp" >
