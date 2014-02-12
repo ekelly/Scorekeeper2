@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter;
@@ -45,6 +46,11 @@ import com.haarman.listviewanimations.itemmanipulation.contextualundo.Contextual
  */
 public class PlayerListFragment extends ListFragment implements
 		LoaderManager.LoaderCallbacks<Cursor>, DeleteItemCallback {
+
+	private static final long TIMEOUT_SECONDS = 3;
+	private static final long TIMEOUT = TIMEOUT_SECONDS * 1000;
+	private int adjustAmt = 0;
+	private int progressStatus = 100;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -208,11 +214,13 @@ public class PlayerListFragment extends ListFragment implements
 	}
 
 	private void flushDeletedPlayers() {
-		ListAdapter adapter = getListView().getAdapter();
-		if (adapter instanceof ContextualUndoAdapter) {
-			ContextualUndoAdapter undoAdapter = (ContextualUndoAdapter) adapter;
-			undoAdapter.onListScrolled();
-			undoAdapter.notifyDataSetChanged();
+		if (getListView() != null) {
+			ListAdapter adapter = getListView().getAdapter();
+			if (adapter instanceof ContextualUndoAdapter) {
+				ContextualUndoAdapter undoAdapter = (ContextualUndoAdapter) adapter;
+				undoAdapter.onListScrolled();
+				undoAdapter.notifyDataSetChanged();
+			}
 		}
 	}
 
@@ -331,6 +339,33 @@ public class PlayerListFragment extends ListFragment implements
 			}, 100L);
 
 		}
+	}
+
+	public void adjustPlayerScore(final ProgressBar progressBar) {
+		progressBar.setVisibility(View.VISIBLE);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (progressStatus <= 0) {
+					progressStatus -= 1;
+					// Update the progress bar and display the
+					// current value in the text view
+					progressBar.post(new Runnable() {
+						public void run() {
+							progressBar.setProgress(progressStatus);
+						}
+					});
+					try {
+						// Sleep for 200 milliseconds.
+						// Just to display the progress slowly
+						Thread.sleep(TIMEOUT / 100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				progressBar.setVisibility(View.INVISIBLE);
+			}
+		}).start();
 	}
 
 	@Override

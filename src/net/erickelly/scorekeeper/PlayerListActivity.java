@@ -54,8 +54,7 @@ public class PlayerListActivity extends FragmentActivity implements
 
 			// In two-pane mode, list items should be given the
 			// 'activated' state when touched.
-			((PlayerListFragment) getSupportFragmentManager().findFragmentById(
-					R.id.player_list)).setActivateOnItemClick(true);
+			getPlayerListFragment().setActivateOnItemClick(true);
 		}
 
 		// TODO: If exposing deep links into your app, handle intents here.
@@ -127,17 +126,20 @@ public class PlayerListActivity extends FragmentActivity implements
 	public void onAdjustScore(View v) {
 		boolean isPositive = (v.getId() == R.id.plus);
 		RelativeLayout row = ((RelativeLayout) v.getParent());
-		PlayerListFragment listFragment = ((PlayerListFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.player_list));
+		PlayerListFragment listFragment = getPlayerListFragment();
 		int index = listFragment.getListView().getPositionForView(row);
 		Long id = listFragment.getListAdapter().getItemId(index);
 		gotoPlayerDetail(index, id, isPositive, true, false);
 	}
 
 	public void editName(View v) {
-		PlayerListFragment listFragment = ((PlayerListFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.player_list));
+		PlayerListFragment listFragment = getPlayerListFragment();
 		listFragment.switchEditName(v);
+	}
+
+	private PlayerListFragment getPlayerListFragment() {
+		return ((PlayerListFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.player_list));
 	}
 
 	/**
@@ -177,8 +179,7 @@ public class PlayerListActivity extends FragmentActivity implements
 	 * Add a player to the list
 	 */
 	private void addPlayer() {
-		((PlayerListFragment) getSupportFragmentManager().findFragmentById(
-				R.id.player_list)).addNewPlayer();
+		getPlayerListFragment().addNewPlayer();
 	}
 
 	/**
