@@ -83,7 +83,7 @@
             android:textSize="36sp" />
 
         <ImageButton
-            android:id="@+id/edit_button"
+            android:id="@+id/confirm_edit_button"
             style="?android:attr/buttonBarButtonStyle"
             android:contentDescription="@string/edit"
             android:layout_width="50dp"
@@ -92,7 +92,7 @@
             android:layout_alignTop="@+id/player_name"
             android:onClick="editName"
             android:visibility="gone"
-            android:src="@drawable/ic_action_edit" />
+            android:src="@drawable/ic_action_accept" />
 
     </RelativeLayout>
 

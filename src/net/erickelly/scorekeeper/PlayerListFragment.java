@@ -10,6 +10,7 @@ import net.erickelly.scorekeeper.data.CursorWithDelete;
 import net.erickelly.scorekeeper.data.Player;
 import net.erickelly.scorekeeper.data.PlayerManager;
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -23,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -265,41 +267,56 @@ public class PlayerListFragment extends ListFragment implements
 		final EditText editName = (EditText) parent
 				.findViewById(R.id.edit_player_name);
 		final Button name = (Button) parent.findViewById(R.id.player_name);
-		final ImageButton editButton = (ImageButton) parent
-				.findViewById(R.id.edit_button);
+		final ImageButton confirmButton = (ImageButton) parent
+				.findViewById(R.id.confirm_edit_button);
 		if (editName.getVisibility() == View.VISIBLE) {
 			// Persist the new player name
-			String newName = editName.getText().toString();
+			String newName = editName.getText().toString().trim();
 			int position = getListView().getPositionForView(parent);
 			long id = mAdapter.getItemId(position);
 			PlayerManager.editPlayerName(getActivity(), id, newName);
+
+			editName.setFocusableInTouchMode(false);
+			name.setText(newName);
+			name.setVisibility(View.VISIBLE);
+			editName.setVisibility(View.GONE);
+			confirmButton.setVisibility(View.GONE);
 
 			getListView().setDescendantFocusability(
 					ListView.FOCUS_BLOCK_DESCENDANTS);
 			getListView().setItemsCanFocus(false);
 			parent.setDescendantFocusability(RelativeLayout.FOCUS_BLOCK_DESCENDANTS);
 
-			editName.setFocusableInTouchMode(false);
-			name.setText(newName);
-
-			name.setVisibility(View.VISIBLE);
-			editName.setVisibility(View.GONE);
-			editButton.setVisibility(View.GONE);
+			InputMethodManager keyboard = (InputMethodManager) getActivity()
+					.getSystemService(Context.INPUT_METHOD_SERVICE);
+			keyboard.hideSoftInputFromWindow(getActivity().getCurrentFocus()
+					.getWindowToken(), 0);
 		} else {
 			getListView().setDescendantFocusability(
-					ListView.FOCUS_BEFORE_DESCENDANTS);
+					ListView.FOCUS_AFTER_DESCENDANTS);
 			getListView().setItemsCanFocus(true);
-			parent.setDescendantFocusability(RelativeLayout.FOCUS_BEFORE_DESCENDANTS);
+			parent.setDescendantFocusability(RelativeLayout.FOCUS_AFTER_DESCENDANTS);
 
-			editName.setFocusableInTouchMode(true);
 			editName.setText(name.getText());
-			editName.setSelectAllOnFocus(true);
-			Log.d(TAG, "Did edit text take focus? " + editName.requestFocus());
-
 			editName.setVisibility(View.VISIBLE);
 			name.setVisibility(View.GONE);
-			editButton.setVisibility(View.VISIBLE);
-			// TODO: bring up keyboard
+			confirmButton.setVisibility(View.VISIBLE);
+
+			editName.setFocusableInTouchMode(true);
+			// editName.setSelectAllOnFocus(true);
+			Log.d(TAG, "Did edit text take focus? " + editName.requestFocus());
+
+			// bring up keyboard
+			editName.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					editName.selectAll();
+					InputMethodManager keyboard = (InputMethodManager) getActivity()
+							.getSystemService(Context.INPUT_METHOD_SERVICE);
+					keyboard.showSoftInput(editName, 0);
+				}
+			}, 100L);
+
 		}
 	}
 
