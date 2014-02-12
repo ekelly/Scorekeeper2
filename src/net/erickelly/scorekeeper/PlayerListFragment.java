@@ -5,9 +5,7 @@ import static net.erickelly.scorekeeper.data.Players.PLAYERS_TABLE_NAME;
 import static net.erickelly.scorekeeper.data.Players.PLAYERS_WITH_SCORE_URI;
 import static net.erickelly.scorekeeper.data.Players.SCORE;
 import static net.erickelly.scorekeeper.data.Players._ID;
-import net.erickelly.scorekeeper.PlayerNameDialogFragment.PlayerNamePromptListener;
 import net.erickelly.scorekeeper.data.CursorWithDelete;
-import net.erickelly.scorekeeper.data.Player;
 import net.erickelly.scorekeeper.data.PlayerManager;
 import android.app.Activity;
 import android.content.Context;
@@ -114,10 +112,6 @@ public class PlayerListFragment extends ListFragment implements
 			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 				// Respond to clicks on the actions in the CAB
 				switch (item.getItemId()) {
-				case R.id.menu_edit_player:
-					editPlayerName(mSelectedId);
-					mode.finish();
-					return true;
 				case R.id.menu_reset_player:
 					resetPlayer(mSelectedId);
 					mode.finish();
@@ -210,7 +204,7 @@ public class PlayerListFragment extends ListFragment implements
 
 	public void addNewPlayer() {
 		PlayerManager.getInstance().addPlayer(getActivity(),
-				PlayerNameDialogFragment.getDefaultPlayerName(getActivity()));
+				getDefaultPlayerName());
 		mAdapter.notifyDataSetChanged();
 		getListView().postDelayed(new Runnable() {
 			@Override
@@ -260,6 +254,11 @@ public class PlayerListFragment extends ListFragment implements
 	 */
 	private void deletePlayer(long playerId) {
 		PlayerManager.getInstance().deletePlayer(getActivity(), playerId);
+	}
+
+	public String getDefaultPlayerName() {
+		return "Player "
+				+ (PlayerManager.getInstance().getPlayerCount(getActivity()) + 1);
 	}
 
 	public void switchEditName(View v) {
@@ -318,27 +317,6 @@ public class PlayerListFragment extends ListFragment implements
 			}, 100L);
 
 		}
-	}
-
-	/**
-	 * Edit the player name associated with the given player id
-	 * 
-	 * @param playerId
-	 */
-	private void editPlayerName(final long playerId) {
-		Log.d(TAG, "editPlayerName: " + playerId);
-		Player p = PlayerManager.getPlayer(getActivity(), playerId);
-		PlayerNameDialogFragment.newInstance(new PlayerNamePromptListener() {
-			/**
-			 * When the new player's name is entered, this method is called. Use
-			 * this to actually set the new player name
-			 */
-			@Override
-			public void onPlayerNameEntry(String name) {
-				PlayerManager.editPlayerName(getActivity(), playerId, name);
-				mAdapter.notifyDataSetChanged();
-			}
-		}, p.getName()).show(getFragmentManager(), "EditPlayerName");
 	}
 
 	@Override

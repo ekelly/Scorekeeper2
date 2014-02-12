@@ -1,6 +1,5 @@
 package net.erickelly.scorekeeper;
 
-import net.erickelly.scorekeeper.PlayerNameDialogFragment.PlayerNamePromptListener;
 import net.erickelly.scorekeeper.data.PlayerManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -81,9 +80,7 @@ public class PlayerListActivity extends FragmentActivity implements
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
 		case R.id.menu_add_player:
-			// showNewPlayerDialog();
-			((PlayerListFragment) getSupportFragmentManager().findFragmentById(
-					R.id.player_list)).addNewPlayer();
+			addPlayer();
 			return true;
 		case R.id.menu_reset_players:
 			resetPlayers();
@@ -179,8 +176,9 @@ public class PlayerListActivity extends FragmentActivity implements
 	/**
 	 * Add a player to the list
 	 */
-	private void addPlayer(String playerName) {
-		PlayerManager.getInstance().addPlayer(this, playerName);
+	private void addPlayer() {
+		((PlayerListFragment) getSupportFragmentManager().findFragmentById(
+				R.id.player_list)).addNewPlayer();
 	}
 
 	/**
@@ -190,24 +188,6 @@ public class PlayerListActivity extends FragmentActivity implements
 		Log.d(TAG, "launchSettings");
 		Intent i = new Intent(this, SettingsActivity.class);
 		startActivity(i);
-	}
-
-	/**
-	 * Open a diolog prompting input for a new player's name
-	 */
-	private void showNewPlayerDialog() {
-		PlayerNameDialogFragment dialog = PlayerNameDialogFragment
-				.newInstance(new PlayerNamePromptListener() {
-					/**
-					 * When the new player's name is entered, this method is
-					 * called. Use this to actually set the new player name
-					 */
-					@Override
-					public void onPlayerNameEntry(String name) {
-						addPlayer(name);
-					}
-				});
-		dialog.show(getSupportFragmentManager(), "NewPlayerDialog");
 	}
 
 	private static final String TAG = "PlayerListActivity";
