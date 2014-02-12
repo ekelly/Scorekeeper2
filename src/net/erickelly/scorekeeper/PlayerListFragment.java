@@ -175,8 +175,6 @@ public class PlayerListFragment extends ListFragment implements
 	public void onDetach() {
 		super.onDetach();
 
-		flushDeletedPlayers();
-
 		// Reset the active callbacks interface to the dummy implementation.
 		mCallbacks = sDummyCallbacks;
 	}
