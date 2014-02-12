@@ -27,6 +27,7 @@ import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -168,6 +169,8 @@ public class PlayerListFragment extends ListFragment implements
 	public void onDetach() {
 		super.onDetach();
 
+		flushDeletedPlayers();
+
 		// Reset the active callbacks interface to the dummy implementation.
 		mCallbacks = sDummyCallbacks;
 	}
@@ -176,6 +179,8 @@ public class PlayerListFragment extends ListFragment implements
 	public void onListItemClick(ListView listView, View view, int position,
 			long id) {
 		super.onListItemClick(listView, view, position, id);
+
+		flushDeletedPlayers();
 
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
@@ -199,6 +204,15 @@ public class PlayerListFragment extends ListFragment implements
 		if (mActivatedPosition != ListView.INVALID_POSITION) {
 			// Serialize and persist the activated item position.
 			outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+		}
+	}
+
+	private void flushDeletedPlayers() {
+		ListAdapter adapter = getListView().getAdapter();
+		if (adapter instanceof ContextualUndoAdapter) {
+			ContextualUndoAdapter undoAdapter = (ContextualUndoAdapter) adapter;
+			undoAdapter.onListScrolled();
+			undoAdapter.notifyDataSetChanged();
 		}
 	}
 
