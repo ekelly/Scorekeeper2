@@ -83,7 +83,7 @@ public class PlayerListFragment extends ListFragment implements
 					.getInt(STATE_ACTIVATED_POSITION));
 		}
 
-		ListView listView = getListView();
+		final ListView listView = getListView();
 
 		// Set the listview padding correctly
 		// (need padding above/below listview so that the first item isn't
@@ -290,7 +290,9 @@ public class PlayerListFragment extends ListFragment implements
 				.findViewById(R.id.confirm_edit_button);
 		if (editName.getVisibility() == View.VISIBLE) {
 			// Persist the new player name
-			String newName = editName.getText().toString().trim();
+			// The extra space on the end is to prevent the italic text
+			// from being slightly cut off
+			String newName = editName.getText().toString().trim() + " ";
 			int position = getListView().getPositionForView(parent);
 			long id = mAdapter.getItemId(position);
 			PlayerManager.editPlayerName(getActivity(), id, newName);
@@ -316,7 +318,8 @@ public class PlayerListFragment extends ListFragment implements
 			getListView().setItemsCanFocus(true);
 			parent.setDescendantFocusability(RelativeLayout.FOCUS_AFTER_DESCENDANTS);
 
-			editName.setText(name.getText());
+			String text = "" + name.getText();
+			editName.setText(text.trim());
 			editName.setVisibility(View.VISIBLE);
 			name.setVisibility(View.GONE);
 			confirmButton.setVisibility(View.VISIBLE);
