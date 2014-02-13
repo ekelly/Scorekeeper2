@@ -290,15 +290,15 @@ public class PlayerListFragment extends ListFragment implements
 				.findViewById(R.id.confirm_edit_button);
 		if (editName.getVisibility() == View.VISIBLE) {
 			// Persist the new player name
-			// The extra space on the end is to prevent the italic text
-			// from being slightly cut off
-			String newName = editName.getText().toString().trim() + " ";
+			String newName = editName.getText().toString().trim();
 			int position = getListView().getPositionForView(parent);
 			long id = mAdapter.getItemId(position);
 			PlayerManager.editPlayerName(getActivity(), id, newName);
 
 			editName.setFocusableInTouchMode(false);
-			name.setText(newName);
+			// The extra space on the end is to prevent the italic text
+			// from being slightly cut off
+			name.setText(newName + " ");
 			name.setVisibility(View.VISIBLE);
 			editName.setVisibility(View.GONE);
 			confirmButton.setVisibility(View.GONE);
