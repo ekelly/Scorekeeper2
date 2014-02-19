@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 /**
  * An activity representing a list of Players. This activity has different
@@ -124,12 +123,15 @@ public class PlayerListActivity extends FragmentActivity implements
 	 * @param v
 	 */
 	public void onAdjustScore(View v) {
-		boolean isPositive = (v.getId() == R.id.plus);
-		RelativeLayout row = ((RelativeLayout) v.getParent());
 		PlayerListFragment listFragment = getPlayerListFragment();
-		int index = listFragment.getListView().getPositionForView(row);
-		Long id = listFragment.getListAdapter().getItemId(index);
-		gotoPlayerDetail(index, id, isPositive, true, false);
+		listFragment.adjustPlayerScore(v);
+		/*
+		 * boolean isPositive = (v.getId() == R.id.plus); RelativeLayout row =
+		 * ((RelativeLayout) v.getParent()); int index =
+		 * listFragment.getListView().getPositionForView(row); Long id =
+		 * listFragment.getListAdapter().getItemId(index);
+		 */
+		// gotoPlayerDetail(index, id, isPositive, true, false);
 	}
 
 	public void editName(View v) {

@@ -6,7 +6,9 @@ import static net.erickelly.scorekeeper.data.Players.PLAYERS_WITH_SCORE_URI;
 import static net.erickelly.scorekeeper.data.Players.SCORE;
 import static net.erickelly.scorekeeper.data.Players._ID;
 import net.erickelly.scorekeeper.data.CursorWithDelete;
+import net.erickelly.scorekeeper.data.Player;
 import net.erickelly.scorekeeper.data.PlayerManager;
+import net.erickelly.scorekeeper.data.Sign;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -26,11 +28,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter;
 import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter.DeleteItemCallback;
@@ -49,8 +53,10 @@ public class PlayerListFragment extends ListFragment implements
 
 	private static final long TIMEOUT_SECONDS = 3;
 	private static final long TIMEOUT = TIMEOUT_SECONDS * 1000;
-	private int adjustAmt = 0;
-	private int progressStatus = 100;
+	private int mAdjustAmt = 0;
+	private Player mCurrentPlayer;
+	private Thread mThread;
+	private Integer mProgressStatus = 100;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -145,7 +151,6 @@ public class PlayerListFragment extends ListFragment implements
 
 			@Override
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-				// TODO Auto-generated method stub
 				return false;
 			}
 		});
@@ -172,6 +177,12 @@ public class PlayerListFragment extends ListFragment implements
 	}
 
 	@Override
+	public void onPause() {
+		super.onPause();
+		flushDeletedPlayers();
+	}
+
+	@Override
 	public void onDetach() {
 		super.onDetach();
 
@@ -184,6 +195,7 @@ public class PlayerListFragment extends ListFragment implements
 			long id) {
 		super.onListItemClick(listView, view, position, id);
 
+		flushPlayerScore();
 		flushDeletedPlayers();
 
 		// Notify the active callbacks interface (the activity, if the
@@ -212,13 +224,11 @@ public class PlayerListFragment extends ListFragment implements
 	}
 
 	private void flushDeletedPlayers() {
-		if (getListView() != null) {
-			ListAdapter adapter = getListView().getAdapter();
-			if (adapter instanceof ContextualUndoAdapter) {
-				ContextualUndoAdapter undoAdapter = (ContextualUndoAdapter) adapter;
-				undoAdapter.onListScrolled();
-				undoAdapter.notifyDataSetChanged();
-			}
+		ListAdapter adapter = getListView().getAdapter();
+		if (adapter instanceof ContextualUndoAdapter) {
+			ContextualUndoAdapter undoAdapter = (ContextualUndoAdapter) adapter;
+			undoAdapter.onListScrolled();
+			undoAdapter.notifyDataSetChanged();
 		}
 	}
 
@@ -342,31 +352,108 @@ public class PlayerListFragment extends ListFragment implements
 		}
 	}
 
-	public void adjustPlayerScore(final ProgressBar progressBar) {
-		progressBar.setVisibility(View.VISIBLE);
-		new Thread(new Runnable() {
+	public void adjustPlayerScore(View v) {
+		RelativeLayout card = ((RelativeLayout) v.getParent());
+		ProgressBar progress = (ProgressBar) ((FrameLayout) card.getParent()
+				.getParent()).findViewById(R.id.progressBar);
+		int index = getListView().getPositionForView(card);
+		long currentPlayer = getListAdapter().getItemId(index);
+		if (mCurrentPlayer == null || mCurrentPlayer.getId() != currentPlayer) {
+			flushPlayerScore();
+			mCurrentPlayer = PlayerManager.getPlayer(getActivity(),
+					currentPlayer);
+		}
+		boolean isPositive = (v.getId() == R.id.plus);
+		Sign s = Sign.valueOf(isPositive);
+		if (s.equals(Sign.NEGATIVE)) {
+			mAdjustAmt--;
+		} else {
+			mAdjustAmt++;
+		}
+		final TextView scoreView = (TextView) card.findViewById(R.id.score);
+		scoreView.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				while (progressStatus <= 0) {
-					progressStatus -= 1;
-					// Update the progress bar and display the
-					// current value in the text view
-					progressBar.post(new Runnable() {
-						public void run() {
-							progressBar.setProgress(progressStatus);
+				scoreView.setText("" + (mCurrentPlayer.getScore() + mAdjustAmt));
+			}
+		}, 100L);
+
+		adjustProgressBar(progress);
+	}
+
+	private void hideProgressBars() {
+		for (int i = 0; i < getListView().getChildCount(); i++) {
+			FrameLayout container = (FrameLayout) getListView().getChildAt(i);
+			ProgressBar progress = (ProgressBar) container
+					.findViewById(R.id.progressBar);
+			if (progress.getVisibility() == View.VISIBLE) {
+				progress.setProgress(100);
+				progress.setVisibility(View.INVISIBLE);
+			}
+		}
+	}
+
+	private void flushPlayerScore() {
+		// Cancel all progress bars
+		hideProgressBars();
+
+		if (mCurrentPlayer != null && mAdjustAmt != 0) {
+			PlayerManager.adjustScore(getActivity(), mCurrentPlayer.getId(),
+					mAdjustAmt, null, false);
+			mCurrentPlayer.adjustScore(mAdjustAmt);
+
+			// Reset variables
+			mAdjustAmt = 0;
+		}
+	}
+
+	public void adjustProgressBar(final ProgressBar progressBar) {
+		progressBar.setVisibility(View.VISIBLE);
+		if (mThread != null && mThread.isAlive()) {
+			mThread.interrupt();
+		}
+		synchronized (mProgressStatus) {
+			mProgressStatus = 100;
+		}
+		mThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (mProgressStatus) {
+					while (!Thread.currentThread().isInterrupted()
+							&& mProgressStatus > 0) {
+						mProgressStatus -= 1;
+						// Update the progress bar and display the
+						// current value in the text view
+						progressBar.post(new Runnable() {
+							public void run() {
+								progressBar.setProgress(mProgressStatus);
+							}
+						});
+						try {
+							// Sleep for 200 milliseconds.
+							// Just to display the progress slowly
+							Thread.sleep(TIMEOUT / 100);
+						} catch (InterruptedException e) {
+							// Restore interrupt flag after catching
+							// InterruptedException
+							// to make loop condition false
+							Thread.currentThread().interrupt();
 						}
-					});
-					try {
-						// Sleep for 200 milliseconds.
-						// Just to display the progress slowly
-						Thread.sleep(TIMEOUT / 100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+					}
+					if (mProgressStatus <= 0
+							&& !Thread.currentThread().isInterrupted()) {
+						progressBar.post(new Runnable() {
+							@Override
+							public void run() {
+								progressBar.setVisibility(View.INVISIBLE);
+								flushPlayerScore();
+							}
+						});
 					}
 				}
-				progressBar.setVisibility(View.INVISIBLE);
 			}
-		}).start();
+		});
+		mThread.start();
 	}
 
 	@Override
@@ -385,7 +472,6 @@ public class PlayerListFragment extends ListFragment implements
 		// Swap the new cursor in. (The framework will take care of closing the
 		// old cursor once we return.)
 		Log.d(TAG, "onLoadFinished");
-		Log.d("onLoadFinished: ", String.valueOf(data.getCount()));
 		mAdapter.swapCursor(data);
 	}
 
