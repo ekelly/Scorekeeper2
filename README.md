@@ -5,7 +5,6 @@ Rebuilding Scorekeeper from the ground up.  This app will provide an easy and co
 
 Todo:
 =====
-- Fix performance bugs
 - Fix list view selection bug
 - Nicify list view
   - Add icons/colors for listview items
@@ -16,5 +15,3 @@ Todo:
 - Make bidding area look nicer
 - Add first run help text
 - Add reset confirmation popup
-- Add 1-click add player functionality
-- Add 1-tap Edit the name of a player
