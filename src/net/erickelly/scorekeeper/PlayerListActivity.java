@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -189,14 +190,17 @@ public class PlayerListActivity extends FragmentActivity implements
 		// 3. Get the AlertDialog from create()
 		AlertDialog dialog = builder.create();
 		final Activity activity = this;
-		dialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+		Resources res = getResources();
+		dialog.setButton(AlertDialog.BUTTON_POSITIVE,
+				res.getString(android.R.string.ok),
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						PlayerManager.resetAllPlayers(activity);
 					}
 				});
-		dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
+		dialog.setButton(AlertDialog.BUTTON_NEGATIVE,
+				res.getString(android.R.string.cancel),
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {

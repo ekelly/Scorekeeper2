@@ -42,7 +42,7 @@
     
     <!-- Dialog -->
     <string name="player_name">Player Name</string>
-    <string name="reset_dialog_title">Reset?</string>
+    <string name="reset_dialog_title">Would you like to reset?</string>
     <string name="reset_dialog_description">Do you really want to reset all players scores?</string>
     
     <!-- Settings -->
