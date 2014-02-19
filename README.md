@@ -14,4 +14,3 @@ Todo:
 - Add tablet layout
 - Make bidding area look nicer
 - Add first run help text
-- Add reset confirmation popup

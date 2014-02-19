@@ -1,6 +1,9 @@
 package net.erickelly.scorekeeper;
 
 import net.erickelly.scorekeeper.data.PlayerManager;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -174,7 +177,33 @@ public class PlayerListActivity extends FragmentActivity implements
 	 * Reset the scores of all the players
 	 */
 	private void resetPlayers() {
-		PlayerManager.resetAllPlayers(this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		// 2. Chain together various setter methods to set the dialog
+		// characteristics
+		String message = getResources().getString(
+				R.string.reset_dialog_description);
+		String title = getResources().getString(R.string.reset_dialog_title);
+		builder.setMessage(message).setTitle(title);
+
+		// 3. Get the AlertDialog from create()
+		AlertDialog dialog = builder.create();
+		final Activity activity = this;
+		dialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						PlayerManager.resetAllPlayers(activity);
+					}
+				});
+		dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+		dialog.show();
 	}
 
 	/**
