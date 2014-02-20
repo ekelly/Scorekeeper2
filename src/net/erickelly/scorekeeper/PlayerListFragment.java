@@ -275,6 +275,8 @@ public class PlayerListFragment extends ListFragment implements
 	 */
 	private void resetPlayer(long playerId) {
 		PlayerManager.resetPlayerScore(getActivity(), playerId);
+		mCurrentPlayer = PlayerManager.getPlayer(getActivity(),
+				mCurrentPlayer.getId());
 	}
 
 	/**
