@@ -5,10 +5,8 @@ Rebuilding Scorekeeper from the ground up.  This app will provide an easy and co
 
 Todo:
 =====
-- Fix list view selection bug
 - Nicify list view
   - Add icons/colors for listview items
-  - Make the "selectable" state more obvious
   - Landscape view
 - Fix text so that it doesn't overflow badly
 - Add tablet layout

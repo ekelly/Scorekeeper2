@@ -5,6 +5,10 @@ import static net.erickelly.scorekeeper.data.Players.PLAYERS_TABLE_NAME;
 import static net.erickelly.scorekeeper.data.Players.PLAYERS_WITH_SCORE_URI;
 import static net.erickelly.scorekeeper.data.Players.SCORE;
 import static net.erickelly.scorekeeper.data.Players._ID;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import net.erickelly.scorekeeper.data.CursorWithDelete;
 import net.erickelly.scorekeeper.data.Player;
 import net.erickelly.scorekeeper.data.PlayerManager;
@@ -105,7 +109,7 @@ public class PlayerListFragment extends ListFragment implements
 		listView.setDividerHeight(0);
 		listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 		listView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
-			private Long mSelectedId;
+			private Set<Long> mSelectedIds = new HashSet<Long>();
 
 			@Override
 			public void onItemCheckedStateChanged(ActionMode mode,
@@ -115,9 +119,9 @@ public class PlayerListFragment extends ListFragment implements
 				// selected/de-selected,
 				// such as update the title in the CAB
 				if (checked) {
-					mSelectedId = id;
+					mSelectedIds.add(id);
 				} else {
-					mSelectedId = null;
+					mSelectedIds.remove(id);
 				}
 			}
 
@@ -126,7 +130,9 @@ public class PlayerListFragment extends ListFragment implements
 				// Respond to clicks on the actions in the CAB
 				switch (item.getItemId()) {
 				case R.id.menu_reset_player:
-					resetPlayer(mSelectedId);
+					for (Long id : mSelectedIds) {
+						resetPlayer(id);
+					}
 					mode.finish();
 				default:
 					return false;
@@ -275,8 +281,10 @@ public class PlayerListFragment extends ListFragment implements
 	 */
 	private void resetPlayer(long playerId) {
 		PlayerManager.resetPlayerScore(getActivity(), playerId);
-		mCurrentPlayer = PlayerManager.getPlayer(getActivity(),
-				mCurrentPlayer.getId());
+		if (mCurrentPlayer != null) {
+			mCurrentPlayer = PlayerManager.getPlayer(getActivity(),
+					mCurrentPlayer.getId());
+		}
 	}
 
 	/**

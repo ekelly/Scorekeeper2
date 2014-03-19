@@ -5,8 +5,21 @@
         <shape
             android:dither="true"
             android:shape="rectangle" >
+            <padding
+                android:bottom="@dimen/player_card_margin_vertical"
+                android:left="@dimen/player_card_margin_horizontal"
+                android:right="@dimen/player_card_margin_horizontal"
+                android:top="@dimen/player_card_margin_vertical" />
+
+            <solid android:color="@color/list_background" />
+        </shape>
+    </item>
+    <item>
+        <shape
+            android:dither="true"
+            android:shape="rectangle" >
             <corners android:radius="2dp" />
-            
+
             <padding android:bottom="2dp" />
 
             <solid android:color="@color/shadow" />
@@ -19,7 +32,7 @@
             <corners android:radius="2dp" />
 
             <solid android:color="@android:color/white" />
-            
         </shape>
     </item>
+
 </layer-list>
