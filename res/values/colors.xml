@@ -4,8 +4,7 @@
     <color name="black">#000000</color>
     <color name="red">#FF0000</color>
     <color name="green">#00FF00</color>
-    <color name="unselected_background">#CDCDCD</color>
-    <color name="shadow">@color/unselected_background</color>
+    <color name="unselected_background">#5ACDCDCD</color>
     <color name="android_blue">#33B5E5</color>
     <color name="android_light_blue">#33b5e5</color>
     <color name="list_background">#E5E5E5</color>
@@ -39,7 +38,12 @@
     <color name="orange">#FFA500</color>
     <color name="brick">#9C661F</color>
     
+    <!-- History View -->
+    <color name="bidding">#CDCDCD</color>
+    
+    <!-- Player card -->
     <color name="card_pressed">#ebebeb</color>
     <color name="card_pressed_header">#d6d6d6</color>
     <color name="card_gray">#e5e5e5</color>
+    <color name="card_shadow">@color/unselected_background</color>
 </resources>

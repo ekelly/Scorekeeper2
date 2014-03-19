@@ -22,7 +22,7 @@
             
             <padding android:bottom="2dp" />
 
-            <solid android:color="@color/shadow" />
+            <solid android:color="@color/card_shadow" />
         </shape>
     </item>
     <item>

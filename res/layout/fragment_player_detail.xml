@@ -16,11 +16,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/mode_background"
             android:onClick="onFocusChanged"
             android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/bidding"
+                android:id="@+id/player_detail_bidding"
                 style="@style/ScorecardText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -31,7 +32,7 @@
             </TextView>
 
             <TextView
-                android:id="@+id/score_notes"
+                android:id="@+id/player_detail_bid"
                 style="@style/ScorecardText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,6 +47,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/mode_background"
             android:onClick="onFocusChanged" >
 
             <TextView

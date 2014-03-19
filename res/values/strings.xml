@@ -34,7 +34,7 @@
     <string name="equals">=</string>
     
     <!-- Player Detail Fragment -->
-    <string name="bidding"><u>Bidding:</u></string>
+    <string name="bidding"><u>Bid</u></string>
     
     <!-- Other -->
     <string name="player">Player</string>

@@ -7,6 +7,7 @@ import net.erickelly.scorekeeper.data.PlayerManager;
 import net.erickelly.scorekeeper.data.Sign;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -68,6 +69,12 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		if (mUsingNotes) {
 			mDetailView = (LinearLayout) inflater.inflate(
 					R.layout.fragment_player_detail, container, false);
+			TextView biddingText = (TextView) mDetailView
+					.findViewById(R.id.player_detail_bidding);
+			Typeface font = Typeface.createFromAsset(getActivity().getAssets(),
+					"calligraffiti/calligraffiti.ttf");
+			biddingText.setTypeface(font);
+
 		} else {
 			mDetailView = (LinearLayout) inflater.inflate(
 					R.layout.fragment_player_detail_no_notes, container, false);
@@ -88,7 +95,8 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		if (mUsingNotes) {
 			mNotesContainerView = (LinearLayout) mDetailView
 					.findViewById(R.id.notes_container);
-			mNotesView = (TextView) mDetailView.findViewById(R.id.score_notes);
+			mNotesView = (TextView) mDetailView
+					.findViewById(R.id.player_detail_bid);
 			mNotesContainerView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
