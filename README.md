@@ -12,3 +12,5 @@ Todo:
 - Add tablet layout
 - Make bidding area look nicer
 - Add first run help text
+- Long press on history list item to bring up option to delete it
+- horizontal view for history list?

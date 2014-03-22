@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * A fragment representing a single Player detail screen. This fragment is
@@ -27,6 +28,7 @@ import android.widget.TextView;
  * fragment must implement its Callbacks interface
  */
 public class PlayerDetailFragment extends Fragment implements NumpadListener {
+
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
@@ -51,8 +53,10 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 
 		if (getArguments().containsKey(ARG_START_IN_NOTES)) {
 			mStartInNotes = getArguments().getBoolean(ARG_START_IN_NOTES);
-			Log.d("erickell", "Start in notes? " + mStartInNotes);
 		}
+
+		integerOverflowToastText = getResources().getString(
+				R.string.integer_overflow);
 
 		// Are we using the notes area or not?
 		SharedPreferences prefs = PreferenceManager
@@ -282,12 +286,38 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	public void adjustScore(Integer amt) {
 		setScore(mPlayer.getScore());
 		if (amt != null) {
-			setAdjustAmt(amt);
-			setFinalScore(mPlayer.getScore() + amt);
-			setSign(amt >= 0);
-			setPlayerScoreVisibility(false);
+			if (!willAdditionOverflow(mPlayer.getScore(), amt)) {
+				setAdjustAmt(amt);
+				setFinalScore(mPlayer.getScore() + amt);
+				setSign(amt >= 0);
+				setPlayerScoreVisibility(false);
+			} else {
+				Toast.makeText(getActivity(), integerOverflowToastText,
+						Toast.LENGTH_SHORT).show();
+			}
 		} else {
 			setPlayerScoreVisibility(true);
+		}
+	}
+
+	/**
+	 * Following 2 functions taken from
+	 * http://stackoverflow.com/questions/3001836/how-does-java-handle
+	 * -integer-underflows-and-overflows-and-how-would-you-check-fo
+	 */
+	private static boolean willAdditionOverflow(int left, int right) {
+		if (right < 0 && right != Integer.MIN_VALUE) {
+			return willSubtractionOverflow(left, -right);
+		} else {
+			return (~(left ^ right) & (left ^ (left + right))) < 0;
+		}
+	}
+
+	private static boolean willSubtractionOverflow(int left, int right) {
+		if (right < 0) {
+			return willAdditionOverflow(left, -right);
+		} else {
+			return ((left ^ right) & (left ^ (left - right))) < 0;
 		}
 	}
 
@@ -347,8 +377,16 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	public void onNumberClicked(String number) {
 		Log.d(TAG, "onNumberClicked: " + number);
 		if (mFocus.equals(ActionFocus.SCORE)) {
-			mAdjustAmount += number;
-			Integer amt = getCurrentAdjustAmount();
+			String adjustAmt = mAdjustAmount + number;
+			Integer amt;
+			try {
+				amt = getAdjustAmount(adjustAmt);
+				mAdjustAmount = adjustAmt;
+			} catch (NumberFormatException e) {
+				Toast.makeText(getActivity(), integerOverflowToastText,
+						Toast.LENGTH_SHORT).show();
+				amt = getCurrentAdjustAmount();
+			}
 			adjustScore(amt);
 		} else {
 			mNotes += number;
@@ -361,10 +399,14 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		Log.d(TAG, "onDeleteClicked");
 		if (mFocus.equals(ActionFocus.SCORE)) {
 			if (mAdjustAmount.length() > 0) {
-				mAdjustAmount = mAdjustAmount.substring(0,
+				String adjustAmount = mAdjustAmount.substring(0,
 						mAdjustAmount.length() - 1);
-				Integer amt = getCurrentAdjustAmount();
-				adjustScore(amt);
+				try {
+					Integer amt = getAdjustAmount(adjustAmount);
+					mAdjustAmount = adjustAmount;
+					adjustScore(amt);
+				} catch (NumberFormatException e) {
+				}
 			}
 		} else {
 			if (mNotes.length() > 0) {
@@ -455,13 +497,19 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	 * @return The adjust amount as an Integer, or null if there is no current
 	 *         adjust amount
 	 */
-	private Integer getCurrentAdjustAmount() {
-		if (!mAdjustAmount.isEmpty()) {
-			return Integer.parseInt((mSign.isPositive() ? "" : "-")
-					+ mAdjustAmount);
+	private Integer getAdjustAmount(String adjustAmount)
+			throws NumberFormatException {
+		if (!adjustAmount.isEmpty()) {
+			Integer adjustAmt = Integer
+					.parseInt((mSign.isPositive() ? "" : "-") + mAdjustAmount);
+			return adjustAmt;
 		} else {
 			return null;
 		}
+	}
+
+	private Integer getCurrentAdjustAmount() throws NumberFormatException {
+		return getAdjustAmount(mAdjustAmount);
 	}
 
 	/**
@@ -469,13 +517,18 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	 */
 	private boolean adjustScore() {
 		Log.d(TAG, "adjustScore");
-		Integer adjustAmt = getCurrentAdjustAmount();
-		if (adjustAmt != null) {
-			Player p = getPlayer();
-			PlayerManager.adjustScore(getActivity(), p.getId(), adjustAmt,
-					mNotes, mUpdate);
-			mUpdate = true;
-			return true;
+		try {
+			Integer adjustAmt = getCurrentAdjustAmount();
+			if (adjustAmt != null) {
+				Player p = getPlayer();
+				if (!willAdditionOverflow(p.getScore(), adjustAmt)) {
+					PlayerManager.adjustScore(getActivity(), p.getId(),
+							adjustAmt, mNotes, mUpdate);
+					mUpdate = true;
+					return true;
+				}
+			}
+		} catch (NumberFormatException e) {
 		}
 		return false;
 	}
@@ -535,6 +588,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	private boolean mUsingNotes = false;
 	private boolean mStartInNotes = false;
 
+	private String integerOverflowToastText;
 	private static final String NUMPAD_FRAGMENT = "numpad";
 
 	private static final String TAG = "PlayerDetailFragment";

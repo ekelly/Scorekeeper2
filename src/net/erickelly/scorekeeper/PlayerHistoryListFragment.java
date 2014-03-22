@@ -85,6 +85,7 @@ public class PlayerHistoryListFragment extends ListFragment implements
 		lv.setChoiceMode(ListView.CHOICE_MODE_NONE);
 		lv.addHeaderView(getActivity().getLayoutInflater().inflate(
 				R.layout.player_history_list_header, null));
+		lv.setDividerHeight(0);
 		setListAdapter(mAdapter);
 	}
 

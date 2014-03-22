@@ -35,6 +35,7 @@
     
     <!-- Player Detail Fragment -->
     <string name="bidding"><u>Bid</u></string>
+    <string name="integer_overflow">Numbers are too large</string>
     
     <!-- Other -->
     <string name="player">Player</string>
