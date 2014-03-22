@@ -2,7 +2,6 @@
 <resources>
     <!-- Player card values -->
     <dimen name="player_card_height">125dp</dimen>
-    <dimen name="player_card_container_height">133dp</dimen>
     <dimen name="player_card_margin_horizontal">10dp</dimen>
     <dimen name="player_card_margin_vertical">4dp</dimen>
     <dimen name="player_card_padding_horizontal">20dp</dimen>

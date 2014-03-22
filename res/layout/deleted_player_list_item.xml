@@ -3,7 +3,7 @@
     android:id="@+id/undo"
     android:layout_width="match_parent"
     android:layout_height="@dimen/player_card_height"
-    android:minHeight="@dimen/player_card_container_height"
+    android:minHeight="@dimen/player_card_height"
     android:background="@color/list_background"
     android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal"
