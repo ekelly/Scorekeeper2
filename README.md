@@ -8,7 +8,6 @@ Todo:
 - Nicify list view
   - Add icons/colors for listview items
   - Landscape view
-- Fix text so that it doesn't overflow badly
 - Make bidding area look nicer
 - Add first run help text
 - Long press on history list item to bring up option to delete it

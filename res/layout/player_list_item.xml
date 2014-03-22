@@ -18,26 +18,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:ellipsize="end"
             android:onClick="editName"
-            android:text="@string/player"
-            android:textColor="@color/android_blue"
-            android:textSize="36sp"
-            android:textStyle="italic|bold" />
-
-        <EditText
-            android:id="@+id/edit_player_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:background="#ffffff"
-            android:focusableInTouchMode="true"
-            android:inputType="text"
-            android:minWidth="150dp"
+            android:singleLine="true"
             android:text="@string/player"
             android:textColor="@color/android_blue"
             android:textSize="36sp"
             android:textStyle="italic|bold"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <Button
             android:id="@+id/plus"
@@ -59,6 +47,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:paddingBottom="8dp"
+            android:singleLine="true"
             android:text="@string/zero"
             android:textColor="@color/black"
             android:textSize="24sp" />
@@ -68,8 +57,8 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/plus"
-            android:layout_alignBottom="@+id/plus"
+            android:layout_alignBaseline="@id/plus"
+            android:layout_alignBottom="@id/plus"
             android:layout_alignParentLeft="true"
             android:onClick="onAdjustScore"
             android:padding="0dp"
@@ -82,11 +71,27 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignRight="@+id/plus"
-            android:layout_alignTop="@+id/player_name"
+            android:layout_alignParentRight="true"
             android:contentDescription="@string/edit"
             android:onClick="editName"
             android:src="@drawable/ic_action_accept"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/edit_player_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/confirm_edit_button"
+            android:background="#ffffff"
+            android:focusableInTouchMode="true"
+            android:inputType="text"
+            android:minWidth="150dp"
+            android:singleLine="true"
+            android:text="@string/player"
+            android:textColor="@color/android_blue"
+            android:textSize="36sp"
+            android:textStyle="italic|bold"
             android:visibility="gone" />
     </RelativeLayout>
 
