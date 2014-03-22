@@ -5,6 +5,7 @@ import static net.erickelly.scorekeeper.data.Players.PLAYERS_TABLE_NAME;
 import static net.erickelly.scorekeeper.data.Players.PLAYERS_WITH_SCORE_URI;
 import static net.erickelly.scorekeeper.data.Players.SCORE;
 import static net.erickelly.scorekeeper.data.Players._ID;
+import static net.erickelly.scorekeeper.utils.NumberUtils.willAdditionOverflow;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,6 +40,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter;
 import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter.DeleteItemCallback;
@@ -76,6 +78,9 @@ public class PlayerListFragment extends ListFragment implements
 		mAdapter = new SimpleCursorAdapter(getActivity(),
 				R.layout.player_list_item, null, new String[] { NAME, SCORE,
 						_ID }, new int[] { R.id.player_name, R.id.score }, 0);
+
+		mIntegerOverflowToastText = getResources().getString(
+				R.string.integer_overflow);
 
 		// Prepare the loader. Either re-connect with an existing one,
 		// or start a new one.
@@ -375,20 +380,28 @@ public class PlayerListFragment extends ListFragment implements
 		}
 		boolean isPositive = (v.getId() == R.id.plus);
 		Sign s = Sign.valueOf(isPositive);
+		int adjustAmt;
 		if (s.equals(Sign.NEGATIVE)) {
-			mAdjustAmt--;
+			adjustAmt = mAdjustAmt - 1;
 		} else {
-			mAdjustAmt++;
+			adjustAmt = mAdjustAmt + 1;
 		}
-		final TextView scoreView = (TextView) card.findViewById(R.id.score);
-		scoreView.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				scoreView.setText("" + (mCurrentPlayer.getScore() + mAdjustAmt));
-			}
-		}, 100L);
+		if (!willAdditionOverflow(mCurrentPlayer.getScore(), adjustAmt)) {
+			mAdjustAmt = adjustAmt;
+			final TextView scoreView = (TextView) card.findViewById(R.id.score);
+			scoreView.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					scoreView.setText(""
+							+ (mCurrentPlayer.getScore() + mAdjustAmt));
+				}
+			}, 100L);
 
-		adjustProgressBar(progress);
+			adjustProgressBar(progress);
+		} else {
+			Toast.makeText(getActivity(), mIntegerOverflowToastText,
+					Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	private void hideProgressBars() {
@@ -545,6 +558,8 @@ public class PlayerListFragment extends ListFragment implements
 		public void onAdjustScore(View v) {
 		}
 	};
+
+	private String mIntegerOverflowToastText;
 
 	private static String TAG = "PlayerListFragment";
 

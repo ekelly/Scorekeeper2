@@ -1,5 +1,6 @@
 package net.erickelly.scorekeeper;
 
+import static net.erickelly.scorekeeper.utils.NumberUtils.willAdditionOverflow;
 import net.erickelly.scorekeeper.NumpadFragment.NumpadListener;
 import net.erickelly.scorekeeper.data.ActionFocus;
 import net.erickelly.scorekeeper.data.Player;
@@ -284,6 +285,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	 * @param amt
 	 */
 	public void adjustScore(Integer amt) {
+		Log.d(TAG, "adjustScore: " + amt);
 		setScore(mPlayer.getScore());
 		if (amt != null) {
 			if (!willAdditionOverflow(mPlayer.getScore(), amt)) {
@@ -297,27 +299,6 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 			}
 		} else {
 			setPlayerScoreVisibility(true);
-		}
-	}
-
-	/**
-	 * Following 2 functions taken from
-	 * http://stackoverflow.com/questions/3001836/how-does-java-handle
-	 * -integer-underflows-and-overflows-and-how-would-you-check-fo
-	 */
-	private static boolean willAdditionOverflow(int left, int right) {
-		if (right < 0 && right != Integer.MIN_VALUE) {
-			return willSubtractionOverflow(left, -right);
-		} else {
-			return (~(left ^ right) & (left ^ (left + right))) < 0;
-		}
-	}
-
-	private static boolean willSubtractionOverflow(int left, int right) {
-		if (right < 0) {
-			return willAdditionOverflow(left, -right);
-		} else {
-			return ((left ^ right) & (left ^ (left - right))) < 0;
 		}
 	}
 
@@ -381,6 +362,9 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 			Integer amt;
 			try {
 				amt = getAdjustAmount(adjustAmt);
+				if (willAdditionOverflow(mPlayer.getScore(), amt)) {
+					throw new NumberFormatException();
+				}
 				mAdjustAmount = adjustAmt;
 			} catch (NumberFormatException e) {
 				Toast.makeText(getActivity(), integerOverflowToastText,
@@ -503,7 +487,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 			throws NumberFormatException {
 		if (!adjustAmount.isEmpty()) {
 			Integer adjustAmt = Integer
-					.parseInt((mSign.isPositive() ? "" : "-") + mAdjustAmount);
+					.parseInt((mSign.isPositive() ? "" : "-") + adjustAmount);
 			return adjustAmt;
 		} else {
 			return null;
@@ -548,6 +532,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	 */
 	public void setSign(Sign sign) {
 		mSign = sign;
+		getNumpadFragment().setOperationSign(mSign);
 	}
 
 	/**

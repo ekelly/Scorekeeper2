@@ -129,13 +129,6 @@ public class PlayerListActivity extends FragmentActivity implements
 	public void onAdjustScore(View v) {
 		PlayerListFragment listFragment = getPlayerListFragment();
 		listFragment.adjustPlayerScore(v);
-		/*
-		 * boolean isPositive = (v.getId() == R.id.plus); RelativeLayout row =
-		 * ((RelativeLayout) v.getParent()); int index =
-		 * listFragment.getListView().getPositionForView(row); Long id =
-		 * listFragment.getListAdapter().getItemId(index);
-		 */
-		// gotoPlayerDetail(index, id, isPositive, true, false);
 	}
 
 	public void editName(View v) {
