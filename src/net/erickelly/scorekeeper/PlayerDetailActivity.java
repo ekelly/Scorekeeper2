@@ -122,8 +122,6 @@ public class PlayerDetailActivity extends FragmentActivity {
 			Fragment fragment = new PlayerDetailFragment();
 			Bundle args = new Bundle();
 			args.putLong(PlayerDetailFragment.ARG_PLAYER_ID, p.getId());
-			args.putBoolean(PlayerDetailFragment.ARG_RETURN_TO_LIST,
-					mReturnToList);
 			args.putBoolean(NumpadFragment.ARG_POS_NEG, mSign.isPositive());
 			args.putBoolean(PlayerDetailFragment.ARG_START_IN_NOTES,
 					mStartInNotes);
@@ -181,7 +179,6 @@ public class PlayerDetailActivity extends FragmentActivity {
 	// representing an object in the collection.
 	private PlayersPagerAdapter mPlayersCollectionPagerAdapter;
 	private ViewPager mViewPager;
-	private boolean mReturnToList = false;
 	private boolean mStartInNotes = false;
 	private Sign mSign = Sign.POSITIVE;
 

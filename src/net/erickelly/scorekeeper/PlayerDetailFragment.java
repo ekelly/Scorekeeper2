@@ -48,10 +48,6 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 			loadPlayer(id);
 		}
 
-		if (getArguments().containsKey(ARG_RETURN_TO_LIST)) {
-			mReturnToList = getArguments().getBoolean(ARG_RETURN_TO_LIST);
-		}
-
 		if (getArguments().containsKey(ARG_START_IN_NOTES)) {
 			mStartInNotes = getArguments().getBoolean(ARG_START_IN_NOTES);
 		}
@@ -540,11 +536,6 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	 * represents.
 	 */
 	public static final String ARG_PLAYER_ID = "player_id";
-
-	/**
-	 * Should the activity return to the player screen when enter is clicked?
-	 */
-	public static final String ARG_RETURN_TO_LIST = "return";
 
 	/**
 	 * Should the notes be selected first?
