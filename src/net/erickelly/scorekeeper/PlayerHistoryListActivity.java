@@ -2,6 +2,7 @@ package net.erickelly.scorekeeper;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.MenuItem;
 
 public class PlayerHistoryListActivity extends FragmentActivity {
 
@@ -9,7 +10,7 @@ public class PlayerHistoryListActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_player_history);
-		
+
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -27,11 +28,11 @@ public class PlayerHistoryListActivity extends FragmentActivity {
 
 			PlayerHistoryListFragment fragment = new PlayerHistoryListFragment();
 
-			long id = getIntent().getExtras().getLong(
+			mPlayerId = getIntent().getExtras().getLong(
 					PlayerHistoryListFragment.ARG_PLAYER_ID);
 
 			Bundle args = new Bundle();
-			args.putLong(PlayerHistoryListFragment.ARG_PLAYER_ID, id);
+			args.putLong(PlayerHistoryListFragment.ARG_PLAYER_ID, mPlayerId);
 			fragment.setArguments(args);
 
 			// Add the fragment to the 'container' FrameLayout
@@ -40,4 +41,24 @@ public class PlayerHistoryListActivity extends FragmentActivity {
 					.commit();
 		}
 	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_in_from_left,
+				R.anim.slide_out_to_right);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		// Respond to the action bar's Up/Home button
+		case android.R.id.home:
+			onBackPressed();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private long mPlayerId;
 }

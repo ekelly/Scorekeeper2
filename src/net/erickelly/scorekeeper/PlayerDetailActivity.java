@@ -48,7 +48,6 @@ public class PlayerDetailActivity extends FragmentActivity {
 
 			@Override
 			public void onPageScrollStateChanged(int scrollState) {
-				String scroll = "";
 				switch (scrollState) {
 				case ViewPager.SCROLL_STATE_DRAGGING:
 					Log.d(TAG, "clearing the state of: " + mPreviousPage);
@@ -56,17 +55,13 @@ public class PlayerDetailActivity extends FragmentActivity {
 						clearState(mPreviousPage);
 						mTriggered = true;
 					}
-					scroll = "Dragging";
 					break;
 				case ViewPager.SCROLL_STATE_IDLE:
 					mTriggered = false;
-					scroll = "Idle";
 					break;
 				case ViewPager.SCROLL_STATE_SETTLING:
-					scroll = "Settling";
 					break;
 				}
-				Log.d(TAG, "onPageScrollStateChanged: " + scroll);
 			}
 
 			@Override
@@ -81,15 +76,8 @@ public class PlayerDetailActivity extends FragmentActivity {
 			}
 		});
 
-		mSign = Sign.valueOf(getIntent().getExtras().getBoolean(
+		mSign = Sign.valueOf(getIntent().getBooleanExtra(
 				NumpadFragment.ARG_POS_NEG, true));
-
-		mReturnToList = getIntent().getExtras().getBoolean(ARG_RETURN_TO_LIST,
-				false);
-
-		mStartInNotes = getIntent().getExtras().getBoolean(ARG_START_IN_NOTES,
-				false);
-
 	}
 
 	@Override
@@ -105,9 +93,18 @@ public class PlayerDetailActivity extends FragmentActivity {
 			//
 			NavUtils.navigateUpTo(this, new Intent(this,
 					PlayerListActivity.class));
+			overridePendingTransition(R.anim.slide_in_from_left,
+					R.anim.slide_out_to_right);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_in_from_left,
+				R.anim.slide_out_to_right);
 	}
 
 	// Since this is an object collection, use a FragmentStatePagerAdapter,
@@ -152,7 +149,7 @@ public class PlayerDetailActivity extends FragmentActivity {
 
 		@Override
 		public int getItemPosition(Object object) {
-			return PagerAdapter.POSITION_NONE;
+			return PagerAdapter.POSITION_UNCHANGED;
 		}
 
 		private static final String TAG = "PlayerDetailActivity.PlayersPagerAdapter";
@@ -168,44 +165,22 @@ public class PlayerDetailActivity extends FragmentActivity {
 	 */
 	private void clearState(int previousPagePosition) {
 		Log.d(TAG, "clearState");
-		// TODO: Do this in the background?
 
 		// Reset the old fragment
 		PlayerDetailFragment fragment = ((PlayerDetailFragment) mViewPager
 				.getAdapter().instantiateItem(mViewPager, previousPagePosition));
 		fragment.reset();
-
-		// Save the notes field into the database
-		// updateNote(getPlayerIdByPosition(previousPagePosition), mNotes);
-
 	}
-
-	/**
-	 * The fragment argument representing the state of the +/- button
-	 */
-	public static final String ARG_POS_NEG = "pos_neg";
-
-	/**
-	 * Should the activity return to the player screen when enter is clicked?
-	 */
-	public static final String ARG_RETURN_TO_LIST = "return";
 
 	/**
 	 * The fragment argument representing the index in the viewpager
 	 */
 	public static final String ARG_PLAYER_INDEX = "player_index";
 
-	/**
-	 * Should the user start with the notes area selected?
-	 */
-	public static final String ARG_START_IN_NOTES = "start_in_notes";
-
 	// When requested, this adapter returns a PageDetailFragment,
 	// representing an object in the collection.
-	PlayersPagerAdapter mPlayersCollectionPagerAdapter;
-
-	ViewPager mViewPager;
-
+	private PlayersPagerAdapter mPlayersCollectionPagerAdapter;
+	private ViewPager mViewPager;
 	private boolean mReturnToList = false;
 	private boolean mStartInNotes = false;
 	private Sign mSign = Sign.POSITIVE;

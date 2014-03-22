@@ -452,6 +452,8 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		Intent i = new Intent(getActivity(), PlayerHistoryListActivity.class);
 		i.putExtra(PlayerHistoryListFragment.ARG_PLAYER_ID, id);
 		startActivity(i);
+		getActivity().overridePendingTransition(R.anim.slide_in_from_right,
+				R.anim.slide_out_to_left);
 	}
 
 	@Override

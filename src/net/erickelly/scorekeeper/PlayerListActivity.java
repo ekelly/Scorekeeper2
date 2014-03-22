@@ -117,7 +117,7 @@ public class PlayerListActivity extends FragmentActivity implements
 		} else {
 			// In single-pane mode, simply start the detail activity
 			// for the selected item ID.
-			gotoPlayerDetail(position, id, true, false, true);
+			gotoPlayerDetail(position, id);
 		}
 	}
 
@@ -155,23 +155,15 @@ public class PlayerListActivity extends FragmentActivity implements
 	 *            Index in the viewflipper to navigate to
 	 * @param id
 	 *            ID of the player
-	 * @param isPositive
-	 *            Should the numpad be positive?
-	 * @param returnToList
-	 *            Should hitting enter cause the screen to return to this list
-	 * @param startInNotes
-	 *            Should you start with notes selected?
 	 */
-	private void gotoPlayerDetail(int index, long id, boolean isPositive,
-			boolean returnToList, boolean startInNotes) {
-		Log.d(TAG, "gotoPlayerDetail: " + index + ", " + id + ", " + isPositive);
+	private void gotoPlayerDetail(int index, long id) {
+		Log.d(TAG, "gotoPlayerDetail: " + index + ", " + id);
 		Intent i = new Intent(this, PlayerDetailActivity.class);
 		i.putExtra(PlayerDetailActivity.ARG_PLAYER_INDEX, index);
 		i.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, id);
-		i.putExtra(NumpadFragment.ARG_POS_NEG, isPositive);
-		i.putExtra(PlayerDetailActivity.ARG_RETURN_TO_LIST, returnToList);
-		i.putExtra(PlayerDetailActivity.ARG_START_IN_NOTES, startInNotes);
 		startActivity(i);
+		overridePendingTransition(R.anim.slide_in_from_right,
+				R.anim.slide_out_to_left);
 	}
 
 	/**
