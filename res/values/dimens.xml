@@ -10,4 +10,7 @@
     <!-- Player details card -->
     <dimen name="bidding_text_size">32sp</dimen>
     <dimen name="adjust_score_text_size">22sp</dimen>
+    
+    <!-- Text padding -->
+    <dimen name="padding">10dp</dimen>
 </resources>

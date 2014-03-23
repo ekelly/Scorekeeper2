@@ -4,30 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/padding"
+    android:paddingRight="@dimen/padding" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/plus_minus"
             style="@style/ScorecardText"
-            android:layout_width="wrap_content"
+            android:layout_width="20dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="center"
             android:text="@string/plus"
             tools:context=".PlayerHistoryListFragment" />
 
         <TextView
             android:id="@+id/notes"
+            style="@style/ScorecardText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/bidding"
-            style="@style/ScorecardText" />
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/bidding" />
 
         <TextView
             android:id="@+id/adjust_amt"
@@ -42,8 +43,6 @@
         android:id="@+id/horizontal_bar"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:background="@color/black"
         android:orientation="horizontal" />
 
