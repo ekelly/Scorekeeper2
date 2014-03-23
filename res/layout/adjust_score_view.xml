@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:duplicateParentState="true"
+    android:gravity="center_vertical"
     android:orientation="vertical"
     android:visibility="gone" >
 
@@ -12,19 +13,17 @@
         android:id="@+id/large_score_view"
         style="@style/ScorecardText"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_weight="1"
         android:duplicateParentState="true"
         tools:context=".PlayerDetailFragment" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_weight="1"
         android:duplicateParentState="true"
         android:orientation="horizontal" >
 
@@ -61,10 +60,9 @@
         android:id="@+id/total_score"
         style="@style/ScorecardText"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_weight="1"
         android:duplicateParentState="true"
         tools:context=".PlayerDetailFragment" />
 
