@@ -78,6 +78,10 @@ public class PlayerDetailActivity extends FragmentActivity {
 
 		mSign = Sign.valueOf(getIntent().getBooleanExtra(
 				NumpadFragment.ARG_POS_NEG, true));
+
+		mStartInNotes = getIntent().getExtras().getBoolean(ARG_START_IN_NOTES,
+				false);
+
 	}
 
 	@Override
@@ -174,6 +178,11 @@ public class PlayerDetailActivity extends FragmentActivity {
 	 * The fragment argument representing the index in the viewpager
 	 */
 	public static final String ARG_PLAYER_INDEX = "player_index";
+
+	/**
+	 * Should the user start with the notes area selected?
+	 */
+	public static final String ARG_START_IN_NOTES = "start_in_notes";
 
 	// When requested, this adapter returns a PageDetailFragment,
 	// representing an object in the collection.

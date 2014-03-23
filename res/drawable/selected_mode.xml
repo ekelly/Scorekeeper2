@@ -3,15 +3,7 @@
 
     <item>
         <shape android:shape="rectangle" >
-            <gradient
-                android:angle="0"
-                android:centerX="0.5"
-                android:centerY="0.5"
-                android:endColor="@color/unselected_background"
-                android:gradientRadius="400"
-                android:startColor="@color/white"
-                android:type="radial"
-                android:useLevel="false" />
+            <solid android:color="@color/unselected_background" />
 
             <padding
                 android:bottom="8dp"

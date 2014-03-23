@@ -154,6 +154,7 @@ public class PlayerListActivity extends FragmentActivity implements
 		Intent i = new Intent(this, PlayerDetailActivity.class);
 		i.putExtra(PlayerDetailActivity.ARG_PLAYER_INDEX, index);
 		i.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, id);
+		i.putExtra(PlayerDetailActivity.ARG_START_IN_NOTES, true);
 		startActivity(i);
 		overridePendingTransition(R.anim.slide_in_from_right,
 				R.anim.slide_out_to_left);

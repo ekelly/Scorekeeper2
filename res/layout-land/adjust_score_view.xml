@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/player_edit_score"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:duplicateParentState="true"
+    android:gravity="right|center_vertical"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:visibility="gone" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp" >
+
+        <TextView
+            android:id="@+id/large_score_view"
+            style="@style/ScorecardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true" />
+
+        <TextView
+            android:id="@+id/plus_minus"
+            style="@style/ScorecardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:duplicateParentState="true"
+            android:text="@string/plus" />
+
+        <TextView
+            android:id="@+id/adjust_amt"
+            style="@style/ScorecardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/equals"
+            style="@style/ScorecardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:duplicateParentState="true"
+            android:text="@string/equals" />
+
+        <TextView
+            android:id="@+id/total_score"
+            style="@style/ScorecardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true" />
+    </LinearLayout>
+
+</LinearLayout>

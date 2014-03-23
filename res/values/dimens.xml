@@ -6,4 +6,8 @@
     <dimen name="player_card_margin_vertical">4dp</dimen>
     <dimen name="player_card_padding_horizontal">20dp</dimen>
     <dimen name="player_card_padding_vertical">14dp</dimen>
+    
+    <!-- Player details card -->
+    <dimen name="bidding_text_size">32sp</dimen>
+    <dimen name="adjust_score_text_size">22sp</dimen>
 </resources>

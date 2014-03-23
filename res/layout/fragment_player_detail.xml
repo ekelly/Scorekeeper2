@@ -28,17 +28,16 @@
                 android:duplicateParentState="true"
                 android:gravity="center_horizontal"
                 android:text="@string/bidding"
-                android:textColor="@color/action_state_background" >
+                android:textSize="@dimen/bidding_text_size" >
             </TextView>
 
-            <TextView
+            <net.erickelly.scorekeeper.ui.AutoresizingTextView
                 android:id="@+id/player_detail_bid"
                 style="@style/ScorecardText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:duplicateParentState="true"
                 android:gravity="center_horizontal"
-                android:textColor="@color/action_state_background"
                 tools:context=".PlayerDetailFragment" />
         </LinearLayout>
 
@@ -57,76 +56,9 @@
                 android:layout_height="match_parent"
                 android:duplicateParentState="true"
                 android:gravity="center"
-                android:textColor="@color/action_state_background"
-                android:textSize="48sp" />
+                android:singleLine="true" />
 
-            <LinearLayout
-                android:id="@+id/player_edit_score"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:duplicateParentState="true"
-                android:orientation="vertical"
-                android:visibility="gone" >
-
-                <TextView
-                    android:id="@+id/player_detail"
-                    style="@style/ScorecardText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:duplicateParentState="true"
-                    android:textColor="@color/action_state_background"
-                    tools:context=".PlayerDetailFragment" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:duplicateParentState="true"
-                    android:orientation="horizontal" >
-
-                    <TextView
-                        android:id="@+id/plus_minus"
-                        style="@style/ScorecardText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:duplicateParentState="true"
-                        android:text="@string/plus"
-                        android:textColor="@color/action_state_background"
-                        tools:context=".PlayerDetailFragment" />
-
-                    <TextView
-                        android:id="@+id/adjust_amt"
-                        style="@style/ScorecardText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="0dp"
-                        android:duplicateParentState="true"
-                        android:textColor="@color/action_state_background"
-                        tools:context=".PlayerDetailFragment" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/horizontal_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/action_state_background"
-                    android:duplicateParentState="true"
-                    android:orientation="horizontal" >
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/total_score"
-                    style="@style/ScorecardText"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:duplicateParentState="true"
-                    android:textColor="@color/action_state_background"
-                    tools:context=".PlayerDetailFragment" />
-            </LinearLayout>
+            <include layout="@layout/adjust_score_view" />
         </FrameLayout>
     </LinearLayout>
 

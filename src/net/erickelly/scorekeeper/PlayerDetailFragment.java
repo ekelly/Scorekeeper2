@@ -86,7 +86,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 
 		mLargeScoreView = (TextView) mDetailView
 				.findViewById(R.id.player_score_large);
-		mScoreView = (TextView) mDetailView.findViewById(R.id.player_detail);
+		mScoreView = (TextView) mDetailView.findViewById(R.id.large_score_view);
 		mTotalScoreView = (TextView) mDetailView.findViewById(R.id.total_score);
 		mSignView = (TextView) mDetailView.findViewById(R.id.plus_minus);
 		mAdjustAmtView = (TextView) mDetailView.findViewById(R.id.adjust_amt);
