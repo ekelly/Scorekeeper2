@@ -70,30 +70,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		if (mUsingNotes) {
 			mDetailView = (LinearLayout) inflater.inflate(
 					R.layout.fragment_player_detail, container, false);
-			TextView biddingText = (TextView) mDetailView
-					.findViewById(R.id.player_detail_bidding);
-			Typeface font = Typeface.createFromAsset(getActivity().getAssets(),
-					"calligraffiti/calligraffiti.ttf");
-			biddingText.setTypeface(font);
 
-		} else {
-			mDetailView = (LinearLayout) inflater.inflate(
-					R.layout.fragment_player_detail_no_notes, container, false);
-		}
-
-		mScoreContainerView = (FrameLayout) mDetailView
-				.findViewById(R.id.score_container);
-
-		mLargeScoreView = (TextView) mDetailView
-				.findViewById(R.id.player_score_large);
-		mScoreView = (TextView) mDetailView.findViewById(R.id.large_score_view);
-		mTotalScoreView = (TextView) mDetailView.findViewById(R.id.total_score);
-		mSignView = (TextView) mDetailView.findViewById(R.id.plus_minus);
-		mAdjustAmtView = (TextView) mDetailView.findViewById(R.id.adjust_amt);
-		mPlayerEditScoreView = (LinearLayout) mDetailView
-				.findViewById(R.id.player_edit_score);
-
-		if (mUsingNotes) {
 			mNotesContainerView = (LinearLayout) mDetailView
 					.findViewById(R.id.notes_container);
 			mNotesView = (TextView) mDetailView
@@ -105,15 +82,39 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 				}
 			});
 
+			TextView biddingText = (TextView) mDetailView
+					.findViewById(R.id.player_detail_bidding);
+			Typeface font = Typeface.createFromAsset(getActivity().getAssets(),
+					"calligraffiti/calligraffiti.ttf");
+			biddingText.setTypeface(font);
+			mNotesView.setTypeface(font);
+
+			setNotesArea(mNotes);
+		} else {
+			mDetailView = (LinearLayout) inflater.inflate(
+					R.layout.fragment_player_detail_no_notes, container, false);
+		}
+
+		mScoreContainerView = (FrameLayout) mDetailView
+				.findViewById(R.id.score_container);
+
+		if (mUsingNotes) {
 			mScoreContainerView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					onFocusChanged(v);
 				}
 			});
-
-			setNotesArea(mNotes);
 		}
+
+		mLargeScoreView = (TextView) mDetailView
+				.findViewById(R.id.player_score_large);
+		mScoreView = (TextView) mDetailView.findViewById(R.id.large_score_view);
+		mTotalScoreView = (TextView) mDetailView.findViewById(R.id.total_score);
+		mSignView = (TextView) mDetailView.findViewById(R.id.plus_minus);
+		mAdjustAmtView = (TextView) mDetailView.findViewById(R.id.adjust_amt);
+		mPlayerEditScoreView = (LinearLayout) mDetailView
+				.findViewById(R.id.player_edit_score);
 
 		if (mPlayer != null) {
 			setScore(mPlayer.getScore());
