@@ -9,6 +9,7 @@ import net.erickelly.scorekeeper.data.Sign;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -164,18 +165,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	 */
 	public void reset() {
 		Log.d(TAG, "reset");
-		refreshPlayer();
-
-		// Adjust amt
-		mAdjustAmount = "";
-
-		setSign(Sign.POSITIVE);
-		setScore(mPlayer.getScore());
-		setAdjustAmt(0);
-		setFinalScore(mPlayer.getScore());
-		setNotesArea(mNotes);
-		setPlayerScoreVisibility(true);
-		startFocus();
+		new ResetAsyncTask(this).execute();
 	}
 
 	/**
@@ -514,6 +504,33 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		} catch (NumberFormatException e) {
 		}
 		return false;
+	}
+
+	private static class ResetAsyncTask extends AsyncTask<Void, Void, Void> {
+		private PlayerDetailFragment mFragment;
+
+		public ResetAsyncTask(PlayerDetailFragment fragment) {
+			mFragment = fragment;
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			mFragment.refreshPlayer();
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			mFragment.setSign(Sign.POSITIVE);
+			mFragment.setScore(mFragment.mPlayer.getScore());
+			// Adjust amt
+			mFragment.mAdjustAmount = "";
+			mFragment.setAdjustAmt(0);
+			mFragment.setFinalScore(mFragment.mPlayer.getScore());
+			mFragment.setNotesArea(mFragment.mNotes);
+			mFragment.setPlayerScoreVisibility(true);
+			mFragment.startFocus();
+		}
 	}
 
 	/**
