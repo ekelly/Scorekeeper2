@@ -62,8 +62,8 @@ public class NumpadFragment extends Fragment {
 		OnClickListener listener = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String number = (String) ((Button) v).getText();
-				onNumberClicked(number);
+				CharSequence number = ((Button) v).getText();
+				onNumberClicked(number.toString());
 			}
 		};
 		oneButton.setOnClickListener(listener);

@@ -163,9 +163,13 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 	/**
 	 * Resets the state of the Activity
 	 */
-	public void reset() {
+	public void reset(boolean updateFocusAndSign) {
 		Log.d(TAG, "reset");
-		new ResetAsyncTask(this).execute();
+		new ResetAsyncTask(this).execute(updateFocusAndSign);
+	}
+
+	public void reset() {
+		reset(true);
 	}
 
 	/**
@@ -434,6 +438,7 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 			if (mAdjustAmount.isEmpty()) {
 				PlayerManager.undoLastAdjustment(getActivity(), getPlayer()
 						.getId());
+				reset(false);
 			} else {
 				reset();
 			}
@@ -506,7 +511,8 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		return false;
 	}
 
-	private static class ResetAsyncTask extends AsyncTask<Void, Void, Void> {
+	private static class ResetAsyncTask extends
+			AsyncTask<Boolean, Void, Boolean> {
 		private PlayerDetailFragment mFragment;
 
 		public ResetAsyncTask(PlayerDetailFragment fragment) {
@@ -514,14 +520,13 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 		}
 
 		@Override
-		protected Void doInBackground(Void... params) {
+		protected Boolean doInBackground(Boolean... params) {
 			mFragment.refreshPlayer();
-			return null;
+			return params[0];
 		}
 
 		@Override
-		protected void onPostExecute(Void result) {
-			mFragment.setSign(Sign.POSITIVE);
+		protected void onPostExecute(Boolean changeFocusAndSign) {
 			mFragment.setScore(mFragment.mPlayer.getScore());
 			// Adjust amt
 			mFragment.mAdjustAmount = "";
@@ -529,7 +534,10 @@ public class PlayerDetailFragment extends Fragment implements NumpadListener {
 			mFragment.setFinalScore(mFragment.mPlayer.getScore());
 			mFragment.setNotesArea(mFragment.mNotes);
 			mFragment.setPlayerScoreVisibility(true);
-			mFragment.startFocus();
+			if (changeFocusAndSign) {
+				mFragment.setSign(Sign.POSITIVE);
+				mFragment.startFocus();
+			}
 		}
 	}
 
