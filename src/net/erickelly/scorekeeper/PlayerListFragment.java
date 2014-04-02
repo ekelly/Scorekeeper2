@@ -42,8 +42,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter;
-import com.haarman.listviewanimations.itemmanipulation.contextualundo.ContextualUndoAdapter.DeleteItemCallback;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.contextualundo.ContextualUndoAdapter;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.contextualundo.ContextualUndoAdapter.DeleteItemCallback;
 
 /**
  * A list fragment representing a list of Players. This fragment also supports
@@ -168,10 +168,9 @@ public class PlayerListFragment extends ListFragment implements
 
 		// Somewhere in your adapter creation code
 		ContextualUndoAdapter adapter = new ContextualUndoAdapter(mAdapter,
-				R.layout.deleted_player_list_item, R.id.undo);
+				R.layout.deleted_player_list_item, R.id.undo, this);
 		adapter.setAbsListView(listView);
 		setListAdapter(adapter);
-		adapter.setDeleteItemCallback(this);
 	}
 
 	@Override
